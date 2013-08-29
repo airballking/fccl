@@ -1,10 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(fccl_control)
 
-## Find catkin macros and libraries
-## if COMPONENTS list like find_package(catkin REQUIRED COMPONENTS xyz)
-## is used, also find other catkin packages
-find_package(catkin REQUIRED COMPONENTS roscpp)
+find_package(catkin REQUIRED COMPONENTS roscpp orocos_kdl)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -22,7 +19,7 @@ find_package(catkin REQUIRED COMPONENTS roscpp)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES fccl_control
-  CATKIN_DEPENDS roscpp
+  CATKIN_DEPENDS roscpp orocos_kdl
 #  DEPENDS system_lib
 )
 
@@ -32,15 +29,15 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-# include_directories(include)
+include_directories(include)
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a cpp library
-# add_library(fccl_control
-#   src/${PROJECT_NAME}/fccl_control.cpp
-# )
+add_library(fccl_control
+   src/main.cpp
+)
 
 ## Declare a cpp executable
 # add_executable(fccl_control_node src/fccl_control_node.cpp)
