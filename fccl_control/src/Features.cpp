@@ -80,4 +80,29 @@ namespace fccl
     position_.changeReferenceFrame(transform);
     normal_.changeReferenceFrame(transform);
   }
+
+  Line::Line(const std::string& name, const fccl::Vector& position, const fccl::Vector& direction) : Feature(name, position), direction_(direction)
+  {
+  }
+
+  Line::~Line()
+  {
+  }
+
+  const fccl::Vector& Line::getDirection() const
+  {
+    return direction_;
+  }
+
+  void Line::setDirection(const fccl::Vector& direction)
+  {
+    direction_ = direction;
+  }
+
+  void Line::changeReferenceFrame(const fccl::Transform& transform)
+  {
+    position_.changeReferenceFrame(transform);
+    direction_.changeReferenceFrame(transform);
+  }
+
 } // namespace fccl

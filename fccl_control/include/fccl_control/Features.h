@@ -59,6 +59,23 @@ namespace fccl
       fccl::Vector normal_;
   };
 
+  class Line: public Feature
+  {
+    public:
+      Line();
+      Line(const std::string& name, const fccl::Vector& position, const fccl::Vector& direction);
 
+      virtual ~Line();
+
+      const fccl::Vector& getDirection() const;
+      void setDirection(const fccl::Vector& direction);
+
+      void changeReferenceFrame(const fccl::Transform& transform);
+    
+    private:
+      // direction of the plane
+      fccl::Vector direction_;
+  };
+  
 } // namespace fccl
 #endif // FCCL_CONTROL_FEATURES_H
