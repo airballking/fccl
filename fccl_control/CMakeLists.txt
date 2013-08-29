@@ -38,6 +38,7 @@ include_directories(
 add_library(fccl_control
    src/main.cpp
    src/Geometry.cpp
+   src/Features.cpp
 )
 
 ## Declare a cpp executable

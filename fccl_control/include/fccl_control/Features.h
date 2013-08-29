@@ -9,38 +9,16 @@ namespace fccl
   class Feature
   {
     public:
-      Feature()
-      {
-        name_.reserve(STRING_SIZE);
-      }
+      Feature();
+      Feature(const std::string& name, const fccl::Position& position);
 
-      Feature(const std::string& name, const fccl::Position& position) :
-          name_(name), position_(position)
-      {
-        name_.reserve(STRING_SIZE);
-      }
+      virtual ~Feature();
 
-      virtual ~Feature() {}
+      const std::string& getName() const;
+      void setName(const std::string& name);
 
-      const std::string& getName() const
-      {
-        return name_;
-      }
-
-      void setName(const std::string& name)
-      {
-        name_ = name;
-      }
-
-      const fccl::Position& getPosition() const
-      {
-        return position_;
-      }
-
-      void setPosition(const fccl::Position& position)
-      {
-        position_ = position;
-      }
+      const fccl::Position& getPosition() const;
+      void setPosition(const fccl::Position& position);
 
       virtual void changeReferenceFrame(const fccl::Transform& transform) = 0;
 
