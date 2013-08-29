@@ -29,5 +29,17 @@ namespace fccl
       // position of the feature
       fccl::Position position_;
   };
+
+  class Point: public Feature
+  {
+    public:
+      Point();
+      Point(const std::string& name, const fccl::Position& position);
+
+      virtual ~Point();
+
+      void changeReferenceFrame(const fccl::Transform& transform);
+  };
+
 } // namespace fccl
 #endif // FCCL_CONTROL_FEATURES_H

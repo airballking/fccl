@@ -35,4 +35,22 @@ namespace fccl
     position_ = position;
   }
 
+  Point::Point() : Feature()
+  {
+  }
+
+  Point::Point(const std::string& name, const fccl::Position& position) :
+      Feature(name, position)
+  {
+  }
+
+  Point::~Point()
+  {
+  }
+
+  void Point::changeReferenceFrame(const fccl::Transform& transform)
+  {
+    position_.changeReferenceFrame(transform);
+  }
+ 
 } // namespace fccl
