@@ -9,51 +9,20 @@ namespace fccl
   class Transform
   {
     public:
-      Transform()
-      {
-        parent_frame_.reserve(STRING_SIZE);
-        child_frame_.reserve(STRING_SIZE);
-      }
-
+      Transform();
       Transform(const std::string& parent_frame, const std::string& child_frame,
-          const KDL::Frame transform) : 
-          parent_frame_(parent_frame), child_frame_(child_frame), transform_(transform)
-      {
-        parent_frame_.reserve(STRING_SIZE);
-        child_frame_.reserve(STRING_SIZE);
-      }
+          const KDL::Frame transform); 
 
-      virtual ~Transform() {}
+      virtual ~Transform();
 
-      const std::string& getParentFrame() const
-      { 
-        return parent_frame_;
-      }
+      const std::string& getParentFrame() const;
+      void setParentFrame(const std::string& parent_frame);
 
-      void setParentFrame(const std::string& parent_frame)
-      { 
-        parent_frame_ = parent_frame;
-      }
+      const std::string& getChildFrame() const;
+      void setChildFrame(const std::string child_frame);
 
-      const std::string& getChildFrame() const
-      {
-        return child_frame_;
-      }
-
-      void setChildFrame(const std::string child_frame)
-      {
-        child_frame_ = child_frame;
-      }
-
-      const KDL::Frame& getTransform() const
-      {
-        return transform_;
-      }
-
-      void setTransform(const KDL::Frame& transform)
-      {
-        transform_ = transform;
-      }
+      const KDL::Frame& getTransform() const;
+      void setTransform(const KDL::Frame& transform);
 
     private:
       // frame w.r.t. kinematic objects are defined before transformation
@@ -69,51 +38,19 @@ namespace fccl
   class Position
   {
     public:
-      Position()
-      {
-        frame_name_.reserve(STRING_SIZE);
-      }
-
-      Position(const KDL::Vector& position, const std::string& frame_name) :
-          frame_name_(frame_name), position_(position)
-      {
-        frame_name_.reserve(STRING_SIZE);
-      }
+      Position();
+      Position(const KDL::Vector& position, const std::string& frame_name);
       
-      virtual ~Position() {}
+      virtual ~Position();
 
-      const std::string& getFrameName() const
-      {
-        return frame_name_;
-      }
+      const std::string& getFrameName() const;
+      void setFrameName(const std::string& frame_name);
 
-      void setFrameName(const std::string& frame_name)
-      {
-        frame_name_ = frame_name;
-      }
-
-      const KDL::Vector& getPosition() const
-      {
-        return position_;
-      }
-
-      void setPosition(const KDL::Vector& position)
-      {
-        position_ = position;
-      }
+      const KDL::Vector& getPosition() const;
+      void setPosition(const KDL::Vector& position);
  
-      bool isTransformApplicable(const fccl::Transform& transform) const
-      {
-        return (frame_name_.compare(transform.getParentFrame()) == 0);
-      }
-
-      void changeReferenceFrame(const fccl::Transform& transform)
-      {
-        assert(isTransformApplicable(transform));
-
-        frame_name_ = transform.getChildFrame();
-        position_ = transform.getTransform() * position_;
-      }
+      bool isTransformApplicable(const fccl::Transform& transform) const;
+      void changeReferenceFrame(const fccl::Transform& transform);
 
     private:
       // frame w.r.t. the position is defined

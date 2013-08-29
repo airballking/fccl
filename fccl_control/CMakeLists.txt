@@ -37,6 +37,7 @@ include_directories(
 ## Declare a cpp library
 add_library(fccl_control
    src/main.cpp
+   src/Geometry.cpp
 )
 
 ## Declare a cpp executable
