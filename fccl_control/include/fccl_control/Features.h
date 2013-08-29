@@ -22,7 +22,7 @@ namespace fccl
 
       virtual void changeReferenceFrame(const fccl::Transform& transform) = 0;
 
-    private:
+    protected:
       // name/id of the feature given by knowledge base
       std::string name_;
 
