@@ -41,5 +41,24 @@ namespace fccl
       void changeReferenceFrame(const fccl::Transform& transform);
   };
 
+  class Plane: public Feature
+  {
+    public:
+      Plane();
+      Plane(const std::string& name, const fccl::Vector& position, const fccl::Vector& normal);
+
+      virtual ~Plane();
+
+      const fccl::Vector& getNormal() const;
+      void setNormal(const fccl::Vector& normal);
+
+      void changeReferenceFrame(const fccl::Transform& transform);
+    
+    private:
+      // normal of the plane
+      fccl::Vector normal_;
+  };
+
+
 } // namespace fccl
 #endif // FCCL_CONTROL_FEATURES_H
