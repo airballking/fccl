@@ -30,6 +30,18 @@ namespace fccl
       fccl::Vector position_;
   };
 
+  class OrientedFeature: public Feature
+  {
+    public:
+      OrientedFeature();
+      OrientedFeature(const std::string& name, const fccl::Vector& position);
+
+      virtual ~OrientedFeature();
+
+      virtual const fccl::Vector& getOrientation() const = 0;
+      virtual void setOrientation(const fccl::Vector& orientation) = 0;
+  };
+
   class Point: public Feature
   {
     public:
@@ -41,7 +53,7 @@ namespace fccl
       void changeReferenceFrame(const fccl::Transform& transform);
   };
 
-  class Plane: public Feature
+  class Plane: public OrientedFeature
   {
     public:
       Plane();
@@ -52,6 +64,9 @@ namespace fccl
       const fccl::Vector& getNormal() const;
       void setNormal(const fccl::Vector& normal);
 
+      virtual const fccl::Vector& getOrientation() const;
+      virtual void setOrientation(const fccl::Vector& orientation);
+ 
       void changeReferenceFrame(const fccl::Transform& transform);
     
     private:
@@ -59,7 +74,7 @@ namespace fccl
       fccl::Vector normal_;
   };
 
-  class Line: public Feature
+  class Line: public OrientedFeature
   {
     public:
       Line();
@@ -70,6 +85,9 @@ namespace fccl
       const fccl::Vector& getDirection() const;
       void setDirection(const fccl::Vector& direction);
 
+      virtual const fccl::Vector& getOrientation() const;
+      virtual void setOrientation(const fccl::Vector& orientation);
+ 
       void changeReferenceFrame(const fccl::Transform& transform);
     
     private:
