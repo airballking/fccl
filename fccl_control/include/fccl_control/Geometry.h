@@ -102,6 +102,19 @@ namespace fccl
         position_ = position;
       }
  
+      bool isTransformApplicable(const fccl::Transform& transform) const
+      {
+        return (frame_name_.compare(transform.getParentFrame()) == 0);
+      }
+
+      void changeReferenceFrame(const fccl::Transform& transform)
+      {
+        assert(isTransformApplicable(transform));
+
+        frame_name_ = transform.getChildFrame();
+        position_ = transform.getTransform() * position_;
+      }
+
     private:
       // frame w.r.t. the position is defined
       std::string frame_name_;
