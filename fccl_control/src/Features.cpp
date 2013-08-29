@@ -7,7 +7,7 @@ namespace fccl
     name_.reserve(STRING_SIZE);
   }
 
-  Feature::Feature(const std::string& name, const fccl::Position& position) :
+  Feature::Feature(const std::string& name, const fccl::Vector& position) :
       name_(name), position_(position)
   {
     name_.reserve(STRING_SIZE);
@@ -25,12 +25,12 @@ namespace fccl
     name_ = name;
   }
 
-  const fccl::Position& Feature::getPosition() const
+  const fccl::Vector& Feature::getPosition() const
   {
     return position_;
   }
 
-  void Feature::setPosition(const fccl::Position& position)
+  void Feature::setPosition(const fccl::Vector& position)
   {
     position_ = position;
   }
@@ -39,7 +39,7 @@ namespace fccl
   {
   }
 
-  Point::Point(const std::string& name, const fccl::Position& position) :
+  Point::Point(const std::string& name, const fccl::Vector& position) :
       Feature(name, position)
   {
   }

@@ -49,49 +49,49 @@ namespace fccl
     transform_ = transform;
   }
 
-  Position::Position()
+  Vector::Vector()
   {
     frame_name_.reserve(STRING_SIZE);
   }
 
-  Position::Position(const KDL::Vector& position, const std::string& frame_name) :
-      frame_name_(frame_name), position_(position)
+  Vector::Vector(const KDL::Vector& vector, const std::string& frame_name) :
+      frame_name_(frame_name), vector_(vector)
   {
     frame_name_.reserve(STRING_SIZE);
   }
   
-  Position::~Position() {}
+  Vector::~Vector() {}
 
-  const std::string& Position::getFrameName() const
+  const std::string& Vector::getFrameName() const
   {
     return frame_name_;
   }
 
-  void Position::setFrameName(const std::string& frame_name)
+  void Vector::setFrameName(const std::string& frame_name)
   {
     frame_name_ = frame_name;
   }
 
-  const KDL::Vector& Position::getPosition() const
+  const KDL::Vector& Vector::getVector() const
   {
-    return position_;
+    return vector_;
   }
 
-  void Position::setPosition(const KDL::Vector& position)
+  void Vector::setVector(const KDL::Vector& vector)
   {
-    position_ = position;
+    vector_ = vector;
   }
 
-  bool Position::isTransformApplicable(const fccl::Transform& transform) const
+  bool Vector::isTransformApplicable(const fccl::Transform& transform) const
   {
     return (frame_name_.compare(transform.getParentFrame()) == 0);
   }
 
-  void Position::changeReferenceFrame(const fccl::Transform& transform)
+  void Vector::changeReferenceFrame(const fccl::Transform& transform)
   {
     assert(isTransformApplicable(transform));
 
     frame_name_ = transform.getChildFrame();
-    position_ = transform.getTransform() * position_;
+    vector_ = transform.getTransform() * vector_;
   }
 } // namespace fccl

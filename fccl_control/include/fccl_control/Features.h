@@ -10,15 +10,15 @@ namespace fccl
   {
     public:
       Feature();
-      Feature(const std::string& name, const fccl::Position& position);
+      Feature(const std::string& name, const fccl::Vector& position);
 
       virtual ~Feature();
 
       const std::string& getName() const;
       void setName(const std::string& name);
 
-      const fccl::Position& getPosition() const;
-      void setPosition(const fccl::Position& position);
+      const fccl::Vector& getPosition() const;
+      void setPosition(const fccl::Vector& position);
 
       virtual void changeReferenceFrame(const fccl::Transform& transform) = 0;
 
@@ -27,14 +27,14 @@ namespace fccl
       std::string name_;
 
       // position of the feature
-      fccl::Position position_;
+      fccl::Vector position_;
   };
 
   class Point: public Feature
   {
     public:
       Point();
-      Point(const std::string& name, const fccl::Position& position);
+      Point(const std::string& name, const fccl::Vector& position);
 
       virtual ~Point();
 

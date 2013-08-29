@@ -35,29 +35,30 @@ namespace fccl
       KDL::Frame transform_;
   };
 
-  class Position
+  class Vector
   {
     public:
-      Position();
-      Position(const KDL::Vector& position, const std::string& frame_name);
+      Vector();
+      Vector(const KDL::Vector& vector, const std::string& frame_name);
       
-      virtual ~Position();
+      virtual ~Vector();
 
       const std::string& getFrameName() const;
       void setFrameName(const std::string& frame_name);
 
-      const KDL::Vector& getPosition() const;
-      void setPosition(const KDL::Vector& position);
+      const KDL::Vector& getVector() const;
+      void setVector(const KDL::Vector& vector);
  
       bool isTransformApplicable(const fccl::Transform& transform) const;
       void changeReferenceFrame(const fccl::Transform& transform);
 
     private:
-      // frame w.r.t. the position is defined
+      // frame w.r.t. the vector is defined
       std::string frame_name_;
 
-      // actual numeric representation of position
-      KDL::Vector position_;
+      // actual numeric representation of vector
+      KDL::Vector vector_;
   };
+
 } // namespace fccl
 #endif // FCCL_CONTROL_GEOMETRY_H
