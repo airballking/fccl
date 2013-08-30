@@ -18,7 +18,7 @@ find_package(catkin REQUIRED COMPONENTS roscpp orocos_kdl)
 ## DEPENDS: system dependencies of this project that dependent projects also need
 catkin_package(
   INCLUDE_DIRS include
-  LIBRARIES fccl_control
+  LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS roscpp orocos_kdl
 #  DEPENDS system_lib
 )
@@ -29,13 +29,13 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
-include_directories(include)
 include_directories(
+  include
   ${catkin_INCLUDE_DIRS}
 )
 
 ## Declare a cpp library
-add_library(fccl_control
+add_library(${PROJECT_NAME}
    src/main.cpp
    src/Geometry.cpp
    src/Features.cpp
@@ -85,8 +85,11 @@ install(DIRECTORY include/${PROJECT_NAME}/
 ## Testing ##
 #############
 
-## Add gtest based cpp test target and link libraries
-# catkin_add_gtest(${PROJECT_NAME}-test test/test_fccl_control.cpp)
-# if(TARGET ${PROJECT_NAME}-test)
-#   target_link_libraries(${PROJECT_NAME}-test ${PROJECT_NAME})
-# endif()
+## Add gtest based cpp test target 
+catkin_add_gtest(${PROJECT_NAME}-test test/main.cpp test/Geometry.cpp)
+# linking against our own library and all libraries from dependencies
+if(TARGET ${PROJECT_NAME}-test)
+  target_link_libraries(${PROJECT_NAME}-test 
+                        ${PROJECT_NAME} 
+                        ${catkin_LIBRARIES})
+endif()
