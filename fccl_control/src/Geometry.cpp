@@ -92,6 +92,6 @@ namespace fccl
     assert(isTransformApplicable(transform));
 
     frame_name_ = transform.getChildFrame();
-    vector_ = transform.getTransform() * vector_;
+    vector_ = transform.getTransform().Inverse(vector_);
   }
 } // namespace fccl
