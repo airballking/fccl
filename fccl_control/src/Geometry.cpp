@@ -94,4 +94,15 @@ namespace fccl
     frame_name_ = transform.getChildFrame();
     vector_ = transform.getTransform().Inverse(vector_);
   }
+
+  bool Vector::operator==(const Vector &other) const {
+    return (frame_name_.compare(other.getFrameName()) == 0)
+       && (KDL::Equal(vector_, other.getVector()));
+  }
+
+  bool Vector::operator!=(const Vector &other) const
+  {
+    return !(*this == other);
+  }
+
 } // namespace fccl

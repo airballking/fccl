@@ -71,3 +71,24 @@ TEST_F(GeometryTest, VectorTransformation)
   EXPECT_TRUE(KDL::Equal(v.getVector(), transform.Inverse(vector)));
   EXPECT_TRUE(KDL::Equal(v.getVector(), KDL::Vector(0.0, -3.0, 0.0)));
 }
+
+TEST_F(GeometryTest, VectorComparison)
+{
+  Vector v(vector, parent_frame);
+  Vector v2(vector, parent_frame);
+  Vector v3(vector+KDL::Vector(1,1,1), parent_frame);
+  Vector v4(vector, child_frame);
+
+  EXPECT_TRUE(v == v2);
+  EXPECT_FALSE(v != v2);
+
+  EXPECT_FALSE(v == v3);
+  EXPECT_TRUE(v != v3);
+
+  EXPECT_FALSE(v == v4);
+  EXPECT_TRUE(v != v4);
+
+  EXPECT_EQ(v, v2);
+  EXPECT_NE(v, v3);
+  EXPECT_NE(v, v4);
+}

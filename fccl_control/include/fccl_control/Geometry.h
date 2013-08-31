@@ -51,6 +51,9 @@ namespace fccl
  
       bool isTransformApplicable(const fccl::Transform& transform) const;
       void changeReferenceFrame(const fccl::Transform& transform);
+ 
+      bool operator==(const Vector &other) const;
+      bool operator!=(const Vector &other) const; 
 
     private:
       // frame w.r.t. the vector is defined
