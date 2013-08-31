@@ -86,7 +86,7 @@ install(DIRECTORY include/${PROJECT_NAME}/
 #############
 
 ## Add gtest based cpp test target 
-catkin_add_gtest(${PROJECT_NAME}-test test/main.cpp test/Geometry.cpp)
+catkin_add_gtest(${PROJECT_NAME}-test test/main.cpp test/Geometry.cpp test/Features.cpp)
 # linking against our own library and all libraries from dependencies
 if(TARGET ${PROJECT_NAME}-test)
   target_link_libraries(${PROJECT_NAME}-test 
