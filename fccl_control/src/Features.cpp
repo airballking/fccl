@@ -1,16 +1,20 @@
 #include <fccl_control/Features.h>
+#include <exception>
+#include <iostream>
 
 namespace fccl
 {
   Feature::Feature()
   {
     name_.reserve(STRING_SIZE);
+    type_ = -1;
   }
 
   Feature::Feature(const std::string& name, const fccl::Vector& position) :
       name_(name), position_(position)
   {
     name_.reserve(STRING_SIZE);
+    type_ = -1;
   }
 
   Feature::~Feature() {}
@@ -35,12 +39,31 @@ namespace fccl
     position_ = position;
   }
 
+  int Feature::getType() const
+  {
+    return type_;
+  }
+
+  bool Feature::operator==(const Feature& other) const
+  {
+    return (type_ == other.getType())
+        && (name_.compare(other.getName()) == 0)
+        && (position_ == other.getPosition());
+  }
+
+  bool Feature::operator!=(const Feature& other) const
+  {
+    return !(*this == other);
+  }
+
   OrientedFeature::OrientedFeature() : Feature()
   {
+    type_ = -2;
   }
 
   OrientedFeature::OrientedFeature(const std::string& name, const fccl::Vector& position) : Feature(name, position)
   {
+    type_ = -2;
   }
 
   OrientedFeature::~OrientedFeature()
@@ -49,15 +72,46 @@ namespace fccl
 
   Point::Point() : Feature()
   {
+    type_ = 1;
+  }
+
+  bool OrientedFeature::operator==(const Feature& other) const
+  {
+    if(type_ != other.getType())
+      return false;
+    
+    try 
+    {
+      const OrientedFeature* other_pointer = dynamic_cast<const OrientedFeature*>(&other);
+
+      assert(other_pointer);
+
+      return (name_.compare(other_pointer->getName()) == 0)
+          && (position_ == other_pointer->getPosition())
+          && (this->getOrientation() == other_pointer->getOrientation());
+    } 
+    catch (std::exception& e) 
+    {
+      std::cout << "Exception in OrientedFeature::operator==: " << e.what();
+    }
+
+    return false;
+  }
+
+  bool OrientedFeature::operator!=(const Feature& other) const
+  {
+    return !(*this == other);
   }
 
   Point::Point(const std::string& name, const fccl::Vector& position) :
       Feature(name, position)
   {
+    type_ = 1;
   }
 
   Point::~Point()
   {
+    type_ = 1;
   }
 
   void Point::changeReferenceFrame(const fccl::Transform& transform)
@@ -67,10 +121,12 @@ namespace fccl
 
   Plane::Plane() : OrientedFeature()
   {
+    type_ = 2;
   }
 
   Plane::Plane(const std::string& name, const fccl::Vector& position, const fccl::Vector& normal) : OrientedFeature(name, position), normal_(normal)
   {
+    type_ = 2;
   }
 
   Plane::~Plane()
@@ -105,10 +161,12 @@ namespace fccl
 
   Line::Line() : OrientedFeature()
   {
+    type_ = 3;
   }
 
   Line::Line(const std::string& name, const fccl::Vector& position, const fccl::Vector& direction) : OrientedFeature(name, position), direction_(direction)
   {
+    type_ = 3;
   }
 
   Line::~Line()

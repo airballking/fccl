@@ -20,7 +20,12 @@ namespace fccl
       const fccl::Vector& getPosition() const;
       void setPosition(const fccl::Vector& position);
 
+      int getType() const;
+
       virtual void changeReferenceFrame(const fccl::Transform& transform) = 0;
+
+      virtual bool operator==(const Feature& other) const;
+      virtual bool operator!=(const Feature& other) const;
 
     protected:
       // name/id of the feature given by knowledge base
@@ -28,6 +33,9 @@ namespace fccl
 
       // position of the feature
       fccl::Vector position_;
+   
+      // integer to uniquely identify every type of feature
+      int type_;
   };
 
   class OrientedFeature: public Feature
@@ -40,6 +48,9 @@ namespace fccl
 
       virtual const fccl::Vector& getOrientation() const = 0;
       virtual void setOrientation(const fccl::Vector& orientation) = 0;
+
+      virtual bool operator==(const Feature& other) const;
+      virtual bool operator!=(const Feature& other) const;
   };
 
   class Point: public Feature
