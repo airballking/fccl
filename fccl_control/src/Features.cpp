@@ -155,6 +155,8 @@ namespace fccl
  
   void Plane::changeReferenceFrame(const fccl::Transform& transform)
   {
+    assert(position_.getFrameName().compare(normal_.getFrameName()) == 0);
+
     position_.changeReferenceFrame(transform);
     normal_.changeReferenceFrame(transform);
   }
@@ -195,6 +197,8 @@ namespace fccl
 
   void Line::changeReferenceFrame(const fccl::Transform& transform)
   {
+    assert(position_.getFrameName().compare(direction_.getFrameName()) == 0);
+
     position_.changeReferenceFrame(transform);
     direction_.changeReferenceFrame(transform);
   }
