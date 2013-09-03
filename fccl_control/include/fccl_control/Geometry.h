@@ -34,6 +34,8 @@ namespace fccl
 
       friend std::ostream& operator<<(std::ostream& os, const Transform& transform);
 
+      bool postMultiplicationMatches(const Transform& other) const;
+
     private:
       // frame w.r.t. kinematic objects are defined before transformation
       std::string parent_frame_;

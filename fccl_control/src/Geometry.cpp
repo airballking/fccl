@@ -73,8 +73,8 @@ namespace fccl
 
   void Transform::operator*=(const Transform& other)
   {
-    assert(child_frame_.compare(other.getParentFrame()) == 0);
-    
+    assert(postMultiplicationMatches(other));
+  
     // change semantics
     child_frame_ = other.getChildFrame();
     
@@ -98,6 +98,11 @@ namespace fccl
     os << "child: " << transform.getChildFrame() << "\n";
 
     return os;
+  }
+
+  bool Transform::postMultiplicationMatches(const Transform& other) const
+  {
+    return (child_frame_.compare(other.getParentFrame()) == 0);
   }
 
   Vector::Vector()
