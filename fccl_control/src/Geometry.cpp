@@ -357,8 +357,6 @@ namespace fccl
 
   unsigned int InteractionMatrix::rows() const
   {
-    assert(data_.rows() == function_names_.size());
-
     return data_.rows();
   }
 
@@ -369,7 +367,7 @@ namespace fccl
 
   TwistDerivative InteractionMatrix::getDerivative(unsigned int row) const
   {
-    assert(row<rows());
+    assert(isRowValid(row));
 
     // init with semantic information
     TwistDerivative result(reference_frame_, function_names_[row]);
@@ -383,8 +381,8 @@ namespace fccl
 
   void InteractionMatrix::setDerivative(unsigned int row, const TwistDerivative& derivative)
   {
-    assert(row < rows());
-    assert(derivative.getReferenceFrame().compare(reference_frame_) == 0);
+    assert(isRowValid(row));
+    assert(referenceFrameMatches(derivative));
     
     // copy semantic information
     function_names_[row] = derivative.getFunctionName();
@@ -396,16 +394,17 @@ namespace fccl
 
   double& InteractionMatrix::operator()(unsigned int row, unsigned int column)
   {
-    assert(row < rows());
-    assert(column < columns());
+    assert(isRowValid(row));
+    assert(isColumnValid(column));
+
 
     return data_(row, column);
   }
 
   double InteractionMatrix::operator()(unsigned int row, unsigned int column) const
   {
-    assert(row < rows());
-    assert(column < columns());
+    assert(isRowValid(row));
+    assert(isColumnValid(column));
 
     return data_(row, column);
   }
@@ -431,6 +430,21 @@ namespace fccl
   const std::vector<std::string>& InteractionMatrix::getFunctionNames() const
   {
     return function_names_;
+  }
+
+  bool InteractionMatrix::referenceFrameMatches(const fccl::TwistDerivative& derivative) const
+  {
+    return (derivative.getReferenceFrame().compare(reference_frame_) == 0);
+  }
+
+  bool InteractionMatrix::isRowValid(unsigned int row) const
+  {
+    return row < rows();
+  }
+
+  bool InteractionMatrix::isColumnValid(unsigned int column) const
+  {
+    return column < columns();
   }
 
   void InteractionMatrix::changeReferenceFrame(const fccl::Transform& transform)

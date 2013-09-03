@@ -140,6 +140,10 @@ namespace fccl
       unsigned int getRowNumber(const std::string& functionName) const;
       const std::vector<std::string>& getFunctionNames() const;
 
+      bool referenceFrameMatches(const TwistDerivative& derivative) const;
+      bool isRowValid(unsigned int row) const;
+      bool isColumnValid(unsigned int column) const;
+
       void changeReferenceFrame(const fccl::Transform& transform);
 
     private:
