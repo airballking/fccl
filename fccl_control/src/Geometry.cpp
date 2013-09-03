@@ -6,6 +6,7 @@ namespace fccl
   {
     parent_frame_.reserve(STRING_SIZE);
     child_frame_.reserve(STRING_SIZE);
+    tmp_string_.reserve(STRING_SIZE);
   }
 
   Transform::Transform(const std::string& parent_frame, const std::string& child_frame, const KDL::Frame transform) : 
@@ -13,8 +14,18 @@ namespace fccl
   {
     parent_frame_.reserve(STRING_SIZE);
     child_frame_.reserve(STRING_SIZE);
+    tmp_string_.reserve(STRING_SIZE);
   }
 
+  Transform::Transform(const Transform& other) :
+      parent_frame_(other.getParentFrame()), child_frame_(other.getChildFrame()),
+      transform_(other.getTransform())
+  {
+    parent_frame_.reserve(STRING_SIZE);
+    child_frame_.reserve(STRING_SIZE);
+    tmp_string_.reserve(STRING_SIZE);
+  }
+ 
   Transform::~Transform()
   {
   }
@@ -47,6 +58,28 @@ namespace fccl
   void Transform::setTransform(const KDL::Frame& transform)
   {
     transform_ = transform;
+  }
+
+  void Transform::invert()
+  {
+    // swap semantics
+    tmp_string_ = parent_frame_;
+    parent_frame_ = child_frame_;
+    child_frame_ = tmp_string_;
+  
+    // change the numerics, i.e. perform the actual calculation
+    transform_ = transform_.Inverse();
+  }
+
+  void Transform::operator*=(const Transform& other)
+  {
+    assert(child_frame_.compare(other.getParentFrame()) == 0);
+    
+    // change semantics
+    child_frame_ = other.getChildFrame();
+    
+    // perform calculation
+    transform_ = transform_ * other.getTransform();
   }
 
   Vector::Vector()

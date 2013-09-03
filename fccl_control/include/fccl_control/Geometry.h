@@ -14,6 +14,7 @@ namespace fccl
       Transform();
       Transform(const std::string& parent_frame, const std::string& child_frame,
           const KDL::Frame transform); 
+      Transform(const Transform& other);
 
       virtual ~Transform();
 
@@ -26,6 +27,10 @@ namespace fccl
       const KDL::Frame& getTransform() const;
       void setTransform(const KDL::Frame& transform);
 
+      void invert();
+
+      void operator*=(const Transform& other);
+
     private:
       // frame w.r.t. kinematic objects are defined before transformation
       std::string parent_frame_;
@@ -35,6 +40,9 @@ namespace fccl
 
       // actual numeric representation of transform
       KDL::Frame transform_;
+
+      // temporary variables
+      std::string tmp_string_;
   };
 
   class Vector
@@ -98,7 +106,7 @@ namespace fccl
       // numeric representation of the derivative 
       Eigen::Matrix< double, 1, 6 > data;
 
- };
+  };
 
   class InteractionMatrix
   {
