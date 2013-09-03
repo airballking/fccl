@@ -97,6 +97,8 @@ namespace fccl
       double& operator[](int index);
       double operator[](int index) const;
       
+      void operator+=(const TwistDerivative& other);
+
       void setZero();
 
     private:

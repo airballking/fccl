@@ -265,6 +265,15 @@ namespace fccl
     return data(0, index);
   }
 
+  void TwistDerivative::operator+=(const TwistDerivative& other)
+  {
+    assert(reference_frame_.compare(other.getReferenceFrame()) == 0);
+    assert(function_name_.compare(other.getFunctionName()) == 0);
+
+    for(unsigned int i=0; i<6; i++)
+      data(0, i) += other(i);
+  }
+
   void TwistDerivative::setZero()
   {
     for(unsigned int i=0; i<6; i++)
