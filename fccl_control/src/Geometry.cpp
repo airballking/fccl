@@ -238,13 +238,18 @@ namespace fccl
     // the rotation B_R_A and translation B_p_A, and S(v) is the skew-matrix of a
     // given 3D-vector v (also see handbook of robotics page 39 for skew-matrix).
     
-    assert(reference_frame_.compare(transform.getChildFrame()) == 0);
+    assert(isTransformApplicable(transform));
 
     // perform the actual calculation 
     data = data*getTransposedTwistTransformationMatrix(transform.getTransform()); 
   
     // update the reference frame
     reference_frame_ = transform.getChildFrame();
+  }
+
+  bool TwistDerivative::isTransformApplicable(const fccl::Transform& transform) const
+  {
+    return (reference_frame_.compare(transform.getChildFrame()) == 0);
   }
 
   double& TwistDerivative::operator()(int index)

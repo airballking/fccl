@@ -95,6 +95,8 @@ namespace fccl
 
       void changeReferenceFrame(const fccl::Transform& transform);
 
+      bool isTransformApplicable(const fccl::Transform& transform) const;
+
       double& operator()(int index);
       double operator()(int index) const;
 
