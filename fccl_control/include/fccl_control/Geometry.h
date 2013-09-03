@@ -97,8 +97,6 @@ namespace fccl
       double& operator[](int index);
       double operator[](int index) const;
       
-      void operator+=(const TwistDerivative& other);
-
       void setZero();
 
     private:
@@ -110,7 +108,6 @@ namespace fccl
 
       // numeric representation of the derivative 
       Eigen::Matrix< double, 1, 6 > data;
-
   };
 
   class InteractionMatrix

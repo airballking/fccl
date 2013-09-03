@@ -228,7 +228,7 @@ namespace fccl
     // the rotation B_R_A and translation B_p_A, and S(v) is the skew-matrix of a
     // given 3D-vector v (also see handbook of robotics page 39 for skew-matrix).
     
-    assert(reference_frame_.compare(transform.getParentFrame()) == 0);
+    assert(reference_frame_.compare(transform.getChildFrame()) == 0);
 
     // perform the actual calculation 
     data = data*getTransposedTwistTransformationMatrix(transform.getTransform()); 
@@ -263,15 +263,6 @@ namespace fccl
     assert(0 <= index && index <= 6);
 
     return data(0, index);
-  }
-
-  void TwistDerivative::operator+=(const TwistDerivative& other)
-  {
-    assert(reference_frame_.compare(other.getReferenceFrame()) == 0);
-    assert(function_name_.compare(other.getFunctionName()) == 0);
-
-    for(unsigned int i=0; i<6; i++)
-      data(0, i) += other(i);
   }
 
   void TwistDerivative::setZero()
