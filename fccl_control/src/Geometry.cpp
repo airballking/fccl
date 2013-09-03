@@ -252,30 +252,35 @@ namespace fccl
     return (reference_frame_.compare(transform.getChildFrame()) == 0);
   }
 
-  double& TwistDerivative::operator()(int index)
+  bool TwistDerivative::isIndexValid(unsigned int index) const
   {
-    assert(0 <= index && index <= 6);
+    return (index <6);
+  }
+
+  double& TwistDerivative::operator()(unsigned int index)
+  {
+    assert(isIndexValid(index));
 
     return data(0, index);
   }
 
-  double TwistDerivative::operator()(int index) const
+  double TwistDerivative::operator()(unsigned int index) const
   {
-    assert(0 <= index && index <= 6);
+    assert(isIndexValid(index));
 
     return data(0, index);
   }
 
-  double& TwistDerivative::operator[](int index)
+  double& TwistDerivative::operator[](unsigned int index)
   {
-    assert(0 <= index && index <= 6);
+    assert(isIndexValid(index));
 
     return data(0, index);
   }
 
-  double TwistDerivative::operator[](int index) const
+  double TwistDerivative::operator[](unsigned int index) const
   {
-    assert(0 <= index && index <= 6);
+    assert(isIndexValid(index));
 
     return data(0, index);
   }

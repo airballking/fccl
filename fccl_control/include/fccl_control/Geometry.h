@@ -96,12 +96,13 @@ namespace fccl
       void changeReferenceFrame(const fccl::Transform& transform);
 
       bool isTransformApplicable(const fccl::Transform& transform) const;
+      bool isIndexValid(unsigned int) const;
 
-      double& operator()(int index);
-      double operator()(int index) const;
+      double& operator()(unsigned int index);
+      double operator()(unsigned int index) const;
 
-      double& operator[](int index);
-      double operator[](int index) const;
+      double& operator[](unsigned int index);
+      double operator[](unsigned int index) const;
       
       void setZero();
 
