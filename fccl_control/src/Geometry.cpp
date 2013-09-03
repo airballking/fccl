@@ -143,6 +143,11 @@ namespace fccl
     return (frame_name_.compare(transform.getParentFrame()) == 0);
   }
 
+  bool Vector::semanticsMatch(const fccl::Vector& other) const
+  {
+    return (frame_name_.compare(other.getFrameName()) == 0);
+  }
+
   void Vector::changeReferenceFrame(const fccl::Transform& transform)
   {
     assert(isTransformApplicable(transform));
@@ -152,7 +157,7 @@ namespace fccl
   }
 
   bool Vector::operator==(const Vector &other) const {
-    return (frame_name_.compare(other.getFrameName()) == 0)
+    return semanticsMatch(other)
        && (KDL::Equal(vector_, other.getVector()));
   }
 

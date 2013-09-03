@@ -65,6 +65,8 @@ namespace fccl
       void setVector(const KDL::Vector& vector);
  
       bool isTransformApplicable(const fccl::Transform& transform) const;
+      bool semanticsMatch(const fccl::Vector& other) const;
+
       void changeReferenceFrame(const fccl::Transform& transform);
  
       bool operator==(const Vector &other) const;
