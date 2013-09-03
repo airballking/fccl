@@ -30,6 +30,11 @@ TEST_F(GeometryTest, TransformConstructor)
   EXPECT_STREQ(parent_frame.c_str(), t.getParentFrame().c_str()); 
   EXPECT_STREQ(child_frame.c_str(), t.getChildFrame().c_str());
   EXPECT_TRUE(KDL::Equal(transform, t.getTransform()));
+
+  Transform t2(t);
+  EXPECT_STREQ(t.getParentFrame().c_str(), t2.getParentFrame().c_str());
+  EXPECT_STREQ(t.getChildFrame().c_str(), t2.getChildFrame().c_str());
+  EXPECT_TRUE(KDL::Equal(t.getTransform(), t2.getTransform()));
 }
 
 TEST_F(GeometryTest, TransformGettersAndSetters)
@@ -41,6 +46,19 @@ TEST_F(GeometryTest, TransformGettersAndSetters)
   EXPECT_STREQ(parent_frame.c_str(), t.getParentFrame().c_str()); 
   EXPECT_STREQ(child_frame.c_str(), t.getChildFrame().c_str());
   EXPECT_TRUE(KDL::Equal(transform, t.getTransform()));
+}
+
+TEST_F(GeometryTest, TransformInversion)
+{
+  Transform t(parent_frame, child_frame, transform);
+  Transform t2(t);
+  t2.invert();
+  EXPECT_STREQ(t2.getParentFrame().c_str(), child_frame.c_str());
+  EXPECT_STREQ(t2.getChildFrame().c_str(), parent_frame.c_str());
+  t*=t2;
+  EXPECT_STREQ(parent_frame.c_str(), t.getParentFrame().c_str());
+  EXPECT_STREQ(parent_frame.c_str(), t.getChildFrame().c_str());
+  EXPECT_TRUE(KDL::Equal(t.getTransform(), KDL::Frame::Identity()));
 }
 
 TEST_F(GeometryTest, VectorConstructor)
@@ -91,4 +109,22 @@ TEST_F(GeometryTest, VectorComparison)
   EXPECT_EQ(v, v2);
   EXPECT_NE(v, v3);
   EXPECT_NE(v, v4);
+}
+
+TEST_F(GeometryTest, TwistDerivative)
+{
+  TwistDerivative td("child", "bla");
+  for(unsigned int i=0; i<6; i++)
+    td(i) = i;
+  
+  Transform tf(parent_frame, child_frame, transform);
+
+  td.changeReferenceFrame(tf);
+
+  EXPECT_DOUBLE_EQ(td(0), 0);
+  EXPECT_DOUBLE_EQ(td(1), -2);
+  EXPECT_DOUBLE_EQ(td(2), 1);
+  EXPECT_DOUBLE_EQ(td(3), 9);
+  EXPECT_DOUBLE_EQ(td(4), -5);
+  EXPECT_DOUBLE_EQ(td(5), 4);
 }
