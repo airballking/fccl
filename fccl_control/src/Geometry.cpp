@@ -82,6 +82,24 @@ namespace fccl
     transform_ = transform_ * other.getTransform();
   }
 
+  std::ostream& operator<<(std::ostream& os, const Transform& transform)
+  {
+    KDL::Frame f = transform.getTransform();
+    os << "p:\n  " << f.p.x() << " " << f.p.y() << " " << f.p.z() << "\n";
+    os << "M:\n";
+    for(unsigned int i=0; i<3; i++)
+    {
+      os << "  ";
+      for(unsigned int j=0; j<3; j++)
+        os << f.M(i,j) << " ";
+      os << "\n";
+    }   
+    os << "parent: " << transform.getParentFrame() << "\n";
+    os << "child: " << transform.getChildFrame() << "\n";
+
+    return os;
+  }
+
   Vector::Vector()
   {
     frame_name_.reserve(STRING_SIZE);

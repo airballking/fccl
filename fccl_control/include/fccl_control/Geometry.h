@@ -5,6 +5,7 @@
 #include <kdl/frames.hpp>
 #include <vector>
 #include <Eigen/Core>
+#include <iostream>
 
 namespace fccl
 {
@@ -30,6 +31,8 @@ namespace fccl
       void invert();
 
       void operator*=(const Transform& other);
+
+      friend std::ostream& operator<<(std::ostream& os, const Transform& transform);
 
     private:
       // frame w.r.t. kinematic objects are defined before transformation
