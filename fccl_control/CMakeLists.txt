@@ -36,9 +36,9 @@ include_directories(
 
 ## Declare a cpp library
 add_library(${PROJECT_NAME}
-   src/main.cpp
    src/Geometry.cpp
    src/Features.cpp
+   src/String.cpp
 )
 
 ## Declare a cpp executable
