@@ -19,6 +19,10 @@ namespace fccl
       Twist(std::size_t reference_id, std::size_t target_id,
           const KDL::Twist& twist);
 
+      virtual ~Twist();
+
+      fccl::Twist& operator=(const fccl::Twist& rhs);
+
       std::size_t getReferenceID() const;
       void setReferenceID(std::size_t reference_id);
       void setReferenceName(const std::string& reference_name);

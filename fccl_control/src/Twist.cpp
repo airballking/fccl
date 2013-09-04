@@ -26,6 +26,23 @@ namespace fccl
   {
   }
 
+  Twist::~Twist()
+  {
+  }
+
+  fccl::Twist& Twist::operator=(const fccl::Twist& rhs)
+  {
+    // need to check for self-allocation
+    if(this != &rhs)
+    {
+      this->setReferenceID(rhs.getReferenceID());
+      this->setTargetID(rhs.getTargetID());
+      this->setTwist(rhs.getTwist());
+    }
+  
+    return *this;
+  }
+
   std::size_t Twist::getReferenceID() const
   {
     return reference_id_;
