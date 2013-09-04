@@ -53,7 +53,7 @@ namespace fccl
     target_id_ = target_id;
   }
 
-  void Transform::setTargetFrame(const std::string target_frame)
+  void Transform::setTargetFrame(const std::string& target_frame)
   {
     target_id_ = hash(target_frame);
   }

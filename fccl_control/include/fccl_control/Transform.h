@@ -25,7 +25,7 @@ namespace fccl
 
       unsigned long getTargetID() const;
       void setTargetID(unsigned long target_id);
-      void setTargetFrame(const std::string target_frame);
+      void setTargetFrame(const std::string& target_frame);
 
       const KDL::Frame& getTransform() const;
       void setTransform(const KDL::Frame& transform);
