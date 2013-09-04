@@ -40,6 +40,7 @@ add_library(${PROJECT_NAME}
    src/Hashing.cpp
    src/Transform.cpp
    src/Vector.cpp
+   src/Twist.cpp
 )
 
 ## Declare a cpp executable
@@ -90,7 +91,8 @@ install(DIRECTORY include/${PROJECT_NAME}/
 catkin_add_gtest(${PROJECT_NAME}-test 
                  test/main.cpp 
                  test/Transform.cpp
-                 test/Vector.cpp) #test/Geometry.cpp test/Features.cpp)
+                 test/Vector.cpp
+                 test/Twist.cpp) #test/Geometry.cpp test/Features.cpp)
 # linking against our own library and all libraries from dependencies
 if(TARGET ${PROJECT_NAME}-test)
   target_link_libraries(${PROJECT_NAME}-test 
