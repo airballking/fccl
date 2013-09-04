@@ -19,6 +19,8 @@ namespace fccl
  
       virtual ~Transform();
 
+      fccl::Transform& operator=(const fccl::Transform& rhs);
+
       std::size_t getReferenceID() const;
       void setReferenceID(std::size_t reference_id);
       void setReferenceFrame(const std::string& reference_frame);

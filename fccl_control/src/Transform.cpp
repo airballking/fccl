@@ -28,6 +28,20 @@ namespace fccl
   {
   }
 
+  fccl::Transform& Transform::operator=(const fccl::Transform& rhs)
+  {
+    // need to check for self-allocation
+    if(this != &rhs)
+    {
+      this->setReferenceID(rhs.getReferenceID());
+      this->setTargetID(rhs.getTargetID());
+      this->setTransform(rhs.getTransform());
+    }
+
+    return *this;
+  }
+
+
   std::size_t Transform::getReferenceID() const
   {
     return reference_id_;
