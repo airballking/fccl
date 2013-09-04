@@ -41,6 +41,7 @@ add_library(${PROJECT_NAME}
    src/Transform.cpp
    src/Vector.cpp
    src/Twist.cpp
+   src/InteractionMatrix.cpp
 )
 
 ## Declare a cpp executable
@@ -92,7 +93,8 @@ catkin_add_gtest(${PROJECT_NAME}-test
                  test/main.cpp 
                  test/Transform.cpp
                  test/Vector.cpp
-                 test/Twist.cpp) #test/Geometry.cpp test/Features.cpp)
+                 test/Twist.cpp
+                 test/InteractionMatrix.cpp) #test/Geometry.cpp test/Features.cpp)
 # linking against our own library and all libraries from dependencies
 if(TARGET ${PROJECT_NAME}-test)
   target_link_libraries(${PROJECT_NAME}-test 
