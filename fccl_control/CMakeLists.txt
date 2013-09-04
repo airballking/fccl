@@ -94,7 +94,7 @@ catkin_add_gtest(${PROJECT_NAME}-test
                  test/Transform.cpp
                  test/Vector.cpp
                  test/Twist.cpp
-                 test/InteractionMatrix.cpp) #test/Geometry.cpp test/Features.cpp)
+                 test/InteractionMatrix.cpp) #test/Features.cpp)
 # linking against our own library and all libraries from dependencies
 if(TARGET ${PROJECT_NAME}-test)
   target_link_libraries(${PROJECT_NAME}-test 
