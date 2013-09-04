@@ -14,17 +14,17 @@ namespace fccl
       Transform(const fccl::Transform& other);
       Transform(const std::string& reference_frame, const std::string& target_frame,
           const KDL::Frame& transform); 
-      Transform(unsigned long reference_id, unsigned long target_id,
+      Transform(std::size_t reference_id, std::size_t target_id,
           const KDL::Frame& transform);
  
       virtual ~Transform();
 
-      unsigned long getReferenceID() const;
-      void setReferenceID(unsigned long reference_id);
+      std::size_t getReferenceID() const;
+      void setReferenceID(std::size_t reference_id);
       void setReferenceFrame(const std::string& reference_frame);
 
-      unsigned long getTargetID() const;
-      void setTargetID(unsigned long target_id);
+      std::size_t getTargetID() const;
+      void setTargetID(std::size_t target_id);
       void setTargetFrame(const std::string& target_frame);
 
       const KDL::Frame& getTransform() const;
@@ -50,11 +50,11 @@ namespace fccl
     private:
       // frame w.r.t. kinematic objects are defined before transformation,
       // sometimes also 'parent_frame' called
-      unsigned long reference_id_;
+      std::size_t reference_id_;
 
       // frame w.r.t. kinematic objects are defined after transformation,
       // also called 'child_frame'
-      unsigned long target_id_;
+      std::size_t target_id_;
 
       // actual numeric representation of transform
       KDL::Frame transform_;

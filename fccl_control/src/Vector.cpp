@@ -19,19 +19,19 @@ namespace fccl
   {
   }
   
-  Vector::Vector(unsigned long reference_id, unsigned long target_id, const KDL::Vector& vector) :
+  Vector::Vector(std::size_t reference_id, std::size_t target_id, const KDL::Vector& vector) :
       reference_id_(reference_id), target_id_(target_id), vector_(vector)
   {
   }
 
   Vector::~Vector() {}
 
-  unsigned long Vector::getReferenceID() const
+  std::size_t Vector::getReferenceID() const
   {
     return reference_id_;
   }
 
-  void Vector::setReferenceID(unsigned long reference_id)
+  void Vector::setReferenceID(std::size_t reference_id)
   {
     reference_id_ = reference_id;
   }
@@ -41,12 +41,12 @@ namespace fccl
     reference_id_ = hash(reference_name);
   }
 
-  unsigned long Vector::getTargetID() const
+  std::size_t Vector::getTargetID() const
   {
     return target_id_;
   }
 
-  void Vector::setTargetID(unsigned long target_id)
+  void Vector::setTargetID(std::size_t target_id)
   {
     target_id_ = target_id;
   }

@@ -2,12 +2,12 @@
 
 namespace fccl
 {
-  unsigned long hash(const std::string& in)
+  std::size_t hash(const std::string& in)
   {
-    unsigned long result = 0;
+    std::size_t result = 0;
 
     for(unsigned int i=0; i<in.size(); i++)
-      result += 37*in[i];
+      result += 101*in[i];
 
     return result;
   }

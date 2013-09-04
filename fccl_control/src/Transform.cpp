@@ -19,7 +19,7 @@ namespace fccl
   {
   }
 
-  Transform::Transform(unsigned long reference_id, unsigned long target_id, const KDL::Frame& transform) :
+  Transform::Transform(std::size_t reference_id, std::size_t target_id, const KDL::Frame& transform) :
       reference_id_(reference_id), target_id_(target_id), transform_(transform)
   {
   }
@@ -28,12 +28,12 @@ namespace fccl
   {
   }
 
-  unsigned long Transform::getReferenceID() const
+  std::size_t Transform::getReferenceID() const
   {
     return reference_id_;
   }
 
-  void Transform::setReferenceID(unsigned long reference_id) 
+  void Transform::setReferenceID(std::size_t reference_id) 
   {
     reference_id_ = reference_id;
   }
@@ -43,12 +43,12 @@ namespace fccl
     reference_id_ = hash(reference_frame);
   }
 
-  unsigned long Transform::getTargetID() const
+  std::size_t Transform::getTargetID() const
   {
     return target_id_;
   }
 
-  void Transform::setTargetID(unsigned long target_id)
+  void Transform::setTargetID(std::size_t target_id)
   {
     target_id_ = target_id;
   }
