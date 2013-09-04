@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 
 #include <fccl_control/Transform.h>
-#include <fccl_control/Hashing.h>
 
 using namespace fccl;
 
@@ -22,7 +21,6 @@ class TransformTest : public ::testing::Test
 
     std::string parent_frame, child_frame;
     KDL::Frame transform;
-    KDL::Vector vector;
 };
 
 TEST_F(TransformTest, Basics)

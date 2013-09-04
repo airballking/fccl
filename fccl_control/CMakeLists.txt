@@ -39,6 +39,7 @@ add_library(${PROJECT_NAME}
 #   src/Features.cpp
    src/Hashing.cpp
    src/Transform.cpp
+   src/Vector.cpp
 )
 
 ## Declare a cpp executable
@@ -86,7 +87,10 @@ install(DIRECTORY include/${PROJECT_NAME}/
 #############
 
 ## Add gtest based cpp test target 
-catkin_add_gtest(${PROJECT_NAME}-test test/main.cpp test/Transform.cpp) #test/Geometry.cpp test/Features.cpp)
+catkin_add_gtest(${PROJECT_NAME}-test 
+                 test/main.cpp 
+                 test/Transform.cpp
+                 test/Vector.cpp) #test/Geometry.cpp test/Features.cpp)
 # linking against our own library and all libraries from dependencies
 if(TARGET ${PROJECT_NAME}-test)
   target_link_libraries(${PROJECT_NAME}-test 
