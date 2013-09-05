@@ -39,7 +39,7 @@ TEST_F(VectorTest, Basics)
 TEST_F(VectorTest, Basics2)
 {
   Vector v(reference, target, vector);
-  Vector v2, v3;
+  Vector v2, v3, v4;
 
   v2.setReferenceID(v.getReferenceID());
   v2.setTargetID(v.getTargetID());
@@ -49,8 +49,11 @@ TEST_F(VectorTest, Basics2)
   v3.setTargetName(target);
   v3.setVector(vector);
 
+  v4 = v;
+
   EXPECT_EQ(v, v2);
   EXPECT_EQ(v, v3);
+  EXPECT_EQ(v, v4);
 }
 
 TEST_F(VectorTest, TransformMultiplication)

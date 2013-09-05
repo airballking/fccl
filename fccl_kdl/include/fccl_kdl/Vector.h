@@ -20,6 +20,8 @@ namespace fccl
       
       virtual ~Vector();
 
+      fccl::Vector& operator=(const fccl::Vector& rhs);
+
       std::size_t getReferenceID() const;
       void setReferenceID(std::size_t reference_id);
       void setReferenceName(const std::string& reference_name);

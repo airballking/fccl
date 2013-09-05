@@ -26,6 +26,19 @@ namespace fccl
 
   Vector::~Vector() {}
 
+  fccl::Vector& Vector::operator=(const fccl::Vector& rhs)
+  {
+    // protect against self-assignment
+    if(this != &rhs)
+    {
+      reference_id_ = rhs.getReferenceID();
+      target_id_ = rhs.getTargetID();
+      vector_ = rhs.getVector();
+    }
+
+    return *this;
+  }
+
   std::size_t Vector::getReferenceID() const
   {
     return reference_id_;
