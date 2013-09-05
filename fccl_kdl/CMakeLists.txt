@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(fccl_kdl)
 
-find_package(catkin REQUIRED COMPONENTS roscpp orocos_kdl)
+find_package(catkin REQUIRED COMPONENTS roscpp orocos_kdl fccl_utils)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -36,7 +36,6 @@ include_directories(
 
 ## Declare a cpp library
 add_library(fccl_kdl
-  src/${PROJECT_NAME}/Hashing.cpp
   src/${PROJECT_NAME}/Transform.cpp
   src/${PROJECT_NAME}/Vector.cpp
   src/${PROJECT_NAME}/Twist.cpp

@@ -1,5 +1,5 @@
 #include <fccl_kdl/InteractionMatrix.h>
-#include <fccl_kdl/Hashing.h>
+#include <fccl_utils/Hashing.h>
 
 namespace fccl
 {
