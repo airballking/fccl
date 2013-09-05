@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<package>
+  <name>fccl_base</name>
+  <version>0.0.0</version>
+  <description>Package containing library with basic feature and constraint representations.</description>
+
+  <maintainer email="georg.bartels@cs.uni-bremen.de">Georg Bartels</maintainer>
+
+  <license>BSD</license>
+
+  <!-- Url tags are optional, but mutiple are allowed, one per tag -->
+  <!-- Optional attribute type can be: website, bugtracker, or repository -->
+  <!-- Example: -->
+  <!-- <url type="website">http://ros.org/wiki/fccl_control</url> -->
+
+  <author email="georg.bartels@cs.uni-bremen.de">Georg Bartels</author>
+  <author email="kresse@in.tum.de">Ingo Kresse</author>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>fccl_kdl</build_depend>
+  <build_depend>eigen</build_depend>
+  <build_depend>orocos_kdl</build_depend>
+  <build_depend>roscpp</build_depend>
+
+  <run_depend>fccl_kdl</run_depend>
+  <run_depend>eigen</run_depend>
+  <run_depend>orocos_kdl</run_depend>
+  <run_depend>roscpp</run_depend>
+
+  <test_depend>gtest</test_depend>
+
+  <!-- The export tag contains other, unspecified, tags -->
+  <export>
+    <!-- You can specify that this package is a metapackage here: -->
+    <!-- <metapackage/> -->
+
+    <!-- Other tools can request additional information be placed here -->
+
+  </export>
+</package>
