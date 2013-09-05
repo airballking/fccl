@@ -61,15 +61,24 @@ namespace fccl
 
   bool Feature::operator==(const Feature& other) const
   {
-    return (type_ == other.getType())
-        && (id_ == other.getID())
-        && (position_ == other.getPosition());
+    return semanticsEqual(other) && numericsEqual(other);
   }
 
   bool Feature::operator!=(const Feature& other) const
   {
     return !(*this == other);
   }
+
+  bool Feature::semanticsEqual(const Feature& other) const
+  {
+    return (getType() == other.getType()) && (getID() == other.getID());
+  }
+
+  bool Feature::numericsEqual(const Feature& other) const
+  {
+    return getPosition() == other.getPosition();
+  }
+
 
   OrientedFeature::OrientedFeature() : Feature()
   {
@@ -98,9 +107,9 @@ namespace fccl
   {
   }
 
-  bool OrientedFeature::operator==(const Feature& other) const
+  bool OrientedFeature::numericsEqual(const Feature& other) const
   {
-    if(type_ != other.getType())
+    if(getType() != other.getType())
       return false;
     
     try 
@@ -109,21 +118,15 @@ namespace fccl
 
       assert(other_pointer);
 
-      return (id_ == other_pointer->getID())
-          && (position_ == other_pointer->getPosition())
-          && (this->getOrientation() == other_pointer->getOrientation());
+      return (getPosition() == other_pointer->getPosition())
+          && (getOrientation() == other_pointer->getOrientation());
     } 
     catch (std::exception& e) 
     {
-      std::cout << "Exception in OrientedFeature::operator==: " << e.what();
+      std::cout << "Exception in OrientedFeature::numericsEqual: " << e.what();
     }
 
     return false;
-  }
-
-  bool OrientedFeature::operator!=(const Feature& other) const
-  {
-    return !(*this == other);
   }
 
   OrientedFeature& OrientedFeature::operator=(const fccl::OrientedFeature& rhs)

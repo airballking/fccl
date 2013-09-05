@@ -31,8 +31,11 @@ namespace fccl
       virtual void changeReference(const fccl::Transform& transform) = 0;
       virtual std::size_t getReferenceID() const = 0; 
 
-      virtual bool operator==(const Feature& other) const;
-      virtual bool operator!=(const Feature& other) const;
+      bool operator==(const Feature& other) const;
+      bool operator!=(const Feature& other) const;
+
+      bool semanticsEqual(const Feature& other) const;
+      virtual bool numericsEqual(const Feature& other) const;
 
     protected:
       // id of the feature given by knowledge base
@@ -58,8 +61,7 @@ namespace fccl
       virtual const fccl::Vector& getOrientation() const = 0;
       virtual void setOrientation(const fccl::Vector& orientation) = 0;
 
-      virtual bool operator==(const Feature& other) const;
-      virtual bool operator!=(const Feature& other) const;
+      virtual bool numericsEqual(const Feature& other) const;
 
       OrientedFeature& operator=(const fccl::OrientedFeature& rhs);
 
