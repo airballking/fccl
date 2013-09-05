@@ -20,7 +20,7 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS roscpp orocos_kdl
-  DEPENDS eigen
+#  DEPENDS eigen
 )
 
 ###########
@@ -35,14 +35,9 @@ include_directories(
 )
 
 ## Declare a cpp library
-add_library(${PROJECT_NAME}
+#add_library(${PROJECT_NAME}
 #   src/Features.cpp
-   src/Hashing.cpp
-   src/Transform.cpp
-   src/Vector.cpp
-   src/Twist.cpp
-   src/InteractionMatrix.cpp
-)
+#)
 
 ## Declare a cpp executable
 # add_executable(fccl_control_node src/fccl_control_node.cpp)
@@ -64,18 +59,18 @@ add_library(${PROJECT_NAME}
 # See http://ros.org/doc/api/catkin/html/adv_user_guide/variables.html
 
 ## Mark executables and/or libraries for installation
-install(TARGETS fccl_control 
-  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
-  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
-)
+#install(TARGETS fccl_control 
+#  ARCHIVE DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#  LIBRARY DESTINATION ${CATKIN_PACKAGE_LIB_DESTINATION}
+#  RUNTIME DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION}
+#)
 
 ## Mark cpp header files for installation
-install(DIRECTORY include/${PROJECT_NAME}/
-  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
-  FILES_MATCHING PATTERN "*.h"
-  PATTERN ".svn" EXCLUDE
-)
+#install(DIRECTORY include/${PROJECT_NAME}/
+#  DESTINATION ${CATKIN_PACKAGE_INCLUDE_DESTINATION}
+#  FILES_MATCHING PATTERN "*.h"
+#  PATTERN ".svn" EXCLUDE
+#)
 
 ## Mark other files for installation (e.g. launch and bag files, etc.)
 # install(FILES
@@ -89,15 +84,12 @@ install(DIRECTORY include/${PROJECT_NAME}/
 #############
 
 ## Add gtest based cpp test target 
-catkin_add_gtest(${PROJECT_NAME}-test 
-                 test/main.cpp 
-                 test/Transform.cpp
-                 test/Vector.cpp
-                 test/Twist.cpp
-                 test/InteractionMatrix.cpp) #test/Features.cpp)
+#catkin_add_gtest(${PROJECT_NAME}-test 
+#                 test/main.cpp 
+#                 ) #test/Features.cpp)
 # linking against our own library and all libraries from dependencies
-if(TARGET ${PROJECT_NAME}-test)
-  target_link_libraries(${PROJECT_NAME}-test 
-                        ${PROJECT_NAME} 
-                        ${catkin_LIBRARIES})
-endif()
+#if(TARGET ${PROJECT_NAME}-test)
+#  target_link_libraries(${PROJECT_NAME}-test 
+#                        ${PROJECT_NAME} 
+#                        ${catkin_LIBRARIES})
+#endif()
