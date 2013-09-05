@@ -20,7 +20,7 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS roscpp orocos_kdl
-#  DEPENDS eigen
+  DEPENDS eigen
 )
 
 ###########
