@@ -39,6 +39,7 @@ include_directories(
 add_library(${PROJECT_NAME}
   src/${PROJECT_NAME}/Hashing.cpp
   src/${PROJECT_NAME}/Printing.cpp
+  src/${PROJECT_NAME}/Equalities.cpp
 )
 
 ## Declare a cpp executable
