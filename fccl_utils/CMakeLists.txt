@@ -38,6 +38,7 @@ include_directories(
 ## Declare a cpp library
 add_library(${PROJECT_NAME}
   src/${PROJECT_NAME}/Hashing.cpp
+  src/${PROJECT_NAME}/Printing.cpp
 )
 
 ## Declare a cpp executable

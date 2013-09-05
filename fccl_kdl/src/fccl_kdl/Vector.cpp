@@ -1,5 +1,6 @@
 #include <fccl_kdl/Vector.h>
 #include <fccl_utils/Hashing.h>
+#include <fccl_utils/Printing.h>
 
 namespace fccl
 {
@@ -122,9 +123,9 @@ namespace fccl
 
   std::ostream& operator<<(std::ostream& os, const fccl::Vector& vector)
   {
-    KDL::Vector v = vector.getVector();
-    os << "[ " << v.x() << " " << v.y() << " " << v.z() << " ]\n";
+    os << vector.getVector() << "\n";
     os << "  refererence: " << vector.getReferenceID() << "\n";
     os << "  target: " << vector.getTargetID() << "\n";
   }
+
 } // namespace fccl

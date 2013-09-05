@@ -1,5 +1,6 @@
 #include <fccl_kdl/Transform.h>
 #include <fccl_utils/Hashing.h>
+#include <fccl_utils/Printing.h>
 
 namespace fccl
 {
@@ -127,16 +128,7 @@ namespace fccl
 
   std::ostream& operator<<(std::ostream& os, const Transform& transform)
   {
-    KDL::Frame f = transform.getTransform();
-    os << "p:\n  " << f.p.x() << " " << f.p.y() << " " << f.p.z() << "\n";
-    os << "M:\n";
-    for(unsigned int i=0; i<3; i++)
-    {
-      os << "  ";
-      for(unsigned int j=0; j<3; j++)
-        os << f.M(i,j) << " ";
-      os << "\n";
-    }   
+    os << "transform:\n" << transform.getTransform() << "\n";
     os << "reference: " << transform.getReferenceID() << "\n";
     os << "target: " << transform.getTargetID() << "\n";
 
