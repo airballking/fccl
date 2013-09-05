@@ -1,8 +1,11 @@
-#ifndef FCCL_CONTROL_FEATURES_H
-#define FCCL_CONTROL_FEATURES_H
+#ifndef FCCL_BASE_FEATURES_H
+#define FCCL_BASE_FEATURES_H
 
-#include <fccl_control/Geometry.h>
-#include <fccl_control/String.h>
+#include <fccl_kdl/Vector.h>
+#include <fccl_kdl/Transform.h>
+#include <fccl_utils/Hashing.h>
+#include <string>
+#include <iostream>
 
 namespace fccl
 {
@@ -10,26 +13,30 @@ namespace fccl
   {
     public:
       Feature();
+      Feature(const Feature& other);
+      Feature(std::size_t id, const fccl::Vector& position);
       Feature(const std::string& name, const fccl::Vector& position);
 
       virtual ~Feature();
 
-      const std::string& getName() const;
+      std::size_t getID() const;
       void setName(const std::string& name);
+      void setID(std::size_t it);
 
       const fccl::Vector& getPosition() const;
       void setPosition(const fccl::Vector& position);
 
       int getType() const;
 
-      virtual void changeReferenceFrame(const fccl::Transform& transform) = 0;
+      virtual void changeReference(const fccl::Transform& transform) = 0;
+      virtual std::size_t getReferenceID() const = 0; 
 
       virtual bool operator==(const Feature& other) const;
       virtual bool operator!=(const Feature& other) const;
 
     protected:
-      // name/id of the feature given by knowledge base
-      std::string name_;
+      // id of the feature given by knowledge base
+      std::size_t id_;
 
       // position of the feature
       fccl::Vector position_;
@@ -42,6 +49,8 @@ namespace fccl
   {
     public:
       OrientedFeature();
+      OrientedFeature(const OrientedFeature& other);
+      OrientedFeature(std::size_t id, const fccl::Vector& position);
       OrientedFeature(const std::string& name, const fccl::Vector& position);
 
       virtual ~OrientedFeature();
@@ -51,23 +60,37 @@ namespace fccl
 
       virtual bool operator==(const Feature& other) const;
       virtual bool operator!=(const Feature& other) const;
+
+      OrientedFeature& operator=(const fccl::OrientedFeature& rhs);
+
+      virtual void changeReference(const fccl::Transform& transform); 
+      virtual std::size_t getReferenceID() const; 
   };
 
   class Point: public Feature
   {
     public:
       Point();
+      Point(const Point& other);
+      Point(std::size_t id, const fccl::Vector& position);
       Point(const std::string& name, const fccl::Vector& position);
 
       virtual ~Point();
 
-      void changeReferenceFrame(const fccl::Transform& transform);
+      Point& operator=(const fccl::Point& rhs);
+
+      virtual void changeReference(const fccl::Transform& transform);
+      virtual std::size_t getReferenceID() const; 
+
+      friend std::ostream& operator<<(std::ostream& os, const Point& point);
   };
 
   class Plane: public OrientedFeature
   {
     public:
       Plane();
+      Plane(const Plane& other);
+      Plane(std::size_t id, const fccl::Vector& position, const fccl::Vector& normal);
       Plane(const std::string& name, const fccl::Vector& position, const fccl::Vector& normal);
 
       virtual ~Plane();
@@ -77,9 +100,9 @@ namespace fccl
 
       virtual const fccl::Vector& getOrientation() const;
       virtual void setOrientation(const fccl::Vector& orientation);
- 
-      void changeReferenceFrame(const fccl::Transform& transform);
-    
+
+      friend std::ostream& operator<<(std::ostream& os, const Plane& plane);
+
     private:
       // normal of the plane
       fccl::Vector normal_;
@@ -89,6 +112,8 @@ namespace fccl
   {
     public:
       Line();
+      Line(const Line& other);
+      Line(std::size_t id, const fccl::Vector& position, const fccl::Vector& direction);
       Line(const std::string& name, const fccl::Vector& position, const fccl::Vector& direction);
 
       virtual ~Line();
@@ -98,13 +123,13 @@ namespace fccl
 
       virtual const fccl::Vector& getOrientation() const;
       virtual void setOrientation(const fccl::Vector& orientation);
- 
-      void changeReferenceFrame(const fccl::Transform& transform);
-    
+
+      friend std::ostream& operator<<(std::ostream& os, const Line& line);
+
     private:
       // direction of the plane
       fccl::Vector direction_;
   };
   
 } // namespace fccl
-#endif // FCCL_CONTROL_FEATURES_H
+#endif // FCCL_BASE_FEATURES_H
