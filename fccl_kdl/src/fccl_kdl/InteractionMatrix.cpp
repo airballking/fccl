@@ -1,5 +1,6 @@
 #include <fccl_kdl/InteractionMatrix.h>
 #include <fccl_utils/Hashing.h>
+#include <fccl_utils/Equalities.h>
 
 namespace fccl
 {
@@ -226,13 +227,8 @@ namespace fccl
 
   bool InteractionMatrix::semanticsEqual(const fccl::InteractionMatrix& other) const
   {
-    assert(target_ids_.size() == other.getTargetIDs().size());
-
-    for(unsigned int i=0; i<target_ids_.size(); i++)
-      if(target_ids_[i] != other.getTargetIDs()[i])
-        return false;
-
-    return reference_id_ == other.getReferenceID();
+    return target_ids_ == other.getTargetIDs()
+        && reference_id_ == other.getReferenceID();
   }
 
   bool InteractionMatrix::numericsEqual(const fccl::InteractionMatrix& other) const
