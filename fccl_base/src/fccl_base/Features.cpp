@@ -1,7 +1,5 @@
 #include <fccl_base/Features.h>
-#include <fccl_base/FeatureTypes.h>
 #include <fccl_utils/Hashing.h>
-#include <exception>
 
 namespace fccl
 {
@@ -19,14 +17,14 @@ namespace fccl
   }
 
   Feature::Feature(std::size_t id, const fccl::Vector& position,
-      const fccl::Vector& orientation, int type) :
+      const fccl::Vector& orientation, FeatureTypes type) :
       id_(id), position_(position), orientation_(orientation), type_(type)
   {
     assert(featureTypeValid(type));
   }
  
   Feature::Feature(const std::string& name, const fccl::Vector& position,
-      const fccl::Vector& orientation, int type) :
+      const fccl::Vector& orientation, FeatureTypes type) :
       id_(hash(name)), position_(position), orientation_(orientation), type_(type)
   {
     assert(featureTypeValid(type));
@@ -83,12 +81,12 @@ namespace fccl
     orientation_ = orientation;
   }
 
-  int Feature::getType() const
+  FeatureTypes Feature::getType() const
   {
-    return type_;
+    return (FeatureTypes) type_;
   }
 
-  void Feature::setType(int type)
+  void Feature::setType(FeatureTypes type)
   {
     assert(featureTypeValid(type));
 

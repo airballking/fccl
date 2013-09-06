@@ -1,6 +1,7 @@
 #ifndef FCCL_BASE_FEATURES_H
 #define FCCL_BASE_FEATURES_H
 
+#include <fccl_base/FeatureTypes.h>
 #include <fccl_kdl/Vector.h>
 #include <fccl_kdl/Transform.h>
 #include <string>
@@ -15,9 +16,9 @@ namespace fccl
       Feature();
       Feature(const Feature& other);
       Feature(std::size_t id, const fccl::Vector& position, 
-          const fccl::Vector& orientation, int type);
+          const fccl::Vector& orientation, FeatureTypes type);
       Feature(const std::string& name, const fccl::Vector& position,
-          const fccl::Vector& orientation, int type);
+          const fccl::Vector& orientation, FeatureTypes type);
 
       virtual ~Feature();
 
@@ -33,8 +34,8 @@ namespace fccl
       const fccl::Vector& getOrientation() const;
       void setOrientation(const fccl::Vector& orientation);
 
-      int getType() const;
-      void setType(int type);
+      FeatureTypes getType() const;
+      void setType(FeatureTypes type);
 
       void changeReference(const fccl::Transform& transform);
       std::size_t getReferenceID() const; 
@@ -58,7 +59,7 @@ namespace fccl
       fccl::Vector orientation_;
 
       // integer to uniquely identify every type of feature
-      int type_;
+      FeatureTypes type_;
   };
 
 } // namespace fccl
