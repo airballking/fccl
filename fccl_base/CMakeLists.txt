@@ -40,6 +40,8 @@ include_directories(
 ## Declare a cpp library
 add_library(${PROJECT_NAME}
   src/${PROJECT_NAME}/Features.cpp
+  src/${PROJECT_NAME}/FeatureTypes.cpp
+#  src/${PROJECT_NAME}/Constraints.cpp
 )
 
 ## Declare a cpp executable
