@@ -155,8 +155,8 @@ namespace fccl
     result.setReferenceID(reference_id_);
     result.setTargetID(target_ids_[row]);
 
-    KDL::Vector angular(data_(row,0), data_(row,1), data_(row,2));
-    KDL::Vector trans(data_(row,3), data_(row,4), data_(row,5));
+    KDL::Vector trans(data_(row,0), data_(row,1), data_(row,2));
+    KDL::Vector angular(data_(row,3), data_(row,4), data_(row,5));
 
     result.setTwist(KDL::Twist(trans, angular)); 
   
@@ -170,13 +170,13 @@ namespace fccl
 
     target_ids_[row] = twist.getTargetID();
     reference_id_ = twist.getReferenceID();
-    
-    data_(row, 0) = twist.getTwist().rot.x();
-    data_(row, 1) = twist.getTwist().rot.y();
-    data_(row, 2) = twist.getTwist().rot.z();
-    data_(row, 3) = twist.getTwist().vel.x();
-    data_(row, 4) = twist.getTwist().vel.y();
-    data_(row, 5) = twist.getTwist().vel.z();
+
+    data_(row, 0) = twist.getTwist().vel.x();
+    data_(row, 1) = twist.getTwist().vel.y();
+    data_(row, 2) = twist.getTwist().vel.z();
+    data_(row, 3) = twist.getTwist().rot.x();
+    data_(row, 4) = twist.getTwist().rot.y();
+    data_(row, 5) = twist.getTwist().rot.z();
 
   }
 
@@ -260,8 +260,8 @@ namespace fccl
     Eigen::Matrix<double, 6, 6> Mi;
     Mi.block<3,3>(0,0) = Rt;
     Mi.block<3,3>(3,3) = Rt;
-    Mi.block<3,3>(0,3) = -Rt*px;
-    Mi.block<3,3>(3,0) = Eigen::Matrix3d::Zero();
+    Mi.block<3,3>(3,0) = -Rt*px;
+    Mi.block<3,3>(0,3) = Eigen::Matrix3d::Zero();
 
     // actual multiplication
     data_ = data_*Mi;

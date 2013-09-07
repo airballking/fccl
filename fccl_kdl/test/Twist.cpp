@@ -63,6 +63,9 @@ TEST_F(TwistTest, ChangeReferenceFrame)
   t2.changeReferenceFrame(trans);
   Twist t3(world, target, KDL::Twist(KDL::Vector(9, -5, 4), KDL::Vector(0, -2, 1)));
 
+  Twist t4(world, target, transform*twist);
+
   EXPECT_EQ(t2, t3);
   EXPECT_NE(t, t2);
+  EXPECT_EQ(t3, t4);
 }
