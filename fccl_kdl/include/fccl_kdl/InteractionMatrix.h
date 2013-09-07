@@ -32,8 +32,10 @@ namespace fccl
       void setReferenceName(const std::string& reference_name);
 
       const std::vector<std::size_t>& getTargetIDs() const;
-      void setTargetIDs(const std::vector<std::size_t> target_ids);
-      void setTargetNames(const std::vector<std::string> target_names);
+      void setTargetIDs(const std::vector<std::size_t>& target_ids);
+      void setTargetNames(const std::vector<std::string>& target_names);
+      void setTargetID(unsigned int row, std::size_t target_id);
+      void setTargetName(unsigned int row, const std::string& target_name);
 
       const Eigen::Matrix< double, Eigen::Dynamic, 6>& getData() const;
       void setData(const Eigen::Matrix< double, Eigen::Dynamic, 6>& data);

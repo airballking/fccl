@@ -85,20 +85,33 @@ namespace fccl
     return target_ids_;
   }
 
-  void InteractionMatrix::setTargetIDs(const std::vector<std::size_t> target_ids)
+  void InteractionMatrix::setTargetIDs(const std::vector<std::size_t>& target_ids)
   {
     assert(target_ids_.size() == target_ids.size());
   
     for(unsigned int i=0; i<target_ids_.size(); i++)
-      target_ids_[i] = target_ids[i];
+      setTargetID(i, target_ids[i]);
   }
 
-  void InteractionMatrix::setTargetNames(const std::vector<std::string> target_names)
+  void InteractionMatrix::setTargetNames(const std::vector<std::string>& target_names)
   {
     assert(target_ids_.size() == target_names.size());
 
     for(unsigned int i=0; i<target_ids_.size(); i++)
-      target_ids_[i] = hash(target_names[i]);
+      setTargetName(i, target_names[i]);
+  }
+
+  void InteractionMatrix::setTargetID(unsigned int row, std::size_t target_id)
+  {
+    assert(row < target_ids_.size());
+
+    target_ids_[row] = target_id;
+  }
+
+  void InteractionMatrix::setTargetName(unsigned int row, const std::string& 
+      target_name)
+  {
+    setTargetID(row, hash(target_name));
   }
 
   const Eigen::Matrix< double, Eigen::Dynamic, 6>& InteractionMatrix::getData() const
