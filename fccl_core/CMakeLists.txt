@@ -36,6 +36,7 @@ include_directories(
 
 ## Declare a cpp library
 add_library(${PROJECT_NAME}
+  src/fccl/kdl/Semantics.cpp
   src/fccl/kdl/Transform.cpp
   src/fccl/kdl/Vector.cpp
   src/fccl/kdl/Twist.cpp
@@ -95,6 +96,8 @@ add_library(${PROJECT_NAME}
 ## Add gtest based cpp test target 
 catkin_add_gtest(${PROJECT_NAME}-test 
                  test/main.cpp 
+                 test/Hashing.cpp
+                 test/Semantics.cpp
                  test/Transform.cpp
                  test/Vector.cpp
                  test/Twist.cpp
