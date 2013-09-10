@@ -7,15 +7,41 @@ namespace fccl
 {
   namespace kdl
   {
-    class TwofoldSemanticObject
+    enum SemanticTypes
+    {
+      SEMANTICS_UNKNOWN = 0,
+
+      SEMANTICS_1x1 = 1,
+
+      SEMANTICS_1xN = 2,
+
+      SEMANTICS_NxN = 3,
+
+      SEMANTICS_COUNT
+    };
+
+    class SemanticObject
     {
       public:
-        TwofoldSemanticObject();
-        TwofoldSemanticObject(const TwofoldSemanticObject& other);
-        TwofoldSemanticObject(const std::string& reference_name, const std::string& target_name);
-        TwofoldSemanticObject(std::size_t reference_id, std::size_t target_id);
+        int getSemanticType() const;
+
+        virtual bool semanticsEqual(const SemanticObject& other) const = 0;
+
+        bool semanticTypesEqual(const SemanticObject& other) const;
+
+      protected:
+        int semantic_type_;
+    };
+
+    class SemanticObject1x1 : public SemanticObject
+    {
+      public:
+        SemanticObject1x1();
+        SemanticObject1x1(const SemanticObject1x1& other);
+        SemanticObject1x1(const std::string& reference_name, const std::string& target_name);
+        SemanticObject1x1(std::size_t reference_id, std::size_t target_id);
   
-        virtual ~TwofoldSemanticObject();
+        virtual ~SemanticObject1x1();
   
         std::size_t getReferenceID() const;
         void setReferenceID(std::size_t reference_id);
@@ -29,7 +55,7 @@ namespace fccl
         const std::string& getTargetName() const;
         void setTargetName(const std::string& target_name);
   
-        virtual bool semanticsEqual(const TwofoldSemanticObject& other) const;
+        virtual bool semanticsEqual(const SemanticObject& other) const;
 
       protected:
         // hash-ID of the reference
@@ -37,6 +63,7 @@ namespace fccl
 
         // hash-ID of the target
         std::size_t target_id_;
+  
     };
   } // namespace kdl
 } // namespace fccl

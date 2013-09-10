@@ -97,7 +97,6 @@ add_library(${PROJECT_NAME}
 catkin_add_gtest(${PROJECT_NAME}-test 
                  test/main.cpp 
                  test/Hashing.cpp
-                 test/Semantics.cpp
                  test/Transform.cpp
                  test/Vector.cpp
                  test/Twist.cpp
