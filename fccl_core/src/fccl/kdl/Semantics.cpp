@@ -235,5 +235,19 @@ namespace fccl
     {
       return (index < target_ids_.size());
     }
+
+    std::size_t SemanticObject1xN::getIndex(size_t target_id) const
+    {
+      for(std::size_t i=0; i<size(); i++)
+        if(target_ids_[i] == target_id)
+          return i;
+
+      return size();
+    }
+
+    std::size_t SemanticObject1xN::getIndex(const std::string& target_name) const
+    {
+      return getIndex(fu::hash(target_name));
+    }
   } // namespace kdl
 } // namespace fccl

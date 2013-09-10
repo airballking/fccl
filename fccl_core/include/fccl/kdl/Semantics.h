@@ -104,6 +104,8 @@ namespace fccl
         void resize(std::size_t new_size);
 
         bool semanticIndexValid(std::size_t index) const;
+        std::size_t getIndex(size_t target_id) const;
+        std::size_t getIndex(const std::string& target_name) const;
 
       protected:
         // hash-ID of the reference
