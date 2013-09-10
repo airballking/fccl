@@ -1,5 +1,6 @@
 #include <fccl/kdl/Semantics.h>
 #include <fccl/utils/Hashing.h>
+#include <fccl/utils/Equalities.h>
 #include <assert.h>
 
 namespace fu = fccl::utils;
@@ -94,6 +95,145 @@ namespace fccl
       assert(other_p);     
 
       return (getTargetID() == other_p->getTargetID()) && (getReferenceID() == other_p->getReferenceID());
+    }
+
+    SemanticObject1xN::SemanticObject1xN()
+    {
+      semantic_type_ = SEMANTICS_1xN;
+    }
+
+    SemanticObject1xN::SemanticObject1xN(const SemanticObject1xN& other) :
+        reference_id_(other.getReferenceID()), target_ids_(other.getTargetIDs())
+    {
+      semantic_type_ = SEMANTICS_1xN;
+    }
+
+    SemanticObject1xN::SemanticObject1xN(const std::string& reference_name, const
+            std::vector<std::string>& target_names) :
+        reference_id_(fu::hash(reference_name))
+    {
+      semantic_type_ = SEMANTICS_1xN;
+
+      target_ids_.resize(target_names.size());
+      for(unsigned int i=0; i<target_names.size(); i++)
+        target_ids_[i] = fu::hash(target_names[i]);
+    }
+
+
+    SemanticObject1xN::SemanticObject1xN(std::size_t reference_id, const 
+            std::vector<std::size_t>& target_ids) :
+        reference_id_(reference_id), target_ids_(target_ids)
+    {
+      semantic_type_ = SEMANTICS_1xN;
+    }
+
+    SemanticObject1xN::~SemanticObject1xN()
+    {
+    }
+
+    std::size_t SemanticObject1xN::getReferenceID() const
+    {
+      return reference_id_;
+    }
+
+    void SemanticObject1xN::setReferenceID(std::size_t reference_id)
+    {
+      reference_id_ = reference_id;
+    }
+
+    const std::string& SemanticObject1xN::getReferenceName() const
+    {
+      return fu::retrieveValue(reference_id_);
+    }
+
+    void SemanticObject1xN::setReferenceName(const std::string& reference_name)
+    {
+      reference_id_ = fu::hash(reference_name);
+    }
+
+    std::size_t SemanticObject1xN::getTargetID(std::size_t index) const
+    {
+      assert(semanticIndexValid(index));
+
+      return target_ids_[index];
+    }
+
+    void SemanticObject1xN::setTargetID(std::size_t index, std::size_t target_id)
+    {
+      assert(semanticIndexValid(index));
+
+      target_ids_[index] = target_id;
+    }
+
+    const std::string& SemanticObject1xN::getTargetName(std::size_t index) const
+    {
+      assert(semanticIndexValid(index));
+
+      return fu::retrieveValue(target_ids_[index]);
+    }
+
+    void SemanticObject1xN::setTargetName(std::size_t index, const std::string& target_name)
+    {
+      assert(semanticIndexValid(index));
+ 
+      target_ids_[index] = fu::hash(target_name);
+    }
+
+    const std::vector<std::size_t>& SemanticObject1xN::getTargetIDs() const
+    {
+      return target_ids_;
+    }
+
+    void SemanticObject1xN::setTargetIDs(const std::vector<std::size_t>& target_ids)
+    {
+      assert(size() == target_ids.size());
+
+      target_ids_ = target_ids;
+    }
+
+    std::vector<std::string> SemanticObject1xN::getTargetNames() const
+    {
+      std::vector<std::string> result;
+
+      for(unsigned int i=0; i<result.size(); i++)
+        result.push_back(getTargetName(i));
+
+      return result;
+    }
+
+    void SemanticObject1xN::setTargetNames(const std::vector<std::string>& target_names)
+    {
+      assert(size() == target_names.size());
+
+      for(unsigned int i=0; i<size(); i++)
+        setTargetName(i, target_names[i]);
+    }
+
+    bool SemanticObject1xN::semanticsEqual(const SemanticObject& other) const
+    {
+      if(!semanticTypesEqual(other))
+        return false;
+
+      const SemanticObject1xN* other_p = static_cast<const SemanticObject1xN*>(&other);
+      assert(other_p);     
+
+      return (fu::Equal(getTargetIDs(), other_p->getTargetIDs()) 
+          && (getReferenceID() == other_p->getReferenceID()));
+    }
+
+    std::size_t SemanticObject1xN::size() const
+    {
+      return target_ids_.size();
+    }
+
+    void SemanticObject1xN::resize(std::size_t new_size)
+    {
+      target_ids_.resize(new_size);
+    }
+ 
+    bool SemanticObject1xN::semanticIndexValid(std::size_t index) const
+    {
+      return (index < target_ids_.size());
     }
   } // namespace kdl
 } // namespace fccl

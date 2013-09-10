@@ -2,6 +2,7 @@
 #define FCCL_KDL_SEMANTICS_H
 
 #include <string>
+#include <vector>
 
 namespace fccl
 {
@@ -65,6 +66,53 @@ namespace fccl
         std::size_t target_id_;
   
     };
+
+    class SemanticObject1xN : public SemanticObject
+    {
+      public:
+        SemanticObject1xN();
+        SemanticObject1xN(const SemanticObject1xN& other);
+        SemanticObject1xN(const std::string& reference_name, const 
+            std::vector<std::string>& target_names);
+        SemanticObject1xN(std::size_t reference_id, const std::vector<std::size_t>&
+            target_ids);
+  
+        virtual ~SemanticObject1xN();
+  
+        std::size_t getReferenceID() const;
+        void setReferenceID(std::size_t reference_id);
+  
+        const std::string& getReferenceName() const;
+        void setReferenceName(const std::string& reference_name);
+  
+        std::size_t getTargetID(std::size_t index) const;
+        void setTargetID(std::size_t index, std::size_t target_id);
+
+        const std::string& getTargetName(std::size_t index) const;
+        void setTargetName(std::size_t index, const std::string& target_name);
+
+        const std::vector<std::size_t>& getTargetIDs() const;
+        void setTargetIDs(const std::vector<std::size_t>& target_ids);
+  
+        // not real-time safe!
+        std::vector<std::string> getTargetNames() const;
+        void setTargetNames(const std::vector<std::string>& target_names);
+  
+        virtual bool semanticsEqual(const SemanticObject& other) const;
+
+        std::size_t size() const;
+        void resize(std::size_t new_size);
+
+        bool semanticIndexValid(std::size_t index) const;
+
+      protected:
+        // hash-ID of the reference
+        std::size_t reference_id_;
+
+        // hash-ID of the target
+        std::vector<std::size_t> target_ids_;
+    };
+
   } // namespace kdl
 } // namespace fccl
 #endif // FCCL_KDL_SEMANTICS_H
