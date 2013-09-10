@@ -5,35 +5,29 @@
 #include <fccl/base/ConstraintTypes.h>
 #include <fccl/kdl/Transform.h>
 #include <fccl/kdl/InteractionMatrix.h>
+#include <fccl/kdl/Semantics.h>
 #include <string>
+#include <iostream>
 
 namespace fccl
 {
   namespace base
   {
-    class Constraint
+    class Constraint : public fccl::kdl::SemanticObject1x1
     {
       public:
         Constraint();
         Constraint(const Constraint& other);
-        Constraint(const std::string& reference_name, const std::string& name,
+        Constraint(const std::string& reference_name, const std::string& target_name,
             const fccl::base::Feature& tool_feature, const fccl::base::Feature& object_feature,
             double lower_boundary, double upper_boundary);
-        Constraint(std::size_t reference_id, std::size_t id,
+        Constraint(std::size_t reference_id, std::size_t target_id,
             const fccl::base::Feature& tool_feature, const fccl::base::Feature& object_feature, 
             double lower_boundary, double upper_boundary);
   
         virtual ~Constraint();
   
         Constraint& operator=(const Constraint& rhs);
-  
-        std::size_t getReferenceID() const;
-        void setReferenceName(const std::string& reference_name);
-        void setReferenceID(std::size_t reference_id);
-  
-        std::size_t getID() const;
-        void setName(const std::string& name);
-        void setID(std::size_t id);
   
         const fccl::base::Feature& getToolFeature() const;
         void setToolFeature(const fccl::base::Feature& tool_feature);
@@ -59,7 +53,7 @@ namespace fccl
         bool operator==(const Constraint& other) const;
         bool operator!=(const Constraint& other) const;
   
-        bool semanticsEqual(const Constraint& other) const;
+        virtual bool semanticsEqual(const Constraint& other) const;
         bool numericsEqual(const Constraint& other) const;
   
         friend std::ostream& operator<<(std::ostream& os, const Constraint& constraint);
@@ -77,13 +71,6 @@ namespace fccl
         // upper boundary for output of feature function
         double upper_boundary_;
   
-        // reference frame w.r.t. relative feature functions are calculated
-        std::size_t reference_id_;
-  
-        // identifier of this constraint, e.g. hash-value calculated from its name
-        // in the knowledge base
-        std::size_t id_;
-  
         // type information to discriminate between constraints
         int type_;
   
@@ -96,11 +83,13 @@ namespace fccl
       public:
         AboveConstraint();
         AboveConstraint(const AboveConstraint& other);
-        AboveConstraint(const std::string& reference_name, const std::string& name,
-            const fccl::base::Feature& tool_feature, const fccl::base::Feature& object_feature,
+        AboveConstraint(const std::string& reference_name, const std::string& 
+            target_name, const fccl::base::Feature& tool_feature,
+            const fccl::base::Feature& object_feature,
             double lower_boundary, double upper_boundary);
-        AboveConstraint(std::size_t reference_id, std::size_t id,
-            const fccl::base::Feature& tool_feature, const fccl::base::Feature& object_feature, 
+        AboveConstraint(std::size_t reference_id, std::size_t target_id,
+            const fccl::base::Feature& tool_feature,
+            const fccl::base::Feature& object_feature, 
             double lower_boundary, double upper_boundary); 
   
         virtual ~AboveConstraint();

@@ -1,44 +1,44 @@
 #include <fccl/base/Constraints.h>
-#include <fccl/utils/Hashing.h>
-
-namespace fu = fccl::utils;
 
 namespace fccl
 {
   namespace base
   {
-    Constraint::Constraint()
+    Constraint::Constraint() : SemanticObject1x1()
     {
       type_ = UNKNOWN_CONSTRAINT;
       first_derivative_.resize(1);
     }
   
     Constraint::Constraint(const Constraint& other) :
-        tool_feature_(other.getToolFeature()), object_feature_(other.getObjectFeature()),
-        lower_boundary_(other.getLowerBoundary()), upper_boundary_(other.getUpperBoundary()),
-        reference_id_(other.getReferenceID()), id_(other.getID())
+        SemanticObject1x1(other), tool_feature_(other.getToolFeature()), 
+        object_feature_(other.getObjectFeature()),
+        lower_boundary_(other.getLowerBoundary()), 
+        upper_boundary_(other.getUpperBoundary())
     {
       type_ = UNKNOWN_CONSTRAINT;
       first_derivative_.resize(1);
     }
   
     Constraint::Constraint(const std::string& reference_name, const std::string&
-            name, const fccl::base::Feature& tool_feature, const fccl::base::Feature& 
-            object_feature, double lower_boundary, double upper_boundary) :
+            target_name, const fccl::base::Feature& tool_feature, 
+            const fccl::base::Feature& object_feature, 
+            double lower_boundary, double upper_boundary) :
+        SemanticObject1x1(reference_name, target_name),
         tool_feature_(tool_feature), object_feature_(object_feature),
-        lower_boundary_(lower_boundary), upper_boundary_(upper_boundary),
-        reference_id_(fu::hash(reference_name)), id_(fu::hash(name))
+        lower_boundary_(lower_boundary), upper_boundary_(upper_boundary)
     {
       type_ = UNKNOWN_CONSTRAINT;
       first_derivative_.resize(1);
     }
   
-    Constraint::Constraint(std::size_t reference_id, std::size_t id,
-            const fccl::base::Feature& tool_feature, const fccl::base::Feature& object_feature,
+    Constraint::Constraint(std::size_t reference_id, std::size_t target_id,
+            const fccl::base::Feature& tool_feature, 
+            const fccl::base::Feature& object_feature,
             double lower_boundary, double upper_boundary) :
+        SemanticObject1x1(reference_id, target_id),
         tool_feature_(tool_feature), object_feature_(object_feature),
-        lower_boundary_(lower_boundary), upper_boundary_(upper_boundary),
-        reference_id_(reference_id), id_(id)
+        lower_boundary_(lower_boundary), upper_boundary_(upper_boundary)
     {
       type_ = UNKNOWN_CONSTRAINT;
       first_derivative_.resize(1);
@@ -59,40 +59,10 @@ namespace fccl
         setLowerBoundary(rhs.getLowerBoundary());
         setUpperBoundary(rhs.getUpperBoundary());
         setReferenceID(rhs.getReferenceID());
-        setID(rhs.getID());
+        setTargetID(rhs.getTargetID());
       }
   
       return *this; 
-    }
-  
-    std::size_t Constraint::getReferenceID() const
-    {
-      return reference_id_; 
-    }
-  
-    void Constraint::setReferenceName(const std::string& reference_name)
-    {
-      reference_id_ = fu::hash(reference_name);
-    }
-  
-    void Constraint::setReferenceID(std::size_t reference_id)
-    {
-      reference_id_ = reference_id;
-    }
-  
-    std::size_t Constraint::getID() const
-    {
-      return id_;
-    }
-  
-    void Constraint::setName(const std::string& name)
-    {
-      id_ = fu::hash(name);
-    }
-  
-    void Constraint::setID(std::size_t id)
-    {
-      id_ = id;
     }
   
     const fccl::base::Feature& Constraint::getToolFeature() const
@@ -147,8 +117,8 @@ namespace fccl
     }
   
     const fccl::kdl::InteractionMatrix& Constraint::calculateFirstDerivative(const
-        fccl::kdl::Transform& tool_transform, const fccl::kdl::Transform& object_transform,
-        double delta)
+        fccl::kdl::Transform& tool_transform, const fccl::kdl::Transform& 
+        object_transform, double delta)
     {
       assert(delta != 0.0);
       assert(first_derivative_.rows() == 1);
@@ -156,7 +126,7 @@ namespace fccl
   
       // prepare semantics of result
       first_derivative_.setReferenceID(tool_transform.getTargetID());
-      first_derivative_.setTargetID(0, getID());
+      first_derivative_.setTargetID(0, getTargetID());
   
       // get current constraint value around which we differentiate
       double value = calculateValue(tool_transform, object_transform);
@@ -201,8 +171,7 @@ namespace fccl
     bool Constraint::semanticsEqual(const Constraint& other) const
     {
       return (getType() == other.getType())
-          && (getID() == other.getID())
-          && (getReferenceID() == other.getReferenceID());
+          && SemanticObject1x1::semanticsEqual(other);
     }
    
     bool Constraint::numericsEqual(const Constraint& other) const
@@ -220,12 +189,14 @@ namespace fccl
       os << "object_feature:\n" << constraint.getObjectFeature() << "\n";
       os << "lower_boundary: " << constraint.getLowerBoundary();
       os << " upper_boundary: " << constraint.getUpperBoundary() << "\n";
-      os << "reference_ID: " << constraint.getReferenceID() << "\n";
-      os << "ID: " << constraint.getID();
+      os << "reference: " << constraint.getReferenceName() << " (";
+      os << constraint.getReferenceID() << ")\n";
+      os << "target: " << constraint.getTargetName() << " (";
+      os << constraint.getTargetID() << ")";
       return os;
     }
   
-    AboveConstraint::AboveConstraint()
+    AboveConstraint::AboveConstraint() : Constraint()
     {
       type_ = ABOVE_CONSTRAINT;
     }
@@ -236,21 +207,22 @@ namespace fccl
       type_ = ABOVE_CONSTRAINT;
     }
   
-    AboveConstraint::AboveConstraint(const std::string& reference_name, const
-            std::string& name, const fccl::base::Feature& tool_feature, const 
-            fccl::base::Feature& object_feature, double lower_boundary, double 
-            upper_boundary) :
-        Constraint(reference_name, name, tool_feature, object_feature, lower_boundary,
-            upper_boundary)
+    AboveConstraint::AboveConstraint(const std::string& reference_name, 
+            const std::string& target_name, const fccl::base::Feature& tool_feature,
+            const fccl::base::Feature& object_feature, 
+            double lower_boundary, double upper_boundary) :
+        Constraint(reference_name, target_name, tool_feature, object_feature, 
+            lower_boundary, upper_boundary)
     {
       type_ = ABOVE_CONSTRAINT;
     }
   
-    AboveConstraint::AboveConstraint(std::size_t reference_id, const std::size_t id,
-            const fccl::base::Feature& tool_feature, const fccl::base::Feature& object_feature, 
+    AboveConstraint::AboveConstraint(std::size_t reference_id, 
+            const std::size_t target_id, const fccl::base::Feature& tool_feature,
+            const fccl::base::Feature& object_feature, 
             double lower_boundary, double upper_boundary) :
-        Constraint(reference_id, id, tool_feature, object_feature, lower_boundary,
-            upper_boundary)
+        Constraint(reference_id, target_id, tool_feature, object_feature,
+            lower_boundary, upper_boundary)
     {
       type_ = ABOVE_CONSTRAINT;
     }

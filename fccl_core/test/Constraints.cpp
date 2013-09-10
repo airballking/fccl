@@ -42,7 +42,7 @@ class ConstraintsTest : public ::testing::Test
 
       // our sample constraint
       ac.setReferenceName(view_frame_name);
-      ac.setName(constraint_name);
+      ac.setTargetName(constraint_name);
       ac.setToolFeature(tool_feature);
       ac.setObjectFeature(object_feature);
       ac.setLowerBoundary(lower_boundary);
@@ -76,7 +76,7 @@ TEST_F(ConstraintsTest, Basics)
   AboveConstraint ac4;
   ac4 = ac;
 
-  AboveConstraint ac5(ac.getReferenceID(), ac.getID(), ac.getToolFeature(),
+  AboveConstraint ac5(ac.getReferenceID(), ac.getTargetID(), ac.getToolFeature(),
     ac.getObjectFeature(), ac.getLowerBoundary(), ac.getUpperBoundary());
 
   Constraint c(ac);
@@ -113,7 +113,7 @@ TEST_F(ConstraintsTest, FirstDerivative)
   InteractionMatrix m = ac.calculateFirstDerivative(T_view_tool, T_view_object);
   EXPECT_EQ(m.getReferenceID(), tool_feature.getReferenceID());
   ASSERT_EQ(m.getTargetIDs().size(), 1);
-  EXPECT_EQ(m.getTargetIDs()[0], ac.getID());
+  EXPECT_EQ(m.getTargetIDs()[0], ac.getTargetID());
   ASSERT_EQ(m.rows(), 1);
   ASSERT_EQ(m.columns(), 6);
   EXPECT_DOUBLE_EQ(m(0,0), 0);
