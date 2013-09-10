@@ -7,6 +7,8 @@
 #include <kdl/chain.hpp>
 #include <kdl/tree.hpp>
 #include <boost/shared_ptr.hpp>
+#include <string>
+#include <map>
 
 typedef boost::shared_ptr<KDL::ChainFkSolverPos_recursive> FkSolverPosPtr;
 typedef boost::shared_ptr<KDL::ChainJntToJacSolver> JacobianSolverPtr;
@@ -41,9 +43,6 @@ class KinematicChain : public SemanticObject1x1
     const fccl::kdl::Transform& calculateForwardKinematics(
         const fccl::kdl::JntArray& joint_state);
 
-    virtual bool operator==(const KinematicChain& other) const;
-    virtual bool operator!=(const KinematicChain& other) const;
-
   private:
     fccl::kdl::Chain chain_;
     
@@ -56,13 +55,27 @@ class KinematicChain : public SemanticObject1x1
     fccl::kdl::Transform transform_;
 };
 
+typedef boost::shared_ptr<KinematicChain> KinematicChainPtr;
+
 class Robot
 {
   public:
     Robot();
+    Robot(const Robot& other);
+    Robot(const KDL::Tree& tree);
+
+    virtual ~Robot();
+
+    const KDL::Tree& getTree() const;
+    void setTree(const KDL::Tree& tree);
+
+    void addKinematicChain(const fccl::kdl::SemanticObject1x1& chain_semantics);
+    void removeKinematicChain(const fccl::kdl::SemanticObject1x1& chain_semantics);
+
+    KinematicChainPtr getKinematicChain(const fccl::kdl::SemanticObject1x1& chain_semantics) const;
 
   private:
     KDL::Tree kinematic_tree_;
 
-    
+    std::map<fccl::kdl::SemanticObject1x1, KinematicChainPtr> chain_map_;
 };
