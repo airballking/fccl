@@ -1,53 +1,31 @@
 #include <fccl/kdl/InteractionMatrix.h>
-#include <fccl/utils/Hashing.h>
-#include <fccl/utils/Equalities.h>
-
-namespace fu = fccl::utils;
 
 namespace fccl
 {
   namespace kdl
   {
-    InteractionMatrix::InteractionMatrix()
+    InteractionMatrix::InteractionMatrix() : SemanticObject1xN()
     {
     }
   
     InteractionMatrix::InteractionMatrix(const fccl::kdl::InteractionMatrix& other) :
-        reference_id_(other.getReferenceID()), target_ids_(other.getTargetIDs()),
-        data_(other.getData())
+        SemanticObject1xN(other), data_(other.getData())
     {
-    }
-  
-    InteractionMatrix::InteractionMatrix(const std::string& reference_name, unsigned int number_of_rows) :
-        reference_id_(fu::hash(reference_name))
-    {
-      target_ids_.resize(number_of_rows);
-      data_.resize(number_of_rows, 6);
-    }
-  
-    InteractionMatrix::InteractionMatrix(std::size_t reference_id, unsigned int number_of_rows) :
-        reference_id_(reference_id)
-     {
-      target_ids_.resize(number_of_rows);
-      data_.resize(number_of_rows, 6);
+      assert(rows() == targets()); 
     }
   
     InteractionMatrix::InteractionMatrix(const std::string& reference_name, const 
-        std::vector<std::string>& target_names, 
-        const Eigen::Matrix<double, Eigen::Dynamic, 6>& data) :
-        reference_id_(fu::hash(reference_name)), data_(data)
+            std::vector<std::string>& target_names, 
+            const Eigen::Matrix<double, Eigen::Dynamic, 6>& data) :
+        SemanticObject1xN(reference_name, target_names), data_(data)
     {
-      assert(data_.rows() == target_names.size());
-  
-      target_ids_.resize(target_names.size());
-      for(unsigned int i=0; i<target_names.size(); i++)
-        target_ids_[i] = fu::hash(target_names[i]);
+      assert(rows() == targets()); 
     }
   
     InteractionMatrix::InteractionMatrix(std::size_t reference_id, const std::vector<std::size_t>& target_ids, const Eigen::Matrix<double, Eigen::Dynamic, 6>& data) :
-        reference_id_(reference_id), target_ids_(target_ids), data_(data)
+        SemanticObject1xN(reference_id, target_ids), data_(data)
     {
-      assert(target_ids_.size() == data_.rows());
+      assert(rows() == targets()); 
     }
   
     InteractionMatrix::~InteractionMatrix()
@@ -68,55 +46,6 @@ namespace fccl
       return *this;
     }
   
-    std::size_t InteractionMatrix::getReferenceID() const
-    {
-      return reference_id_;
-    }
-  
-    void InteractionMatrix::setReferenceID(std::size_t reference_id)
-    {
-      reference_id_ = reference_id;
-    }
-  
-    void InteractionMatrix::setReferenceName(const std::string& reference_name)
-    {
-      reference_id_ = fu::hash(reference_name);
-    }
-  
-    const std::vector<std::size_t>& InteractionMatrix::getTargetIDs() const
-    {
-      return target_ids_;
-    }
-  
-    void InteractionMatrix::setTargetIDs(const std::vector<std::size_t>& target_ids)
-    {
-      assert(target_ids_.size() == target_ids.size());
-    
-      for(unsigned int i=0; i<target_ids_.size(); i++)
-        setTargetID(i, target_ids[i]);
-    }
-  
-    void InteractionMatrix::setTargetNames(const std::vector<std::string>& target_names)
-    {
-      assert(target_ids_.size() == target_names.size());
-  
-      for(unsigned int i=0; i<target_ids_.size(); i++)
-        setTargetName(i, target_names[i]);
-    }
-  
-    void InteractionMatrix::setTargetID(unsigned int row, std::size_t target_id)
-    {
-      assert(row < target_ids_.size());
-  
-      target_ids_[row] = target_id;
-    }
-  
-    void InteractionMatrix::setTargetName(unsigned int row, const std::string& 
-        target_name)
-    {
-      setTargetID(row, fu::hash(target_name));
-    }
-  
     const Eigen::Matrix< double, Eigen::Dynamic, 6>& InteractionMatrix::getData() const
     {
       return data_;
@@ -132,7 +61,7 @@ namespace fccl
   
     void InteractionMatrix::resize(unsigned int number_of_rows)
     {
-      target_ids_.resize(number_of_rows);
+      resizeTargets(number_of_rows);
       data_.resize(number_of_rows, 6);
     }
   
@@ -165,11 +94,11 @@ namespace fccl
     fccl::kdl::Twist InteractionMatrix::getRow(unsigned int row) const
     {
       assert(row < rows());
-      assert(rows() == target_ids_.size());
+      assert(rows() == targets());
    
       Twist result;
-      result.setReferenceID(reference_id_);
-      result.setTargetID(target_ids_[row]);
+      result.setReferenceID(getReferenceID());
+      result.setTargetID(getTargetID(row));
   
       KDL::Vector trans(data_(row,0), data_(row,1), data_(row,2));
       KDL::Vector angular(data_(row,3), data_(row,4), data_(row,5));
@@ -182,10 +111,10 @@ namespace fccl
     void InteractionMatrix::setRow(unsigned int row, const fccl::kdl::Twist& twist)
     {
       assert(row < rows());
-      assert(rows() == target_ids_.size());
+      assert(rows() == targets());
   
-      target_ids_[row] = twist.getTargetID();
-      reference_id_ = twist.getReferenceID();
+      setTargetID(row, twist.getTargetID());
+      setReferenceID(twist.getReferenceID());
   
       data_(row, 0) = twist.getTwist().vel.x();
       data_(row, 1) = twist.getTwist().vel.y();
@@ -194,41 +123,6 @@ namespace fccl
       data_(row, 4) = twist.getTwist().rot.y();
       data_(row, 5) = twist.getTwist().rot.z();
   
-    }
-  
-    bool InteractionMatrix::hasDerivative(const std::string& target_name) const
-    {
-      return hasDerivative(fu::hash(target_name));  
-    }
-  
-    bool InteractionMatrix::hasDerivative(std::size_t target_id) const
-    {
-      return (getRowNumber(target_id) < rows());
-    }
-  
-    bool InteractionMatrix::hasDerivative(const fccl::kdl::Twist& twist) const
-    {
-      return hasDerivative(twist.getReferenceID());
-    }
-  
-    unsigned int InteractionMatrix::getRowNumber(const std::string& target_name) const
-    {
-      return getRowNumber(fu::hash(target_name));
-    }
-  
-    unsigned int InteractionMatrix::getRowNumber(std::size_t target_id) const
-    {
-      for(unsigned int i=0; i<target_ids_.size(); i++)
-        if(target_id == target_ids_[i])
-          return i;
-  
-      // search failed, return number of rows as error code
-      return rows();
-    }
-  
-    unsigned int InteractionMatrix::getRowNumber(const fccl::kdl::Twist& twist) const
-    {
-      return getRowNumber(twist.getTargetID());
     }
   
     bool InteractionMatrix::operator==(const fccl::kdl::InteractionMatrix& other) const
@@ -241,22 +135,16 @@ namespace fccl
       return !(*this == other);
     }
   
-    bool InteractionMatrix::semanticsEqual(const fccl::kdl::InteractionMatrix& other) const
-    {
-      return target_ids_ == other.getTargetIDs()
-          && reference_id_ == other.getReferenceID();
-    }
-  
     bool InteractionMatrix::numericsEqual(const fccl::kdl::InteractionMatrix& other) const
     {
-      return data_.isApprox(other.getData());
+      return getData().isApprox(other.getData());
     }
   
     void InteractionMatrix::changeReferenceFrame(const fccl::kdl::Transform& transform)
     {
       // take care of semantics
       assert(transformationPossible(transform));
-      reference_id_ = transform.getReferenceID();
+      setReferenceID(transform.getReferenceID());
   
       // copy frame because some of Eigens functions do not guarantee constness
       KDL::Frame f = transform.getTransform();
@@ -280,12 +168,12 @@ namespace fccl
       Mi.block<3,3>(0,3) = Eigen::Matrix3d::Zero();
   
       // actual multiplication
-      data_ = data_*Mi;
+      setData(getData() * Mi);
     }
   
     bool InteractionMatrix::transformationPossible(const fccl::kdl::Transform& transform) const
     {
-      return reference_id_ == transform.getTargetID();
+      return getReferenceID() == transform.getTargetID();
     }
   
     std::ostream& operator<<(std::ostream& os, const fccl::kdl::InteractionMatrix& interaction_matrix)

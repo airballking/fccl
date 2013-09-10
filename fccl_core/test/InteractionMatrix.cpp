@@ -39,6 +39,7 @@ TEST_F(InteractionMatrixTest, Basics)
   m.setReferenceName(reference);
   m.resize(1);
   m.setRow(0, twist);
+
   InteractionMatrix m2(m);
 
   std::vector<std::string> targets;
@@ -47,30 +48,26 @@ TEST_F(InteractionMatrixTest, Basics)
 
   InteractionMatrix m4(m.getReferenceID(), m.getTargetIDs(), m.getData());
 
-  InteractionMatrix m5(reference, m.rows());
-  m5.setTargetIDs(m.getTargetIDs());
-  m5.setData(m.getData());
-
-  InteractionMatrix m6(m.getReferenceID(), m.rows());
-  m6.setTargetIDs(m.getTargetIDs());
-  m6.setData(m.getData());
-
   EXPECT_EQ(m, m2);
   EXPECT_EQ(m, m3);
   EXPECT_EQ(m, m4);
-  EXPECT_EQ(m, m5);
-  EXPECT_EQ(m, m6);
   EXPECT_EQ(m.getRow(0), twist);
+
+  EXPECT_STREQ(m.getReferenceName().c_str(), reference.c_str());
 }
 
 TEST_F(InteractionMatrixTest, ChangeReferenceFrame)
 {
-  InteractionMatrix m(reference, 1);
+  InteractionMatrix m;
+  m.setReferenceName(reference);
+  m.resize(1);
   m.setRow(0, twist);
 
   // compare with KDL's method for change of reference frames of twists
   twist.changeReferenceFrame(transform);
-  InteractionMatrix m2(world, 1);
+  InteractionMatrix m2;
+  m2.setReferenceName(world);
+  m2.resize(1);
   m2.setRow(0, twist);
 
   // our own method to change reference frames

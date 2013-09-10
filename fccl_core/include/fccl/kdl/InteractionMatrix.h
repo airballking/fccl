@@ -12,13 +12,11 @@ namespace fccl
 {
   namespace kdl
   {
-    class InteractionMatrix
+    class InteractionMatrix : public SemanticObject1xN
     {
       public:
         InteractionMatrix();
         InteractionMatrix(const fccl::kdl::InteractionMatrix& other);
-        InteractionMatrix(const std::string& reference_name, unsigned int number_of_rows);
-        InteractionMatrix(std::size_t reference_id, unsigned int number_of_rows);
         InteractionMatrix(const std::string& reference_name, const 
             std::vector<std::string>& target_names, 
             const Eigen::Matrix<double, Eigen::Dynamic, 6>& data);
@@ -28,16 +26,6 @@ namespace fccl
         virtual ~InteractionMatrix();
   
         fccl::kdl::InteractionMatrix& operator=(const fccl::kdl::InteractionMatrix& rhs);
-  
-        std::size_t getReferenceID() const;
-        void setReferenceID(std::size_t reference_id);
-        void setReferenceName(const std::string& reference_name);
-  
-        const std::vector<std::size_t>& getTargetIDs() const;
-        void setTargetIDs(const std::vector<std::size_t>& target_ids);
-        void setTargetNames(const std::vector<std::string>& target_names);
-        void setTargetID(unsigned int row, std::size_t target_id);
-        void setTargetName(unsigned int row, const std::string& target_name);
   
         const Eigen::Matrix< double, Eigen::Dynamic, 6>& getData() const;
         void setData(const Eigen::Matrix< double, Eigen::Dynamic, 6>& data);
@@ -53,18 +41,9 @@ namespace fccl
         fccl::kdl::Twist getRow(unsigned int row) const;
         void setRow(unsigned int row, const fccl::kdl::Twist& twist);
   
-        bool hasDerivative(const std::string& target_name) const;
-        bool hasDerivative(std::size_t target_id) const;
-        bool hasDerivative(const fccl::kdl::Twist& twist) const;
-  
-        unsigned int getRowNumber(const std::string& target_name) const;
-        unsigned int getRowNumber(std::size_t target_id) const;
-        unsigned int getRowNumber(const fccl::kdl::Twist& twist) const;
-  
         bool operator==(const fccl::kdl::InteractionMatrix& other) const;
         bool operator!=(const fccl::kdl::InteractionMatrix& other) const;
   
-        bool semanticsEqual(const fccl::kdl::InteractionMatrix& other) const;
         bool numericsEqual(const fccl::kdl::InteractionMatrix& other) const;
   
         void changeReferenceFrame(const fccl::kdl::Transform& transform);
