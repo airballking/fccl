@@ -100,12 +100,12 @@ namespace fccl
   
         virtual bool semanticsEqual(const SemanticObject& other) const;
 
-        std::size_t size() const;
-        void resize(std::size_t new_size);
+        std::size_t targets() const;
+        void resizeTargets(std::size_t new_size);
 
-        bool semanticIndexValid(std::size_t index) const;
-        std::size_t getIndex(size_t target_id) const;
-        std::size_t getIndex(const std::string& target_name) const;
+        bool targetIndexValid(std::size_t index) const;
+        std::size_t getTargetIndex(size_t target_id) const;
+        std::size_t getTargetIndex(const std::string& target_name) const;
 
       protected:
         // hash-ID of the reference

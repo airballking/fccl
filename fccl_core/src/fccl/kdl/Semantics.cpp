@@ -153,28 +153,28 @@ namespace fccl
 
     std::size_t SemanticObject1xN::getTargetID(std::size_t index) const
     {
-      assert(semanticIndexValid(index));
+      assert(targetIndexValid(index));
 
       return target_ids_[index];
     }
 
     void SemanticObject1xN::setTargetID(std::size_t index, std::size_t target_id)
     {
-      assert(semanticIndexValid(index));
+      assert(targetIndexValid(index));
 
       target_ids_[index] = target_id;
     }
 
     const std::string& SemanticObject1xN::getTargetName(std::size_t index) const
     {
-      assert(semanticIndexValid(index));
+      assert(targetIndexValid(index));
 
       return fu::retrieveValue(target_ids_[index]);
     }
 
     void SemanticObject1xN::setTargetName(std::size_t index, const std::string& target_name)
     {
-      assert(semanticIndexValid(index));
+      assert(targetIndexValid(index));
  
       target_ids_[index] = fu::hash(target_name);
     }
@@ -186,7 +186,7 @@ namespace fccl
 
     void SemanticObject1xN::setTargetIDs(const std::vector<std::size_t>& target_ids)
     {
-      assert(size() == target_ids.size());
+      assert(targets() == target_ids.size());
 
       target_ids_ = target_ids;
     }
@@ -203,9 +203,9 @@ namespace fccl
 
     void SemanticObject1xN::setTargetNames(const std::vector<std::string>& target_names)
     {
-      assert(size() == target_names.size());
+      assert(targets() == target_names.size());
 
-      for(unsigned int i=0; i<size(); i++)
+      for(unsigned int i=0; i<targets(); i++)
         setTargetName(i, target_names[i]);
     }
 
@@ -221,33 +221,33 @@ namespace fccl
           && (getReferenceID() == other_p->getReferenceID()));
     }
 
-    std::size_t SemanticObject1xN::size() const
+    std::size_t SemanticObject1xN::targets() const
     {
       return target_ids_.size();
     }
 
-    void SemanticObject1xN::resize(std::size_t new_size)
+    void SemanticObject1xN::resizeTargets(std::size_t new_size)
     {
       target_ids_.resize(new_size);
     }
  
-    bool SemanticObject1xN::semanticIndexValid(std::size_t index) const
+    bool SemanticObject1xN::targetIndexValid(std::size_t index) const
     {
       return (index < target_ids_.size());
     }
 
-    std::size_t SemanticObject1xN::getIndex(size_t target_id) const
+    std::size_t SemanticObject1xN::getTargetIndex(size_t target_id) const
     {
-      for(std::size_t i=0; i<size(); i++)
+      for(std::size_t i=0; i<targets(); i++)
         if(target_ids_[i] == target_id)
           return i;
 
-      return size();
+      return targets();
     }
 
-    std::size_t SemanticObject1xN::getIndex(const std::string& target_name) const
+    std::size_t SemanticObject1xN::getTargetIndex(const std::string& target_name) const
     {
-      return getIndex(fu::hash(target_name));
+      return getTargetIndex(fu::hash(target_name));
     }
   } // namespace kdl
 } // namespace fccl
