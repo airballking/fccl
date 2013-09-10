@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 
 #include <fccl/base/Features.h>
-#include <fccl/kdl/Vector.h>
 #include <fccl/kdl/Transform.h>
 #include <kdl/frames.hpp>
 
@@ -20,12 +19,10 @@ class FeaturesTest : public ::testing::Test
       world = "world"; 
 
       // kdl data
-      pos_data = KDL::Vector(0, 0, 0);
-      dir_data = KDL::Vector(0, 0, 1);
+      pos = KDL::Vector(0, 0, 0);
+      dir = KDL::Vector(0, 0, 1);
       transform_data = KDL::Frame(KDL::Rotation::RotZ(M_PI/2.0), KDL::Vector(0, 0, 1));
       // semantic kdl ;)
-      pos = Vector(parent, name, pos_data);
-      dir = Vector(parent, name, dir_data);
       transform = Transform(world, parent, transform_data);
     }
 
@@ -34,8 +31,7 @@ class FeaturesTest : public ::testing::Test
     }
 
     std::string name, parent, child, world;
-    KDL::Vector pos_data, dir_data;
-    Vector pos, dir;
+    KDL::Vector pos, dir;
     KDL::Frame transform_data;
     Transform transform;
 };
@@ -43,19 +39,21 @@ class FeaturesTest : public ::testing::Test
 TEST_F(FeaturesTest, Basics)
 {
   Feature f;
-  f.setName(name);
+  f.setTargetName(name);
+  f.setReferenceName(parent);
   f.setPosition(pos); 
   f.setOrientation(dir);
   f.setType(LINE_FEATURE);
 
-  Feature f2(name, pos, dir, LINE_FEATURE);
+  Feature f2(parent, name, pos, dir, LINE_FEATURE);
 
   Feature f3(f);
 
-  Feature f4(f.getID(), f.getPosition(), f.getOrientation(), f.getType());
+  Feature f4(f.getReferenceID(), f.getTargetID(), f.getPosition(), f.getOrientation(), f.getType());
 
   Feature f5;
-  f5.setID(f.getID());
+  f5.setTargetID(f.getTargetID());
+  f5.setReferenceID(f.getReferenceID());
   f5.setPosition(f.getPosition());
   f5.setOrientation(f.getOrientation());
   f5.setType(f.getType());
@@ -72,12 +70,12 @@ TEST_F(FeaturesTest, Basics)
   f7.changeReference(transform);
   
   EXPECT_NE(f, f7);
-  EXPECT_EQ(f7, Feature(name, transform * pos, transform * dir, LINE_FEATURE));
+  EXPECT_EQ(f7, Feature(world, name, transform.getTransform() * pos, transform.getTransform() * dir, LINE_FEATURE));
 }
 
 TEST_F(FeaturesTest, Equalities)
 {
-  Feature f(name, pos, dir, POINT_FEATURE);
+  Feature f(parent, name, pos, dir, POINT_FEATURE);
   Feature f2(f);
   f2.setType(PLANE_FEATURE);
   Feature f3(f);

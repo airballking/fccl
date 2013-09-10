@@ -264,11 +264,13 @@ namespace fccl
     {
       assert(getReferenceID() == tool_transform.getReferenceID());
       assert(getReferenceID() == object_transform.getReferenceID());
+      assert(tool_feature_.getReferenceID() == tool_transform.getTargetID());
+      assert(object_feature_.getReferenceID() == object_transform.getTargetID());
   
-      fccl::kdl::Vector tool_position_in_view = tool_transform * tool_feature_.getPosition();
-      fccl::kdl::Vector object_position_in_view = object_transform * object_feature_.getPosition();
+      KDL::Vector tool_position_in_view = tool_transform.getTransform() * tool_feature_.getPosition();
+      KDL::Vector object_position_in_view = object_transform.getTransform() * object_feature_.getPosition();
   
-      return  tool_position_in_view.getVector().z() - object_position_in_view.getVector().z();
+      return  tool_position_in_view.z() - object_position_in_view.z();
     }
   } // namespace base
 } // namespace fccl

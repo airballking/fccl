@@ -21,23 +21,20 @@ class ConstraintsTest : public ::testing::Test
       constraint_name = "height of spatula front edge over pancake center seen from view";
 
       // numeric data
-      pos_data = KDL::Vector(0, 0, 0);
-      dir_data = KDL::Vector(0, 0, 1);
-      dir2_data = KDL::Vector(1, 0, 0);
+      tool_feature_pos = KDL::Vector(0,0,0);
+      tool_feature_dir = KDL::Vector(1,0,0);
+      object_feature_pos = KDL::Vector(0,0,0);
+      object_feature_dir = KDL::Vector(0,0,1);
       T_view_tool_data = KDL::Frame(KDL::Rotation::RotZ(M_PI/2.0), KDL::Vector(0.4, -0.3, -0.2));
       T_view_object_data = KDL::Frame(KDL::Rotation::Identity(), KDL::Vector(0.5, 0.0, -0.5));
  
       // semanitic KLD ;)
-      tool_feature_pos = Vector(tool_frame_name, tool_feature_name, pos_data);
-      tool_feature_dir = Vector(tool_frame_name, tool_feature_name, dir2_data);
-      object_feature_pos = Vector(object_frame_name, object_feature_name, pos_data);
-      object_feature_dir = Vector(object_frame_name, object_feature_name, dir_data);
       T_view_tool = Transform(view_frame_name, tool_frame_name, T_view_tool_data);
       T_view_object = Transform(view_frame_name, object_frame_name, T_view_object_data);
       
       // features
-      object_feature = Feature(object_feature_name, object_feature_pos, object_feature_dir, PLANE_FEATURE);
-      tool_feature = Feature(tool_feature_name, tool_feature_pos, tool_feature_dir, LINE_FEATURE);
+      object_feature = Feature(object_frame_name, object_feature_name, object_feature_pos, object_feature_dir, PLANE_FEATURE);
+      tool_feature = Feature(tool_frame_name, tool_feature_name, tool_feature_pos, tool_feature_dir, LINE_FEATURE);
 
       //actual constraint values
       lower_boundary = 0.1; 
@@ -60,9 +57,8 @@ class ConstraintsTest : public ::testing::Test
     std::string view_frame_name, tool_frame_name, object_frame_name;
     std::string tool_feature_name, object_feature_name;
     std::string constraint_name;
-    KDL::Vector pos_data, dir_data, dir2_data;
-    Vector tool_feature_pos, tool_feature_dir;
-    Vector object_feature_pos, object_feature_dir;
+    KDL::Vector object_feature_pos, object_feature_dir;
+    KDL::Vector tool_feature_pos, tool_feature_dir;
     KDL::Frame T_view_tool_data, T_view_object_data;
     Transform T_view_tool, T_view_object;
     Feature object_feature, tool_feature;

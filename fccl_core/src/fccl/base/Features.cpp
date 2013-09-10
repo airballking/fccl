@@ -1,38 +1,40 @@
 #include <fccl/base/Features.h>
-#include <fccl/utils/Hashing.h>
-
-namespace fu = fccl::utils;
+#include <fccl/utils/Printing.h>
 
 namespace fccl
 {
   namespace base
   {
-    Feature::Feature()
+    Feature::Feature() : SemanticObject1x1()
     {
       type_ = UNKNOWN_FEATURE;
     }
   
     Feature::Feature(const Feature& other) :
-        id_(other.getID()), position_(other.getPosition()), 
+        SemanticObject1x1(other), position_(other.getPosition()), 
         orientation_(other.getOrientation()), type_(other.getType())
     {
       assert(featureTypeValid(other.getType()));
     }
-  
-    Feature::Feature(std::size_t id, const fccl::kdl::Vector& position,
-        const fccl::kdl::Vector& orientation, FeatureTypes type) :
-        id_(id), position_(position), orientation_(orientation), type_(type)
-    {
-      assert(featureTypeValid(type));
-    }
-   
-    Feature::Feature(const std::string& name, const fccl::kdl::Vector& position,
-        const fccl::kdl::Vector& orientation, FeatureTypes type) :
-        id_(fu::hash(name)), position_(position), orientation_(orientation), type_(type)
+
+    Feature::Feature(const std::string& reference_name, const std::string&
+            target_name, const KDL::Vector& position, const KDL::Vector&
+            orientation, FeatureTypes type) :
+        SemanticObject1x1(reference_name, target_name), position_(position),
+        orientation_(orientation), type_(type)
     {
       assert(featureTypeValid(type));
     }
   
+    Feature::Feature(std::size_t reference_id, std::size_t target_id,
+            const KDL::Vector& position, const KDL::Vector& orientation,
+            FeatureTypes type) :
+        SemanticObject1x1(reference_id, target_id), position_(position), 
+        orientation_(orientation), type_(type)
+    {
+      assert(featureTypeValid(type));
+    }
+ 
     Feature::~Feature() {}
   
     Feature& Feature::operator=(const Feature& rhs)
@@ -40,7 +42,8 @@ namespace fccl
       // protect against self-assignement
       if(this != &rhs)
       {
-        setID(rhs.getID());
+        setTargetID(rhs.getTargetID());
+        setReferenceID(rhs.getReferenceID());
         setPosition(rhs.getPosition());
         setOrientation(rhs.getOrientation());
         setType(rhs.getType());
@@ -49,37 +52,22 @@ namespace fccl
       return *this;
     }
   
-    std::size_t Feature::getID() const
-    {
-      return id_;
-    }
-  
-    void Feature::setName(const std::string& name)
-    {
-      id_ = fu::hash(name);
-    }
-  
-    void Feature::setID(std::size_t id)
-    {
-      id_ = id;
-    }
-  
-    const fccl::kdl::Vector& Feature::getPosition() const
+    const KDL::Vector& Feature::getPosition() const
     {
       return position_;
     }
   
-    void Feature::setPosition(const fccl::kdl::Vector& position)
+    void Feature::setPosition(const KDL::Vector& position)
     {
       position_ = position;
     }
   
-    const fccl::kdl::Vector& Feature::getOrientation() const
+    const KDL::Vector& Feature::getOrientation() const
     {
       return orientation_;
     }
   
-    void Feature::setOrientation(const fccl::kdl::Vector& orientation)
+    void Feature::setOrientation(const KDL::Vector& orientation)
     {
       orientation_ = orientation;
     }
@@ -100,17 +88,12 @@ namespace fccl
     {
       assert(getReferenceID() == transform.getTargetID());
   
-      setPosition(transform * getPosition());
-      setOrientation(transform * getOrientation());
+      setReferenceID(transform.getReferenceID());
+
+      setPosition(transform.getTransform() * getPosition());
+      setOrientation(transform.getTransform() * getOrientation());
     }
   
-    std::size_t Feature::getReferenceID() const
-    {
-      assert(getPosition().getReferenceID() == getOrientation().getReferenceID());
-  
-      return getPosition().getReferenceID();
-    }
-   
     bool Feature::operator==(const Feature& other) const
     {
       return semanticsEqual(other) && numericsEqual(other);
@@ -123,20 +106,26 @@ namespace fccl
   
     bool Feature::semanticsEqual(const Feature& other) const
     {
-      return (getType() == other.getType()) && (getID() == other.getID());
+      return (getType() == other.getType()) && 
+          SemanticObject1x1::semanticsEqual(other);
     }
   
     bool Feature::numericsEqual(const Feature& other) const
     {
-      return (getPosition() == other.getPosition())
-          && (getOrientation() == other.getOrientation());
+      return (KDL::Equal(getPosition(), other.getPosition()))
+          && (KDL::Equal(getOrientation(), other.getOrientation()));
     }
   
     std::ostream& operator<<(std::ostream& os, const Feature& feature)
     {
+      using fccl::utils::operator<<;
+
       os << "position:\n" << feature.getPosition() << "\n";
       os << "direction:\n" << feature.getOrientation() << "\n";
-      os << "id: " << feature.getID() << "\n";
+      os << "reference: " << feature.getReferenceName() << " (";
+      os << feature.getReferenceID() << ")\n";
+      os << "target: " << feature.getTargetName() << " (";
+      os << feature.getTargetID() << ")\n";
       os << "type: " << feature.getType();
   
       return os;
