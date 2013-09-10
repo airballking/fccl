@@ -38,7 +38,6 @@ include_directories(
 add_library(${PROJECT_NAME}
   src/fccl/kdl/Semantics.cpp
   src/fccl/kdl/Transform.cpp
-  src/fccl/kdl/Vector.cpp
   src/fccl/kdl/Twist.cpp
   src/fccl/kdl/InteractionMatrix.cpp
   src/fccl/utils/Equalities.cpp
@@ -98,7 +97,6 @@ catkin_add_gtest(${PROJECT_NAME}-test
                  test/main.cpp 
                  test/Hashing.cpp
                  test/Transform.cpp
-                 test/Vector.cpp
                  test/Twist.cpp
                  test/InteractionMatrix.cpp
                  test/Features.cpp
