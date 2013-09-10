@@ -42,8 +42,8 @@ TEST_F(TransformTest, Basics2)
   t2.setTargetID(t.getTargetID());
   t2.setTransform(t.getTransform());
 
-  t3.setReferenceFrame(parent_frame);
-  t3.setTargetFrame(child_frame);
+  t3.setReferenceName(parent_frame);
+  t3.setTargetName(child_frame);
   t3.setTransform(transform);
 
   EXPECT_EQ(t, t2);

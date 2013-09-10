@@ -1,6 +1,7 @@
 #ifndef FCCL_KDL_TRANSFORM_H
 #define FCCL_KDL_TRANSFORM_H
 
+#include <fccl/kdl/Semantics.h>
 #include <kdl/frames.hpp>
 #include <string>
 #include <iostream>
@@ -9,7 +10,7 @@ namespace fccl
 {
   namespace kdl
   {
-    class Transform
+    class Transform : public SemanticObject1x1
     {
       public:
         Transform();
@@ -23,22 +24,12 @@ namespace fccl
   
         fccl::kdl::Transform& operator=(const fccl::kdl::Transform& rhs);
   
-        std::size_t getReferenceID() const;
-        void setReferenceID(std::size_t reference_id);
-        void setReferenceFrame(const std::string& reference_frame);
-  
-        std::size_t getTargetID() const;
-        void setTargetID(std::size_t target_id);
-        void setTargetFrame(const std::string& target_frame);
-  
         const KDL::Frame& getTransform() const;
         void setTransform(const KDL::Frame& transform);
   
-        bool operator==(const fccl::kdl::Transform& other) const;
-        bool operator!=(const fccl::kdl::Transform& other) const;
-  
-        bool semanticsEqual(const fccl::kdl::Transform& other) const;
         bool numericsEqual(const fccl::kdl::Transform& other) const;
+        virtual bool operator==(const fccl::kdl::Transform& other) const;
+        virtual bool operator!=(const fccl::kdl::Transform& other) const;
   
         fccl::kdl::Transform inverse() const;
         
@@ -52,14 +43,6 @@ namespace fccl
             const fccl::kdl::Transform& transform);
   
       private:
-        // frame w.r.t. kinematic objects are defined before transformation,
-        // sometimes also 'parent_frame' called
-        std::size_t reference_id_;
-  
-        // frame w.r.t. kinematic objects are defined after transformation,
-        // also called 'child_frame'
-        std::size_t target_id_;
-  
         // actual numeric representation of transform
         KDL::Frame transform_;
     };
