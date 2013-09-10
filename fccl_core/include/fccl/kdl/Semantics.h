@@ -63,8 +63,7 @@ namespace fccl
         std::size_t reference_id_;
 
         // hash-ID of the target
-        std::size_t target_id_;
-  
+        std::size_t target_id_; 
     };
 
     class SemanticObject1xN : public SemanticObject
