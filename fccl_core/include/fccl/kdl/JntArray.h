@@ -21,9 +21,6 @@ namespace fccl
 
         JntArray& operator=(const JntArray& other);
         
-        SemanticObjectN getSemantics() const;
-        void setSemantics(const SemanticObjectN& semantics);
-
         const KDL::JntArray& getData() const;
         void setData(const KDL::JntArray& data);
 

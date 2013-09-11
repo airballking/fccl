@@ -32,20 +32,7 @@ namespace fccl
       setData(other.getData());
     }
 
-    SemanticObjectN JntArray::getSemantics() const
-    {
-      return SemanticObjectN(*this);
-    }
-
-    void JntArray::setSemantics(const SemanticObjectN& semantics)
-    {
-      SemanticObjectN* semantic_pointer = 
-          static_cast<SemanticObjectN*>(this);
-
-      *semantic_pointer = semantics;
-    }
-
-    const KDL::JntArray& JntArray::getData() const
+   const KDL::JntArray& JntArray::getData() const
     {
       return data_;
     }

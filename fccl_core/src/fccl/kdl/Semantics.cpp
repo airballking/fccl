@@ -314,6 +314,16 @@ namespace fccl
       setTargetIDs(other.getTargetIDs());
     }
 
+    const SemanticObjectN& SemanticObjectN::getSemantics() const
+    {
+      return *this;
+    }
+
+    void SemanticObjectN::setSemantics(const SemanticObjectN& semantics)
+    {
+      *this = semantics;
+    }
+ 
     std::size_t SemanticObjectN::getTargetID(std::size_t index) const
     {
       assert(indexValid(index));

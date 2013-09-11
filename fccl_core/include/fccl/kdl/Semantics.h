@@ -134,7 +134,10 @@ namespace fccl
         virtual ~SemanticObjectN();
 
         SemanticObjectN& operator=(const SemanticObjectN& other);
-  
+
+        const SemanticObjectN& getSemantics() const;
+        void setSemantics(const SemanticObjectN& semantics);
+ 
         std::size_t getTargetID(std::size_t index) const;
         void setTargetID(std::size_t index, std::size_t target_id);
 
