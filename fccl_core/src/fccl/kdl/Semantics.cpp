@@ -30,22 +30,42 @@ namespace fccl
       semantic_type_ = SEMANTICS_1x1;
     }
 
-    SemanticObject1x1::SemanticObject1x1(const std::string& reference_name, const std::string& target_name) :
-        reference_id_(fu::hash(reference_name)), target_id_(fu::hash(target_name))
+    SemanticObject1x1::SemanticObject1x1(const std::string& reference_name, 
+        const std::string& target_name)
     {
       semantic_type_ = SEMANTICS_1x1;
+      setReferenceName(reference_name);
+      setTargetName(target_name);
     }
+
 
     SemanticObject1x1::SemanticObject1x1(std::size_t reference_id, std::size_t target_id) :
         reference_id_(reference_id), target_id_(target_id)
     {
       semantic_type_ = SEMANTICS_1x1;
     }
-  
+
+
     SemanticObject1x1::~SemanticObject1x1()
     {
     }
   
+    SemanticObject1x1& SemanticObject1x1::operator=(const SemanticObject1x1& other)
+    {
+      setReferenceID(other.getReferenceID());
+      setTargetID(other.getTargetID());
+    }
+
+    SemanticObject1x1 SemanticObject1x1::getSemantics() const
+    {
+      return SemanticObject1x1(*this);
+    }
+
+    void SemanticObject1x1::setSemantics(const SemanticObject1x1& semantics)
+    {
+      *this = semantics;
+    }
+ 
     std::size_t SemanticObject1x1::getReferenceID() const
     {
       return reference_id_;
@@ -95,6 +115,14 @@ namespace fccl
       assert(other_p);     
 
       return (getTargetID() == other_p->getTargetID()) && (getReferenceID() == other_p->getReferenceID());
+    }
+
+    SemanticObject1x1 SemanticObject1x1::inverse() const
+    {
+      SemanticObject1x1 result;
+      result.setReferenceID(getTargetID());
+      result.setTargetID(getReferenceID());
+      return result;
     }
 
     SemanticObject1xN::SemanticObject1xN()

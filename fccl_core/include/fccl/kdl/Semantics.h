@@ -45,6 +45,11 @@ namespace fccl
         SemanticObject1x1(std::size_t reference_id, std::size_t target_id);
   
         virtual ~SemanticObject1x1();
+
+        SemanticObject1x1& operator=(const SemanticObject1x1& other);
+
+        SemanticObject1x1 getSemantics() const;
+        void setSemantics(const SemanticObject1x1& other);
   
         std::size_t getReferenceID() const;
         void setReferenceID(std::size_t reference_id);
@@ -59,6 +64,8 @@ namespace fccl
         void setTargetName(const std::string& target_name);
   
         virtual bool semanticsEqual(const SemanticObject& other) const;
+
+        SemanticObject1x1 inverse() const;
 
       protected:
         // hash-ID of the reference
