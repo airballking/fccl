@@ -14,16 +14,9 @@ namespace fccl
       assert(rows() == targets()); 
     }
   
-    InteractionMatrix::InteractionMatrix(const std::string& reference_name, const 
-            std::vector<std::string>& target_names, 
+    InteractionMatrix::InteractionMatrix(const SemanticObject1xN& semantics, 
             const Eigen::Matrix<double, Eigen::Dynamic, 6>& data) :
-        SemanticObject1xN(reference_name, target_names), data_(data)
-    {
-      assert(rows() == targets()); 
-    }
-  
-    InteractionMatrix::InteractionMatrix(std::size_t reference_id, const std::vector<std::size_t>& target_ids, const Eigen::Matrix<double, Eigen::Dynamic, 6>& data) :
-        SemanticObject1xN(reference_id, target_ids), data_(data)
+        SemanticObject1xN(semantics), data_(data)
     {
       assert(rows() == targets()); 
     }

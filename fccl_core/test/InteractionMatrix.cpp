@@ -44,9 +44,9 @@ TEST_F(InteractionMatrixTest, Basics)
 
   std::vector<std::string> targets;
   targets.push_back(target);
-  InteractionMatrix m3(reference, targets, m.getData());
+  InteractionMatrix m3(SemanticObject1xN(reference, targets), m.getData());
 
-  InteractionMatrix m4(m.getReferenceID(), m.getTargetIDs(), m.getData());
+  InteractionMatrix m4(SemanticObject1xN(m.getReferenceID(), m.getTargetIDs()), m.getData());
 
   EXPECT_EQ(m, m2);
   EXPECT_EQ(m, m3);

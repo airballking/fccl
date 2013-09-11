@@ -17,11 +17,8 @@ namespace fccl
       public:
         InteractionMatrix();
         InteractionMatrix(const fccl::kdl::InteractionMatrix& other);
-        InteractionMatrix(const std::string& reference_name, const 
-            std::vector<std::string>& target_names, 
+        InteractionMatrix(const SemanticObject1xN& semantics, 
             const Eigen::Matrix<double, Eigen::Dynamic, 6>& data);
-        InteractionMatrix(std::size_t reference_id, const std::vector<std::size_t>&
-            target_ids, const Eigen::Matrix<double, Eigen::Dynamic, 6>& data);
   
         virtual ~InteractionMatrix();
   
