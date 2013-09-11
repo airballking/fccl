@@ -128,6 +128,8 @@ namespace fccl
       public:
         SemanticObjectN();
         SemanticObjectN(const SemanticObjectN& other);
+        SemanticObjectN(const std::vector<std::size_t>& target_ids);
+        SemanticObjectN(const std::vector<std::string>& target_names);
   
         virtual ~SemanticObjectN();
 

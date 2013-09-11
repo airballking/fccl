@@ -289,6 +289,20 @@ namespace fccl
       semantic_type_ = SEMANTICS_N;
     }
 
+    SemanticObjectN::SemanticObjectN(const std::vector<std::size_t>& target_ids) :
+        target_ids_(target_ids)
+    {
+      semantic_type_ = SEMANTICS_N;
+    }
+
+    SemanticObjectN::SemanticObjectN(const std::vector<std::string>& target_names)
+    {
+      semantic_type_ = SEMANTICS_N;
+
+      resize(target_names.size());
+      setTargetNames(target_names);
+    }
+
     SemanticObjectN::~SemanticObjectN()
     {
     }
