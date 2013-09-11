@@ -48,7 +48,7 @@ namespace fccl
 
         SemanticObject1x1& operator=(const SemanticObject1x1& other);
 
-        SemanticObject1x1 getSemantics() const;
+        const SemanticObject1x1& getSemantics() const;
         void setSemantics(const SemanticObject1x1& other);
   
         std::size_t getReferenceID() const;

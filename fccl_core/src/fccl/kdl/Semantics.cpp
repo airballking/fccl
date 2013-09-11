@@ -56,9 +56,9 @@ namespace fccl
       setTargetID(other.getTargetID());
     }
 
-    SemanticObject1x1 SemanticObject1x1::getSemantics() const
+    const SemanticObject1x1& SemanticObject1x1::getSemantics() const
     {
-      return SemanticObject1x1(*this);
+      return *this;
     }
 
     void SemanticObject1x1::setSemantics(const SemanticObject1x1& semantics)
