@@ -14,13 +14,9 @@ namespace fccl
     {
     }
    
-    Transform::Transform(const std::string& reference_frame, const std::string& target_frame, const KDL::Frame& transform) :
-        SemanticObject1x1(reference_frame, target_frame), transform_(transform)
-    {
-    }
-  
-    Transform::Transform(std::size_t reference_id, std::size_t target_id, const KDL::Frame& transform) :
-        SemanticObject1x1(reference_id, target_id), transform_(transform)
+    Transform::Transform(const SemanticObject1x1& semantics, 
+            const KDL::Frame& transform) :
+        SemanticObject1x1(semantics), transform_(transform)
     {
     }
   
@@ -33,8 +29,7 @@ namespace fccl
       // need to check for self-allocation
       if(this != &rhs)
       {
-        this->setReferenceID(rhs.getReferenceID());
-        this->setTargetID(rhs.getTargetID());
+        this->setSemantics(rhs.getSemantics());
         this->setTransform(rhs.getTransform());
       }
   
@@ -68,7 +63,7 @@ namespace fccl
  
     fccl::kdl::Transform Transform::inverse() const
     {
-      return Transform(getTargetID(), getReferenceID(), transform_.Inverse());
+      return Transform(getSemantics().inverse(), getTransform().Inverse());
     }
   
     bool Transform::postMultiplicationPossible(const fccl::kdl::Transform& other_post) const
@@ -85,7 +80,13 @@ namespace fccl
     {
       assert(lhs.postMultiplicationPossible(rhs));
   
-      return Transform(lhs.getReferenceID(), rhs.getTargetID(), lhs.getTransform()*rhs.getTransform());
+      Transform result;
+      result.setReferenceID(lhs.getReferenceID());
+      result.setTargetID(rhs.getTargetID());
+      result.setTransform(lhs.getTransform() * rhs.getTransform());
+
+      return result;
+//      return Transform(lhs.getReferenceID(), rhs.getTargetID(), lhs.getTransform()*rhs.getTransform());
     }
   
     std::ostream& operator<<(std::ostream& os, const fccl::kdl::Transform& transform)

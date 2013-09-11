@@ -18,11 +18,8 @@ namespace fccl
       public:
         Constraint();
         Constraint(const Constraint& other);
-        Constraint(const std::string& reference_name, const std::string& target_name,
-            const fccl::base::Feature& tool_feature, const fccl::base::Feature& object_feature,
-            double lower_boundary, double upper_boundary);
-        Constraint(std::size_t reference_id, std::size_t target_id,
-            const fccl::base::Feature& tool_feature, const fccl::base::Feature& object_feature, 
+        Constraint(const SemanticObject1x1& semantics, const fccl::base::Feature& 
+            tool_feature, const fccl::base::Feature& object_feature,
             double lower_boundary, double upper_boundary);
   
         virtual ~Constraint();
@@ -83,14 +80,10 @@ namespace fccl
       public:
         AboveConstraint();
         AboveConstraint(const AboveConstraint& other);
-        AboveConstraint(const std::string& reference_name, const std::string& 
-            target_name, const fccl::base::Feature& tool_feature,
+        AboveConstraint(const SemanticObject1x1& semantics, 
+            const fccl::base::Feature& tool_feature,
             const fccl::base::Feature& object_feature,
             double lower_boundary, double upper_boundary);
-        AboveConstraint(std::size_t reference_id, std::size_t target_id,
-            const fccl::base::Feature& tool_feature,
-            const fccl::base::Feature& object_feature, 
-            double lower_boundary, double upper_boundary); 
   
         virtual ~AboveConstraint();
   

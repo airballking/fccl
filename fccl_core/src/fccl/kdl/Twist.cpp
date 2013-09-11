@@ -15,15 +15,8 @@ namespace fccl
     {
     }
   
-    Twist::Twist(const std::string& reference_name, const std::string&
-        target_name, const KDL::Twist& twist) :
-        SemanticObject1x1(reference_name, target_name), twist_(twist)
-    {
-    }
-  
-    Twist::Twist(std::size_t reference_id, std::size_t target_id,
-        const KDL::Twist& twist) :
-        SemanticObject1x1(reference_id, target_id), twist_(twist)
+    Twist::Twist(const SemanticObject1x1& semantics, const KDL::Twist& twist) :
+        SemanticObject1x1(semantics), twist_(twist)
     {
     }
   
@@ -36,14 +29,13 @@ namespace fccl
       // need to check for self-allocation
       if(this != &rhs)
       {
-        this->setReferenceID(rhs.getReferenceID());
-        this->setTargetID(rhs.getTargetID());
+        this->setSemantics(rhs.getSemantics());
         this->setTwist(rhs.getTwist());
       }
     
       return *this;
     }
-  
+
     const KDL::Twist& Twist::getTwist() const
     {
       return twist_;

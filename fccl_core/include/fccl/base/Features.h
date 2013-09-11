@@ -17,12 +17,8 @@ namespace fccl
       public:
         Feature();
         Feature(const Feature& other);
-        Feature(const std::string& reference_name, const std::string& target_name,
-            const KDL::Vector& position, const KDL::Vector& orientation,
-            FeatureTypes type);
-        Feature(std::size_t reference_id, std::size_t target_id, 
-            const KDL::Vector& position, const KDL::Vector& orientation, 
-            FeatureTypes type);
+        Feature(const SemanticObject1x1& semantics, const KDL::Vector& position, 
+            const KDL::Vector& orientation, FeatureTypes type);
  
         virtual ~Feature();
   

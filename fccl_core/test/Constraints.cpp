@@ -29,12 +29,12 @@ class ConstraintsTest : public ::testing::Test
       T_view_object_data = KDL::Frame(KDL::Rotation::Identity(), KDL::Vector(0.5, 0.0, -0.5));
  
       // semanitic KLD ;)
-      T_view_tool = Transform(view_frame_name, tool_frame_name, T_view_tool_data);
-      T_view_object = Transform(view_frame_name, object_frame_name, T_view_object_data);
+      T_view_tool = Transform(SemanticObject1x1(view_frame_name, tool_frame_name), T_view_tool_data);
+      T_view_object = Transform(SemanticObject1x1(view_frame_name, object_frame_name), T_view_object_data);
       
       // features
-      object_feature = Feature(object_frame_name, object_feature_name, object_feature_pos, object_feature_dir, PLANE_FEATURE);
-      tool_feature = Feature(tool_frame_name, tool_feature_name, tool_feature_pos, tool_feature_dir, LINE_FEATURE);
+      object_feature = Feature(SemanticObject1x1(object_frame_name, object_feature_name), object_feature_pos, object_feature_dir, PLANE_FEATURE);
+      tool_feature = Feature(SemanticObject1x1(tool_frame_name, tool_feature_name), tool_feature_pos, tool_feature_dir, LINE_FEATURE);
 
       //actual constraint values
       lower_boundary = 0.1; 
@@ -70,13 +70,13 @@ TEST_F(ConstraintsTest, Basics)
 {
   AboveConstraint ac2(ac);
 
-  AboveConstraint ac3(view_frame_name, constraint_name, tool_feature,
+  AboveConstraint ac3(SemanticObject1x1(view_frame_name, constraint_name), tool_feature,
       object_feature, lower_boundary, upper_boundary);
 
   AboveConstraint ac4;
   ac4 = ac;
 
-  AboveConstraint ac5(ac.getReferenceID(), ac.getTargetID(), ac.getToolFeature(),
+  AboveConstraint ac5(SemanticObject1x1(ac.getReferenceID(), ac.getTargetID()), ac.getToolFeature(),
     ac.getObjectFeature(), ac.getLowerBoundary(), ac.getUpperBoundary());
 
   Constraint c(ac);

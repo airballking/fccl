@@ -28,9 +28,9 @@ class TwistTest : public ::testing::Test
 
 TEST_F(TwistTest, Basics)
 {
-  Twist t(reference, target, twist);
+  Twist t(SemanticObject1x1(reference, target), twist);
   Twist t2(t);
-  Twist t3(t.getReferenceID(), t.getTargetID(), t.getTwist());
+  Twist t3(SemanticObject1x1(t.getReferenceID(), t.getTargetID()), t.getTwist());
 
   EXPECT_EQ(t, t2);
   EXPECT_EQ(t, t3);
@@ -38,7 +38,7 @@ TEST_F(TwistTest, Basics)
 
 TEST_F(TwistTest, Basics2)
 {
-  Twist t(reference, target, twist);
+  Twist t(SemanticObject1x1(reference, target), twist);
   Twist t2, t3;
 
   t2.setReferenceID(t.getReferenceID());
@@ -55,15 +55,15 @@ TEST_F(TwistTest, Basics2)
 
 TEST_F(TwistTest, ChangeReferenceFrame)
 {
-  Transform trans(world, reference, transform);
+  Transform trans(SemanticObject1x1(world, reference), transform);
 
-  Twist t(reference, target, twist);
+  Twist t(SemanticObject1x1(reference, target), twist);
 
   Twist t2(t);
   t2.changeReferenceFrame(trans);
-  Twist t3(world, target, KDL::Twist(KDL::Vector(9, -5, 4), KDL::Vector(0, -2, 1)));
+  Twist t3(SemanticObject1x1(world, target), KDL::Twist(KDL::Vector(9, -5, 4), KDL::Vector(0, -2, 1)));
 
-  Twist t4(world, target, transform*twist);
+  Twist t4(SemanticObject1x1(world, target), transform*twist);
 
   EXPECT_EQ(t2, t3);
   EXPECT_NE(t, t2);

@@ -17,24 +17,14 @@ namespace fccl
       assert(featureTypeValid(other.getType()));
     }
 
-    Feature::Feature(const std::string& reference_name, const std::string&
-            target_name, const KDL::Vector& position, const KDL::Vector&
-            orientation, FeatureTypes type) :
-        SemanticObject1x1(reference_name, target_name), position_(position),
+    Feature::Feature(const SemanticObject1x1& semantics,const KDL::Vector& position,
+             const KDL::Vector& orientation, FeatureTypes type) :
+        SemanticObject1x1(semantics), position_(position),
         orientation_(orientation), type_(type)
     {
       assert(featureTypeValid(type));
     }
   
-    Feature::Feature(std::size_t reference_id, std::size_t target_id,
-            const KDL::Vector& position, const KDL::Vector& orientation,
-            FeatureTypes type) :
-        SemanticObject1x1(reference_id, target_id), position_(position), 
-        orientation_(orientation), type_(type)
-    {
-      assert(featureTypeValid(type));
-    }
- 
     Feature::~Feature() {}
   
     Feature& Feature::operator=(const Feature& rhs)
@@ -42,8 +32,7 @@ namespace fccl
       // protect against self-assignement
       if(this != &rhs)
       {
-        setTargetID(rhs.getTargetID());
-        setReferenceID(rhs.getReferenceID());
+        setSemantics(rhs.getSemantics());
         setPosition(rhs.getPosition());
         setOrientation(rhs.getOrientation());
         setType(rhs.getType());

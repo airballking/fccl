@@ -16,8 +16,8 @@ class InteractionMatrixTest : public ::testing::Test
       target = "child";
       transform_data = KDL::Frame(KDL::Rotation::RotX(M_PI/2.0), KDL::Vector(0.0, 0.0, 3.0));
       twist_data = KDL::Twist(KDL::Vector(3, 4, 5), KDL::Vector(0,1,2));
-      transform = Transform(world, reference, transform_data);
-      twist = Twist(reference, target, twist_data);
+      transform = Transform(SemanticObject1x1(world, reference), transform_data);
+      twist = Twist(SemanticObject1x1(reference, target), twist_data);
 
     }
 

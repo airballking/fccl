@@ -15,10 +15,7 @@ namespace fccl
       public:
         Transform();
         Transform(const fccl::kdl::Transform& other);
-        Transform(const std::string& reference_frame, const std::string& target_frame,
-            const KDL::Frame& transform); 
-        Transform(std::size_t reference_id, std::size_t target_id,
-            const KDL::Frame& transform);
+        Transform(const SemanticObject1x1& semantics, const KDL::Frame& transform); 
    
         virtual ~Transform();
   

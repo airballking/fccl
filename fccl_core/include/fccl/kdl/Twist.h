@@ -16,15 +16,12 @@ namespace fccl
       public:
         Twist();
         Twist(const fccl::kdl::Twist& other);
-        Twist(const std::string& reference_name, const std::string&
-            target_name, const KDL::Twist& twist);
-        Twist(std::size_t reference_id, std::size_t target_id,
-            const KDL::Twist& twist);
+        Twist(const SemanticObject1x1& semantics, const KDL::Twist& twist);
   
         virtual ~Twist();
   
         fccl::kdl::Twist& operator=(const fccl::kdl::Twist& rhs);
-  
+
         const KDL::Twist& getTwist() const;
         void setTwist(const KDL::Twist& twist);
   

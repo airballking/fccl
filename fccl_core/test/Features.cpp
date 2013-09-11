@@ -23,7 +23,7 @@ class FeaturesTest : public ::testing::Test
       dir = KDL::Vector(0, 0, 1);
       transform_data = KDL::Frame(KDL::Rotation::RotZ(M_PI/2.0), KDL::Vector(0, 0, 1));
       // semantic kdl ;)
-      transform = Transform(world, parent, transform_data);
+      transform = Transform(SemanticObject1x1(world, parent), transform_data);
     }
 
     virtual void TearDown()
@@ -45,11 +45,11 @@ TEST_F(FeaturesTest, Basics)
   f.setOrientation(dir);
   f.setType(LINE_FEATURE);
 
-  Feature f2(parent, name, pos, dir, LINE_FEATURE);
+  Feature f2(SemanticObject1x1(parent, name), pos, dir, LINE_FEATURE);
 
   Feature f3(f);
 
-  Feature f4(f.getReferenceID(), f.getTargetID(), f.getPosition(), f.getOrientation(), f.getType());
+  Feature f4(SemanticObject1x1(f.getReferenceID(), f.getTargetID()), f.getPosition(), f.getOrientation(), f.getType());
 
   Feature f5;
   f5.setTargetID(f.getTargetID());
@@ -70,12 +70,12 @@ TEST_F(FeaturesTest, Basics)
   f7.changeReference(transform);
   
   EXPECT_NE(f, f7);
-  EXPECT_EQ(f7, Feature(world, name, transform.getTransform() * pos, transform.getTransform() * dir, LINE_FEATURE));
+  EXPECT_EQ(f7, Feature(SemanticObject1x1(world, name), transform.getTransform() * pos, transform.getTransform() * dir, LINE_FEATURE));
 }
 
 TEST_F(FeaturesTest, Equalities)
 {
-  Feature f(parent, name, pos, dir, POINT_FEATURE);
+  Feature f(SemanticObject1x1(parent, name), pos, dir, POINT_FEATURE);
   Feature f2(f);
   f2.setType(PLANE_FEATURE);
   Feature f3(f);
