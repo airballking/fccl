@@ -87,6 +87,11 @@ namespace fccl
   
         virtual ~SemanticObject1xN();
   
+        SemanticObject1xN& operator=(const SemanticObject1xN& other);
+
+        const SemanticObject1xN& getSemantics() const;
+        void setSemantics(const SemanticObject1xN& semantics);
+
         std::size_t getReferenceID() const;
         void setReferenceID(std::size_t reference_id);
   

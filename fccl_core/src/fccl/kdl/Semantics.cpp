@@ -159,6 +159,29 @@ namespace fccl
     {
     }
 
+    SemanticObject1xN& SemanticObject1xN::operator=(const SemanticObject1xN& other)
+    {
+      if(this != &other)
+      {
+        assert(targets() == other.targets());
+        
+        setReferenceID(other.getReferenceID());
+        setTargetIDs(other.getTargetIDs());
+      }
+
+      return *this;
+    }
+
+    const SemanticObject1xN& SemanticObject1xN::getSemantics() const
+    {
+      return *this;
+    }
+
+    void SemanticObject1xN::setSemantics(const SemanticObject1xN& semantics)
+    {
+      *this = semantics;
+    }
+
     std::size_t SemanticObject1xN::getReferenceID() const
     {
       return reference_id_;
