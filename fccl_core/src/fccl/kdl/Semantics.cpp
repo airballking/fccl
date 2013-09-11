@@ -52,8 +52,13 @@ namespace fccl
   
     SemanticObject1x1& SemanticObject1x1::operator=(const SemanticObject1x1& other)
     {
-      setReferenceID(other.getReferenceID());
-      setTargetID(other.getTargetID());
+      if(this != &other)
+      {
+        setReferenceID(other.getReferenceID());
+        setTargetID(other.getTargetID());
+      }
+
+      return *this;
     }
 
     const SemanticObject1x1& SemanticObject1x1::getSemantics() const
@@ -332,9 +337,14 @@ namespace fccl
 
     SemanticObjectN& SemanticObjectN::operator=(const SemanticObjectN& other)
     {
-      assert(size() == other.size());
+      if(this != &other)
+      {
+        assert(size() == other.size());
 
-      setTargetIDs(other.getTargetIDs());
+        setTargetIDs(other.getTargetIDs());
+      }
+
+      return *this;
     }
 
     const SemanticObjectN& SemanticObjectN::getSemantics() const
