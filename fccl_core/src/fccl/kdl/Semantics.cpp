@@ -251,7 +251,7 @@ namespace fccl
     {
       std::vector<std::string> result;
 
-      for(unsigned int i=0; i<result.size(); i++)
+      for(unsigned int i=0; i<size(); i++)
         result.push_back(getTargetName(i));
 
       return result;
