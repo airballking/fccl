@@ -16,5 +16,10 @@ namespace fccl
   
       return true;
     }
+
+    bool isJoint(const KDL::Segment& segment)
+    {
+      return (segment.getJoint().getType() != KDL::Joint::None);
+    }
   } // namespace utils
 } // namespace fccl
