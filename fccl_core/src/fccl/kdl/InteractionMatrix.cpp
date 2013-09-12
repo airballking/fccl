@@ -11,14 +11,14 @@ namespace fccl
     InteractionMatrix::InteractionMatrix(const fccl::kdl::InteractionMatrix& other) :
         SemanticObject1xN(other), data_(other.getData())
     {
-      assert(rows() == targets()); 
+      assert(rows() == size()); 
     }
   
     InteractionMatrix::InteractionMatrix(const SemanticObject1xN& semantics, 
             const Eigen::Matrix<double, Eigen::Dynamic, 6>& data) :
         SemanticObject1xN(semantics), data_(data)
     {
-      assert(rows() == targets()); 
+      assert(rows() == size()); 
     }
   
     InteractionMatrix::~InteractionMatrix()
@@ -87,7 +87,7 @@ namespace fccl
     fccl::kdl::Twist InteractionMatrix::getRow(unsigned int row) const
     {
       assert(row < rows());
-      assert(rows() == targets());
+      assert(rows() == size());
    
       Twist result;
       result.setReferenceID(getReferenceID());
@@ -104,7 +104,7 @@ namespace fccl
     void InteractionMatrix::setRow(unsigned int row, const fccl::kdl::Twist& twist)
     {
       assert(row < rows());
-      assert(rows() == targets());
+      assert(rows() == size());
   
       setTargetID(row, twist.getTargetID());
       setReferenceID(twist.getReferenceID());

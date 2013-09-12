@@ -168,7 +168,7 @@ namespace fccl
     {
       if(this != &other)
       {
-        assert(targets() == other.targets());
+        assert(size() == other.size());
         
         setReferenceID(other.getReferenceID());
         setTargetIDs(other.getTargetIDs());
@@ -242,7 +242,7 @@ namespace fccl
 
     void SemanticObject1xN::setTargetIDs(const std::vector<std::size_t>& target_ids)
     {
-      assert(targets() == target_ids.size());
+      assert(size() == target_ids.size());
 
       target_ids_ = target_ids;
     }
@@ -259,9 +259,9 @@ namespace fccl
 
     void SemanticObject1xN::setTargetNames(const std::vector<std::string>& target_names)
     {
-      assert(targets() == target_names.size());
+      assert(size() == target_names.size());
 
-      for(unsigned int i=0; i<targets(); i++)
+      for(unsigned int i=0; i<size(); i++)
         setTargetName(i, target_names[i]);
     }
 
@@ -277,7 +277,7 @@ namespace fccl
           && (getReferenceID() == other_p->getReferenceID()));
     }
 
-    std::size_t SemanticObject1xN::targets() const
+    std::size_t SemanticObject1xN::size() const
     {
       return target_ids_.size();
     }
@@ -294,11 +294,11 @@ namespace fccl
 
     std::size_t SemanticObject1xN::getTargetIndex(size_t target_id) const
     {
-      for(std::size_t i=0; i<targets(); i++)
+      for(std::size_t i=0; i<size(); i++)
         if(target_ids_[i] == target_id)
           return i;
 
-      return targets();
+      return size();
     }
 
     std::size_t SemanticObject1xN::getTargetIndex(const std::string& target_name) const
