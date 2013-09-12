@@ -152,6 +152,7 @@ namespace fccl
     {
       assert(transformationPossible(transform));
 
+      setReferenceName(transform.getReferenceName());
       jacobian_.changeRefFrame(transform.getTransform());
     }
 
