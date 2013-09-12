@@ -32,5 +32,20 @@ namespace fccl
       out << "p: " << f.p << "\n";
       out << "M:\n" << f.M;
     }
+
+    std::ostream& operator<<(std::ostream& out, const Eigen::Matrix< double, Eigen::Dynamic, Eigen::Dynamic >& m)
+    {
+      for(unsigned int row=0; row<m.rows(); row++)
+      {
+        for(unsigned int column=0; column<m.cols(); column++)
+        {
+          out << "  " << m(row, column);
+        }
+        if(row < (m.rows() - 1))
+          out << "\n";
+      }  
+ 
+      return out;
+    }
   } // namespace utils
 } // namespace fccl
