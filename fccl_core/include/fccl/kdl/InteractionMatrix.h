@@ -50,12 +50,6 @@ namespace fccl
             const fccl::kdl::InteractionMatrix& interaction_matrix);
   
       private:
-        // reference frame w.r.t. the twists are defined
-        std::size_t reference_id_;
-  
-        // name of the functions for which we're holding the derivatives
-        std::vector<std::size_t> target_ids_;
-  
         // actual numeric representation of interaction matrix
         Eigen::Matrix< double, Eigen::Dynamic, 6 > data_;
     };
