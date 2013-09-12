@@ -94,8 +94,10 @@ namespace fccl
       using fccl::utils::operator<<;
 
       os << "transform:\n" << transform.getTransform() << "\n";
-      os << "reference: " << transform.getReferenceID() << "\n";
-      os << "target: " << transform.getTargetID() << "\n";
+      os << "reference: " << transform.getReferenceName() << " (";
+      os << transform.getReferenceID() << ")\n";
+      os << "target: " << transform.getTargetName() << " (";
+      os << transform.getTargetID() << ")";
   
       return os;
     }
