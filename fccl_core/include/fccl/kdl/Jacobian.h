@@ -25,7 +25,7 @@ namespace fccl
         const KDL::Jacobian& getData() const;
         void setData(const KDL::Jacobian& jacobian);
  
-        virtual void resize(std::size_t rows);
+        virtual void resize(std::size_t columns);
         virtual std::size_t size() const;
 
         bool isValid() const;

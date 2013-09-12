@@ -58,10 +58,10 @@ namespace fccl
       jacobian_ = jacobian;
     }
 
-    void Jacobian::resize(std::size_t rows)
+    void Jacobian::resize(std::size_t columns)
     {
-      jacobian_.resize(rows);
-      SemanticObject1xN::resize(rows);
+      jacobian_.resize(columns);
+      SemanticObject1xN::resize(columns);
     }
 
     std::size_t Jacobian::size() const
