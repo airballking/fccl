@@ -20,10 +20,12 @@
   <build_depend>roscpp</build_depend>
   <build_depend>orocos_kdl</build_depend>
   <build_depend>eigen</build_depend>
+  <build_depend>urdf</build_depend>
 
   <run_depend>roscpp</run_depend>
   <run_depend>orocos_kdl</run_depend>
   <run_depend>eigen</run_depend>
+  <run_depend>urdf</run_depend>
 
   <test_depend>gtest</test_depend>
 
