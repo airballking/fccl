@@ -27,7 +27,7 @@ namespace fccl
         const Eigen::Matrix< double, Eigen::Dynamic, 6>& getData() const;
         void setData(const Eigen::Matrix< double, Eigen::Dynamic, 6>& data);
   
-        void resize(unsigned int number_of_rows);
+        virtual void resize(unsigned int number_of_rows);
   
         unsigned int rows() const;
         unsigned int columns() const;

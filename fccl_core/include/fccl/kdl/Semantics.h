@@ -114,7 +114,7 @@ namespace fccl
         virtual bool semanticsEqual(const SemanticObject& other) const;
 
         std::size_t size() const;
-        void resizeTargets(std::size_t new_size);
+        void resize(std::size_t new_size);
 
         bool targetIndexValid(std::size_t index) const;
         std::size_t getTargetIndex(size_t target_id) const;

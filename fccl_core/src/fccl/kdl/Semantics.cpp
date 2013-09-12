@@ -282,7 +282,7 @@ namespace fccl
       return target_ids_.size();
     }
 
-    void SemanticObject1xN::resizeTargets(std::size_t new_size)
+    void SemanticObject1xN::resize(std::size_t new_size)
     {
       target_ids_.resize(new_size);
     }

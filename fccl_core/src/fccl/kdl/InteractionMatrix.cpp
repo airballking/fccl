@@ -54,7 +54,7 @@ namespace fccl
   
     void InteractionMatrix::resize(unsigned int number_of_rows)
     {
-      resizeTargets(number_of_rows);
+      SemanticObject1xN::resize(number_of_rows);
       data_.resize(number_of_rows, 6);
     }
   
