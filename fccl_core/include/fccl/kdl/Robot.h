@@ -6,6 +6,7 @@
 #include <kdl/chainfksolverpos_recursive.hpp>
 #include <boost/shared_ptr.hpp>
 #include <string>
+#include <vector>
 #include <map>
 
 namespace fccl
@@ -22,23 +23,25 @@ namespace fccl
         KinematicChain(const urdf::Model& model, const SemanticObject1x1& chain_semantics);
         virtual ~KinematicChain();
     
-        bool init(const urdf::Model& model, const SemanticObject1x1& chain_semantics);
+        bool init(const SemanticObject1x1& semantics, const urdf::Model& model);
     
-        const fccl::kdl::JntArray& getSoftLowerJointLimits() const;
-        const fccl::kdl::JntArray& getSoftUpperJointLimits() const;
+        const JntArray& getSoftLowerJointLimits() const;
+        const JntArray& getSoftUpperJointLimits() const;
     
-        const fccl::kdl::JntArray& getHardLowerJointLimits() const;
-        const fccl::kdl::JntArray& getHardUpperJointLimits() const;
+        const JntArray& getHardLowerJointLimits() const;
+        const JntArray& getHardUpperJointLimits() const;
+
+        const std::vector<std::string>& getJointNames() const;
+        std::size_t getNumberOfJoints() const;
+        
+        bool isValid() const;
     
-        void calculateJacobian(const fccl::kdl::JntArray& joint_state, 
-            fccl::kdl::Jacobian& jacobian);
-        const fccl::kdl::Jacobian& calculateJacobian(const fccl::kdl::JntArray&
-            joint_state);
+        void calculateJacobian(const JntArray& joint_state, Jacobian& jacobian);
+        const Jacobian& calculateJacobian(const JntArray& joint_state);
     
-        void calculateForwardKinematics(const fccl::kdl::JntArray& joint_state, 
-            fccl::kdl::Transform& transform);
-        const fccl::kdl::Transform& calculateForwardKinematics(
-            const fccl::kdl::JntArray& joint_state);
+        void calculateForwardKinematics(const JntArray& joint_state, 
+            Transform& transform);
+        const Transform& calculateForwardKinematics(const JntArray& joint_state);
     
         virtual bool numericsEqual(const KinematicChain& other) const;
         
@@ -46,18 +49,26 @@ namespace fccl
         virtual bool operator!=(const KinematicChain& other) const;
     
       private:
+
+        void createSolvers(const KDL::Chain& chain);
+        bool extractJointNames(const KDL::Chain& chain);
+        bool extractJointLimits(const urdf::Model& model);
+        void resize(std::size_t new_size);
+
         FkSolverPtr jnt_to_pose_solver_;
         
         JacobianSolverPtr jnt_to_jac_solver_;
     
-        fccl::kdl::JntArray soft_lower_joint_limits_;
-        fccl::kdl::JntArray soft_upper_joint_limits_;
-        fccl::kdl::JntArray hard_lower_joint_limits_;
-        fccl::kdl::JntArray hard_upper_joint_limits_;
+        JntArray soft_lower_joint_limits_;
+        JntArray soft_upper_joint_limits_;
+        JntArray hard_lower_joint_limits_;
+        JntArray hard_upper_joint_limits_;
+
+        std::vector<std::string> joint_names_;
     
-        fccl::kdl::Jacobian jacobian_;
+        Jacobian jacobian_;
     
-        fccl::kdl::Transform transform_;
+        Transform transform_;
     };
   } // namespace kdl
 } // namespace fccl
