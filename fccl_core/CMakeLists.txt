@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(fccl_core)
 
-find_package(catkin REQUIRED COMPONENTS roscpp orocos_kdl urdf)
+find_package(catkin REQUIRED COMPONENTS roscpp orocos_kdl urdf kdl_parser)
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
