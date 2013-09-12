@@ -41,6 +41,7 @@ add_library(${PROJECT_NAME}
   src/fccl/kdl/Twist.cpp
   src/fccl/kdl/InteractionMatrix.cpp
   src/fccl/kdl/JntArray.cpp
+  src/fccl/kdl/Jacobian.cpp
   src/fccl/utils/Equalities.cpp
   src/fccl/utils/Hashing.cpp
   src/fccl/utils/Printing.cpp
