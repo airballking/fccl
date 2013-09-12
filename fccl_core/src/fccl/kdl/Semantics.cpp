@@ -306,6 +306,22 @@ namespace fccl
       return getTargetIndex(fu::hash(target_name));
     }
 
+    std::ostream& operator<<(std::ostream& os, const SemanticObject1xN& semantics)
+    {
+      os << "reference: " << semantics.getReferenceName() << " (";
+      os << semantics.getReferenceID() << ")\n";
+      os << "targets: \n";
+      for(std::size_t i=0; i<semantics.size(); i++)
+      {
+        os << semantics.getTargetName(i) << " (";
+        os << semantics.getTargetID(i) << ")";
+        if(i < (semantics.size() - 1))
+          os << "\n";
+      }
+
+      return os;
+    }
+ 
     SemanticObjectN::SemanticObjectN()
     {
       semantic_type_ = SEMANTICS_N;

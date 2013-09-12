@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <iostream>
 
 namespace fccl
 {
@@ -120,6 +121,9 @@ namespace fccl
         std::size_t getTargetIndex(size_t target_id) const;
         std::size_t getTargetIndex(const std::string& target_name) const;
 
+        friend std::ostream& operator<<(std::ostream& os, 
+            const SemanticObject1xN& semantics);
+ 
       protected:
         // hash-ID of the reference
         std::size_t reference_id_;
