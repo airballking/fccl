@@ -1,3 +1,6 @@
+#ifndef FCCL_KDL_KINEMATIC_CHAIN_H
+#define FCCL_KDL_KINEMATIC_CHAIN_H
+
 #include <fccl/kdl/Jacobian.h>
 #include <fccl/kdl/Transform.h>
 #include <fccl/kdl/Semantics.h>
@@ -72,3 +75,4 @@ namespace fccl
     };
   } // namespace kdl
 } // namespace fccl
+#endif // FCCL_KDL_KINEMATIC_CHAIN_H
