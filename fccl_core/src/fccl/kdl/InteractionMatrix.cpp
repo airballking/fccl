@@ -11,14 +11,14 @@ namespace fccl
     InteractionMatrix::InteractionMatrix(const fccl::kdl::InteractionMatrix& other) :
         SemanticObject1xN(other), data_(other.getData())
     {
-      assert(rows() == size()); 
+      assert(isValid());
     }
   
     InteractionMatrix::InteractionMatrix(const SemanticObject1xN& semantics, 
             const Eigen::Matrix<double, Eigen::Dynamic, 6>& data) :
         SemanticObject1xN(semantics), data_(data)
     {
-      assert(rows() == size()); 
+      assert(isValid());
     }
   
     InteractionMatrix::~InteractionMatrix()
@@ -30,6 +30,8 @@ namespace fccl
       // need to check for self-allocation
       if(this != &rhs)
       {
+        assert(rhs.isValid());
+
         this->resize(rhs.rows());
         this->setReferenceID(rhs.getReferenceID());
         this->setTargetIDs(rhs.getTargetIDs());
@@ -57,9 +59,21 @@ namespace fccl
       SemanticObject1xN::resize(number_of_rows);
       data_.resize(number_of_rows, 6);
     }
+
+    std::size_t InteractionMatrix::size() const
+    {
+      return rows();
+    }
+
+    bool InteractionMatrix::isValid() const
+    {
+      return data_.rows() == SemanticObject1xN::size();
+    }
   
     unsigned int InteractionMatrix::rows() const
     {
+      assert(isValid());
+
       return data_.rows();
     }
   
@@ -87,7 +101,7 @@ namespace fccl
     fccl::kdl::Twist InteractionMatrix::getRow(unsigned int row) const
     {
       assert(row < rows());
-      assert(rows() == size());
+      assert(isValid());
    
       Twist result;
       result.setReferenceID(getReferenceID());
@@ -104,7 +118,7 @@ namespace fccl
     void InteractionMatrix::setRow(unsigned int row, const fccl::kdl::Twist& twist)
     {
       assert(row < rows());
-      assert(rows() == size());
+      assert(isValid());
   
       setTargetID(row, twist.getTargetID());
       setReferenceID(twist.getReferenceID());
@@ -137,6 +151,7 @@ namespace fccl
     {
       // take care of semantics
       assert(transformationPossible(transform));
+
       setReferenceID(transform.getReferenceID());
   
       // copy frame because some of Eigens functions do not guarantee constness
