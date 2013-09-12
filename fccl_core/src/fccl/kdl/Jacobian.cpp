@@ -9,6 +9,12 @@ namespace fccl
     {
     }
 
+    Jacobian::Jacobian(std::size_t columns) :
+        SemanticObject1xN()
+    {
+      resize(columns);
+    }
+
     Jacobian::Jacobian(const Jacobian& other) :
         SemanticObject1xN(other), jacobian_(other.getData())
     {

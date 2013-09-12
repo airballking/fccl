@@ -14,6 +14,7 @@ namespace fccl
     {
       public:
         Jacobian();
+        Jacobian(std::size_t columns);
         Jacobian(const Jacobian& other);
         Jacobian(const SemanticObject1xN& semantics, const KDL::Jacobian& data);
  
