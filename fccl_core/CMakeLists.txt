@@ -101,6 +101,7 @@ catkin_add_gtest(${PROJECT_NAME}-test
                  test/Transform.cpp
                  test/Twist.cpp
                  test/InteractionMatrix.cpp
+                 test/Jacobian.cpp
                  test/JntArray.cpp
                  test/Features.cpp
                  test/Constraints.cpp)
