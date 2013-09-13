@@ -32,7 +32,7 @@ namespace fccl
       setData(other.getData());
     }
 
-   const KDL::JntArray& JntArray::getData() const
+    const KDL::JntArray& JntArray::getData() const
     {
       return data_;
     }
@@ -44,6 +44,16 @@ namespace fccl
       data_ = data;
     }
 
+    double& JntArray::operator()(std::size_t row)
+    {
+      return data_(row);
+    }
+
+    double JntArray::operator()(std::size_t row) const
+    {
+      return data_(row);
+    }
+ 
     bool JntArray::numericsEqual(const JntArray& other) const
     {
       return KDL::Equal(getData(), other.getData());

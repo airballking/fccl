@@ -24,6 +24,9 @@ namespace fccl
         const KDL::JntArray& getData() const;
         void setData(const KDL::JntArray& data);
 
+        double& operator()(std::size_t row);
+        double operator()(std::size_t row) const;
+ 
         virtual bool numericsEqual(const JntArray& other) const;
         
         bool operator==(const JntArray& other) const;
