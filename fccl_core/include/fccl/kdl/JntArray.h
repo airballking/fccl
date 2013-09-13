@@ -35,7 +35,6 @@ namespace fccl
         friend std::ostream& operator<<(std::ostream& os, 
             const JntArray& jnt_array);
  
-      private:
         KDL::JntArray data_;
     }; 
   } // namespace kdl

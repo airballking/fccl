@@ -39,7 +39,6 @@ namespace fccl
         friend std::ostream& operator<<(std::ostream& os, 
             const fccl::kdl::Twist& twist);
    
-      private:
         // numeric representation of the derivative 
         KDL::Twist twist_;
     };

@@ -52,7 +52,6 @@ namespace fccl
   
         friend std::ostream& operator<<(std::ostream& os, const Jacobian& jacobian);
  
-      private:
         KDL::Jacobian jacobian_;
     };
   } // namespace kdl 

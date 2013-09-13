@@ -39,7 +39,6 @@ namespace fccl
         friend std::ostream& operator<<(std::ostream& os, 
             const fccl::kdl::Transform& transform);
   
-      private:
         // actual numeric representation of transform
         KDL::Frame transform_;
     };

@@ -52,7 +52,6 @@ namespace fccl
         friend std::ostream& operator<<(std::ostream& os, 
             const fccl::kdl::InteractionMatrix& interaction_matrix);
   
-      private:
         // actual numeric representation of interaction matrix
         Eigen::Matrix< double, Eigen::Dynamic, 6 > data_;
     };
