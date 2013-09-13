@@ -42,6 +42,7 @@ add_library(${PROJECT_NAME}
   src/fccl/kdl/InteractionMatrix.cpp
   src/fccl/kdl/JntArray.cpp
   src/fccl/kdl/Jacobian.cpp
+  src/fccl/kdl/KinematicChain.cpp
   src/fccl/utils/Equalities.cpp
   src/fccl/utils/Hashing.cpp
   src/fccl/utils/Printing.cpp
@@ -103,8 +104,10 @@ catkin_add_gtest(${PROJECT_NAME}-test
                  test/InteractionMatrix.cpp
                  test/Jacobian.cpp
                  test/JntArray.cpp
+                 test/KinematicChain.cpp
                  test/Features.cpp
-                 test/Constraints.cpp)
+                 test/Constraints.cpp
+                 WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/test_data)
 
 # linking against our own library and all libraries from dependencies
 if(TARGET ${PROJECT_NAME}-test)
