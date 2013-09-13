@@ -3,12 +3,15 @@
 
 #include <string>
 #include <map>
+#include <boost/functional/hash.hpp>
 
 namespace fccl
 {
   namespace utils
   {  
     static std::map<std::size_t, std::string> hash_memory_;
+
+    static boost::hash<std::string> string_hash_;
 
     std::size_t hash(const std::string& value);
   

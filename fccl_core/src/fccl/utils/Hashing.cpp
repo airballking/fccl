@@ -3,11 +3,7 @@
 
 std::size_t fccl::utils::hash(const std::string& value)
 {
-  std::size_t result = 0;
-
-  for(unsigned int i=0; i<value.size(); i++)
-    result += 101*value[i];
-
+  std::size_t result = string_hash_(value);
   rememberHashValuePair(result, value);
 
   return result;
