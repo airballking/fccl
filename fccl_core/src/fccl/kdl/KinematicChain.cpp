@@ -21,7 +21,7 @@ namespace fccl
     {
     }
  
-    bool KinematicChain::init(const SemanticObject1x1& semantics, 
+    void KinematicChain::init(const SemanticObject1x1& semantics, 
         const urdf::Model& urdf)
     {
       KDL::Chain chain = extractChain(semantics, urdf);
@@ -34,8 +34,6 @@ namespace fccl
       initJointLimits(urdf, joint_names);
 
       initSolvers(chain);
-
-      return true;
     }
 
     const JntArray& KinematicChain::getSoftLowerJointLimits() const
@@ -76,6 +74,8 @@ namespace fccl
     void KinematicChain::calculateJacobian(const JntArray& joint_state, Jacobian& jacobian) const
     {
       assert(jacobian.semanticsEqual(jacobian_));
+      assert(Equal(joint_state.getTargetIDs(), jacobian_.getTargetIDs()));
+      assert(jnt_to_jac_solver_);
 
       int error = jnt_to_jac_solver_->JntToJac(joint_state.getData(), jacobian.jacobian_);
       assert(error == 0);
@@ -86,6 +86,7 @@ namespace fccl
     const Jacobian& KinematicChain::calculateJacobian(const JntArray& joint_state)
     {
       assert(Equal(joint_state.getTargetIDs(), jacobian_.getTargetIDs()));
+      assert(jnt_to_jac_solver_);
 
       int error = jnt_to_jac_solver_->JntToJac(joint_state.getData(), jacobian_.jacobian_);
       assert(error == 0);
@@ -99,6 +100,7 @@ namespace fccl
     {
       assert(transform.semanticsEqual(transform_));
       assert(Equal(joint_state.getTargetIDs(), jacobian_.getTargetIDs()));
+      assert(jnt_to_pose_solver_);
 
       int error = jnt_to_pose_solver_->JntToCart(joint_state.getData(), 
           transform.transform_);
@@ -109,9 +111,12 @@ namespace fccl
     const Transform& KinematicChain::calculateForwardKinematics(const JntArray& joint_state)
     {
       assert(Equal(joint_state.getTargetIDs(), jacobian_.getTargetIDs()));
- 
+      assert(jnt_to_pose_solver_);
+
       int error = jnt_to_pose_solver_->JntToCart(joint_state.getData(), transform_.transform_);
+
       assert(error == 0);
+      return transform_;
     }
  
     KDL::Chain KinematicChain::extractChain(const SemanticObject1x1& semantics, 

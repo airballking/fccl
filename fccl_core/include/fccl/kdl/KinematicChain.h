@@ -24,7 +24,7 @@ namespace fccl
         KinematicChain(const SemanticObject1x1& semantics, const urdf::Model& urdf);
         virtual ~KinematicChain();
     
-        bool init(const SemanticObject1x1& semantics, const urdf::Model& urdf);
+        void init(const SemanticObject1x1& semantics, const urdf::Model& urdf);
     
         const JntArray& getSoftLowerJointLimits() const;
         const JntArray& getSoftUpperJointLimits() const;
