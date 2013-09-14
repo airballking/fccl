@@ -122,6 +122,14 @@ namespace fccl
       return (getTargetID() == other_p->getTargetID()) && (getReferenceID() == other_p->getReferenceID());
     }
 
+    bool SemanticObject1x1::operator<(const SemanticObject1x1& rhs) const
+    {
+      // THIS SCREAMS FOR REFACTORING:
+      // (1) have semanticInterface, where Semantic1x1 inherits from this
+      // (2) have semanticObjectInterface, which holds a SemanticInterface
+      return semantics_ < rhs.semantics_; 
+    }
+
     SemanticObject1x1 SemanticObject1x1::inverse() const
     {
       SemanticObject1x1 result;

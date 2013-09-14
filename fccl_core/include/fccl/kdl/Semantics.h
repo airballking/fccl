@@ -65,6 +65,7 @@ namespace fccl
         void setTargetName(const std::string& target_name);
   
         virtual bool semanticsEqual(const SemanticObject& other) const;
+        bool operator<(const SemanticObject1x1& rhs) const;
 
         SemanticObject1x1 inverse() const;
 
