@@ -18,6 +18,7 @@ namespace fccl
             const fccl::kdl::SemanticObject1x1& semantics);
         void removeTransform(const fccl::kdl::SemanticObject1x1& semantics);
         void clear();
+        bool hasTransform(const fccl::kdl::SemanticObject1x1& semantics);
 
         boost::mutex& getMutex(); 
 

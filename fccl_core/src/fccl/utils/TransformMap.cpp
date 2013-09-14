@@ -42,6 +42,13 @@ namespace fccl
       map_.clear();
     }
 
+    bool TransformMap::hasTransform(const fccl::kdl::SemanticObject1x1& semantics)
+    {
+      boost::mutex::scoped_lock scoped_lock(getMutex());
+     
+      return map_.find(semantics) != map_.end();
+    }
+
     INLINE 
     boost::mutex& TransformMap::getMutex()
     {
