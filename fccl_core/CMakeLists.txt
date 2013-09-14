@@ -4,7 +4,7 @@ project(fccl_core)
 find_package(catkin REQUIRED COMPONENTS roscpp orocos_kdl urdf kdl_parser)
 
 ## System dependencies are found with CMake's conventions
-# find_package(Boost REQUIRED COMPONENTS system)
+find_package(Boost REQUIRED COMPONENTS thread)
 
 
 ###################################
@@ -46,6 +46,7 @@ add_library(${PROJECT_NAME}
   src/fccl/utils/Equalities.cpp
   src/fccl/utils/Hashing.cpp
   src/fccl/utils/Printing.cpp
+  src/fccl/utils/TransformMap.cpp
   src/fccl/base/Constraints.cpp
   src/fccl/base/Features.cpp
   src/fccl/base/FeatureTypes.cpp
@@ -107,6 +108,7 @@ catkin_add_gtest(${PROJECT_NAME}-test
                  test/KinematicChain.cpp
                  test/Features.cpp
                  test/Constraints.cpp
+                 test/TransformMap.cpp
                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/test_data)
 
 # linking against our own library and all libraries from dependencies
