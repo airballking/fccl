@@ -25,7 +25,7 @@ namespace fccl
     }
   
     SemanticObject1x1::SemanticObject1x1(const SemanticObject1x1& other) :
-        reference_id_(other.getReferenceID()), target_id_(other.getTargetID())
+        semantics_(other.getReferenceID(), other.getTargetID())
     {
       semantic_type_ = SEMANTICS_1x1;
     }
@@ -40,7 +40,7 @@ namespace fccl
 
 
     SemanticObject1x1::SemanticObject1x1(std::size_t reference_id, std::size_t target_id) :
-        reference_id_(reference_id), target_id_(target_id)
+        semantics_(reference_id, target_id)
     {
       semantic_type_ = SEMANTICS_1x1;
     }
@@ -73,12 +73,12 @@ namespace fccl
  
     std::size_t SemanticObject1x1::getReferenceID() const
     {
-      return reference_id_;
+      return semantics_.first;
     }
 
     void SemanticObject1x1::setReferenceID(std::size_t reference_id)
     {
-      reference_id_ = reference_id;
+      semantics_.first = reference_id;
     }
   
     const std::string& SemanticObject1x1::getReferenceName() const
@@ -88,17 +88,17 @@ namespace fccl
 
     void SemanticObject1x1::setReferenceName(const std::string& reference_name)
     {
-      reference_id_ = fu::hash(reference_name);
+      setReferenceID(fu::hash(reference_name));
     }
   
     std::size_t SemanticObject1x1::getTargetID() const
     {
-      return target_id_;
+      return semantics_.second;
     }
 
     void SemanticObject1x1::setTargetID(std::size_t target_id)
     {
-      target_id_ = target_id;
+      semantics_.second = target_id;
     }
   
     const std::string& SemanticObject1x1::getTargetName() const
@@ -108,7 +108,7 @@ namespace fccl
 
     void SemanticObject1x1::setTargetName(const std::string& target_name)
     {
-      target_id_ = fu::hash(target_name);
+      setTargetID(fu::hash(target_name));
     }
   
     bool SemanticObject1x1::semanticsEqual(const SemanticObject& other) const

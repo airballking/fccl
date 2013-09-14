@@ -69,11 +69,10 @@ namespace fccl
         SemanticObject1x1 inverse() const;
 
       protected:
-        // hash-ID of the reference
-        std::size_t reference_id_;
-
-        // hash-ID of the target
-        std::size_t target_id_; 
+        // internal representation of the semantics:
+        // - first element of the pair holds the hash value of the reference name
+        // - second element of the pair holds the hash value of the reference name
+        std::pair<std::size_t, std::size_t> semantics_;
     };
 
     class SemanticObject1xN : public SemanticObject
