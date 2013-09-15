@@ -43,6 +43,7 @@ add_library(${PROJECT_NAME}
   src/fccl/kdl/JntArray.cpp
   src/fccl/kdl/Jacobian.cpp
   src/fccl/kdl/KinematicChain.cpp
+  src/fccl/kdl/JointMappingMatrix.cpp
   src/fccl/utils/Equalities.cpp
   src/fccl/utils/Hashing.cpp
   src/fccl/utils/Printing.cpp
