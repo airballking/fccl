@@ -44,7 +44,8 @@ TEST_F(KinematicChainTest, Basics)
 {
   KinematicChain kinematics1(semantics, urdf);
   
-  EXPECT_TRUE(kinematics1.getSemantics().semanticsEqual(semantics));
+  EXPECT_TRUE(kinematics1.getTransformationSemantics().semanticsEqual(semantics));
+  EXPECT_TRUE(kinematics1.getJointSemantics().semanticsEqual(joint_state));
 
   EXPECT_EQ(kinematics1.getSoftLowerJointLimits().size(), 
       kinematics1.getNumberOfJoints());

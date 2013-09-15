@@ -35,7 +35,8 @@ namespace fccl
         // not real-time safe
         std::vector<std::string> getJointNames() const;
         std::size_t getNumberOfJoints() const;
-        const SemanticObject1x1& getSemantics() const;
+        const SemanticObject1x1& getTransformationSemantics() const;
+        const SemanticObjectN& getJointSemantics() const;
         
         void calculateJacobian(const JntArray& joint_state, Jacobian& jacobian);
         const Jacobian& calculateJacobian(const JntArray& joint_state);

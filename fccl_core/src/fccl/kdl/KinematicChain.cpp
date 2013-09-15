@@ -66,9 +66,14 @@ namespace fccl
       return soft_lower_joint_limits_.size();
     }
 
-    const SemanticObject1x1& KinematicChain::getSemantics() const
+    const SemanticObject1x1& KinematicChain::getTransformationSemantics() const
     {
       return transform_.getSemantics();
+    }
+
+    const SemanticObjectN& KinematicChain::getJointSemantics() const
+    {
+      return hard_lower_joint_limits_.getSemantics();
     }
     
     void KinematicChain::calculateJacobian(const JntArray& joint_state, Jacobian& jacobian)
