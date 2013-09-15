@@ -329,6 +329,267 @@ namespace fccl
 
       return os;
     }
+
+    SemanticObjectNxM::SemanticObjectNxM()
+    {
+      semantic_type_ = SEMANTICS_NxM;
+    }
+
+    SemanticObjectNxM::SemanticObjectNxM(const SemanticObjectNxM& other) :
+        reference_ids_(other.getReferenceIDs()), target_ids_(other.getTargetIDs())
+    {
+      semantic_type_ = SEMANTICS_NxM;
+    }
+
+   
+    SemanticObjectNxM::SemanticObjectNxM(const std::vector<std::string>& reference_names, const std::vector<std::string>& target_names)
+    {
+      semantic_type_ = SEMANTICS_NxM;
+      setReferenceNames(reference_names);
+      setTargetNames(target_names);
+    }
+
+
+    SemanticObjectNxM::SemanticObjectNxM(const std::vector<std::size_t>& reference_ids, const std::vector<std::size_t>& target_ids) :
+        reference_ids_(reference_ids), target_ids_(target_ids)
+    {
+      semantic_type_ = SEMANTICS_NxM;
+    }
+
+    SemanticObjectNxM::~SemanticObjectNxM()
+    {
+    }
+ 
+    SemanticObjectNxM& SemanticObjectNxM::operator=(const SemanticObjectNxM& other)
+    {
+      // protect against self-assignment
+      if(this != &other)
+      {
+        setReferenceIDs(other.getReferenceIDs());
+        setTargetIDs(other.getTargetIDs());
+      }
+
+      return *this;
+    }
+ 
+    const SemanticObjectNxM& SemanticObjectNxM::getSemantics() const
+    {
+      return *this;
+    }
+ 
+    void SemanticObjectNxM::setSemantics(const SemanticObjectNxM& semantics)
+    {
+      *this = semantics;
+    }
+ 
+    std::size_t SemanticObjectNxM::getReferenceID(std::size_t index) const
+    {
+      assert(referenceIndexValid(index));
+
+      return reference_ids_[index];
+    }
+
+    void SemanticObjectNxM::setReferenceID(std::size_t index, std::size_t reference_id)
+    {
+      assert(referenceIndexValid(index));
+
+      reference_ids_[index] = reference_id;
+    }
+ 
+    const std::string& SemanticObjectNxM::getReferenceName(std::size_t index) const
+    {
+      return fu::retrieveValue(getReferenceID(index));
+    }
+
+    void SemanticObjectNxM::setReferenceName(std::size_t index, const std::string& reference_name)
+    {
+      setReferenceID(index, fu::hash(reference_name));
+    }
+ 
+    const std::vector<std::size_t>& SemanticObjectNxM::getReferenceIDs() const
+    {
+      return reference_ids_;
+    }
+
+    void SemanticObjectNxM::setReferenceIDs(const std::vector<std::size_t>& reference_ids)
+    {
+      assert(sizeReferences() == reference_ids.size());
+
+      reference_ids_ = reference_ids;
+    }
+
+    std::vector<std::string> SemanticObjectNxM::getReferenceNames() const
+    {
+      std::vector<std::string> result;
+
+      for(std::size_t i=0; i<sizeReferences(); i++)
+        result.push_back(getReferenceName(i));
+
+      return result;
+    }
+
+    void SemanticObjectNxM::setReferenceNames(const std::vector<std::string>& reference_names)
+    {
+      assert(sizeReferences() == reference_names.size());
+
+      for(std::size_t i=0; i<sizeReferences(); i++)
+        setReferenceName(i, reference_names[i]);
+    }
+
+    std::size_t SemanticObjectNxM::getTargetID(std::size_t index) const
+    {
+      assert(targetIndexValid(index));
+      
+      return target_ids_[index];
+    }
+
+    void SemanticObjectNxM::setTargetID(std::size_t index, std::size_t target_id)
+    {
+      assert(targetIndexValid(index));
+
+      target_ids_[index] = target_id;
+    }
+ 
+    const std::string& SemanticObjectNxM::getTargetName(std::size_t index) const
+    {
+      return fu::retrieveValue(getTargetID(index));
+    }
+
+    void SemanticObjectNxM::setTargetName(std::size_t index, const std::string& target_name)
+    {
+      setTargetID(index, fu::hash(target_name));
+    }
+ 
+    const std::vector<std::size_t>& SemanticObjectNxM::getTargetIDs() const
+    {
+      return target_ids_;
+    }
+
+    void SemanticObjectNxM::setTargetIDs(const std::vector<std::size_t>& target_ids)
+    {
+      assert(sizeTargets() == target_ids.size());
+
+      target_ids_ = target_ids;
+    }
+ 
+    std::vector<std::string> SemanticObjectNxM::getTargetNames() const
+    {
+      std::vector<std::string> result;
+
+      for(std::size_t i=0; i<sizeTargets(); i++)
+        result.push_back(getTargetName(i));
+
+      return result;
+    }
+
+    void SemanticObjectNxM::setTargetNames(const std::vector<std::string>& target_names)
+    {
+      assert(sizeTargets() == target_names.size());
+
+      for(std::size_t i=0; i<sizeTargets(); i++)
+        setTargetName(i, target_names[i]);
+    }
+ 
+    bool SemanticObjectNxM::semanticsEqual(const SemanticObject& other) const
+    {
+      if(!semanticTypesEqual(other))
+        return false;
+
+      const SemanticObjectNxM* other_p = static_cast<const SemanticObjectNxM*>(&other);
+      assert(other_p);     
+
+      return (fu::Equal(getTargetIDs(), other_p->getTargetIDs()) 
+          && (fu::Equal(getReferenceIDs(), other_p->getReferenceIDs())));
+    }
+ 
+    std::pair<std::size_t, std::size_t> SemanticObjectNxM::size() const
+    {
+      return std::pair<std::size_t, std::size_t>(sizeTargets(), sizeReferences());
+    }
+
+    void SemanticObjectNxM::resize(const std::pair<std::size_t, std::size_t>& new_size)
+    {
+      resizeTargets(new_size.first);
+      resizeReferences(new_size.second);
+    }
+ 
+    std::size_t SemanticObjectNxM::sizeReferences() const
+    {
+      return reference_ids_.size();
+    }
+
+    void SemanticObjectNxM::resizeReferences(std::size_t new_size)
+    {
+      reference_ids_.resize(new_size);
+    }
+ 
+    std::size_t SemanticObjectNxM::sizeTargets() const
+    {
+      return target_ids_.size();
+    }
+
+    void SemanticObjectNxM::resizeTargets(std::size_t new_size)
+    {
+      target_ids_.resize(new_size);
+    }
+ 
+    bool SemanticObjectNxM::referenceIndexValid(std::size_t index) const
+    {
+      return index < sizeReferences();
+    }
+
+    std::size_t SemanticObjectNxM::getReferenceIndex(size_t reference_id) const
+    {
+      for(std::size_t i=0; i<sizeReferences(); i++)
+        if(getReferenceID(i) == reference_id)
+          return i;
+
+      return sizeReferences();
+    }
+
+    std::size_t SemanticObjectNxM::getReferenceIndex(const std::string& reference_name) const
+    {
+      return getReferenceIndex(fu::hash(reference_name));
+    } 
+ 
+    bool SemanticObjectNxM::targetIndexValid(std::size_t index) const
+    {
+      return index < sizeTargets();
+    }
+
+    std::size_t SemanticObjectNxM::getTargetIndex(size_t target_id) const
+    {
+      for(std::size_t i=0; i<sizeTargets(); i++)
+        if(getTargetID(i) == target_id)
+          return i;
+
+      return sizeTargets();
+    }
+
+    std::size_t SemanticObjectNxM::getTargetIndex(const std::string& target_name) const
+    {
+      return getTargetIndex(fu::hash(target_name));
+    }
+ 
+    std::ostream& operator<<(std::ostream& os, const SemanticObjectNxM& semantics)
+    {
+      os << "references: \n";
+      for(std::size_t i=0; i<semantics.sizeReferences(); i++)
+      {
+        os << semantics.getReferenceName(i) << " (";
+        os << semantics.getReferenceID(i) << ")";
+      }
+      os << "targets: \n";
+      for(std::size_t i=0; i<semantics.sizeTargets(); i++)
+      {
+        os << semantics.getTargetName(i) << " (";
+        os << semantics.getTargetID(i) << ")";
+        if(i < (semantics.sizeTargets() - 1))
+          os << "\n";
+      }
+
+      return os;
+    }
  
     SemanticObjectN::SemanticObjectN()
     {

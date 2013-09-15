@@ -17,7 +17,7 @@ namespace fccl
 
       SEMANTICS_1xN = 2,
 
-      SEMANTICS_NxN = 3,
+      SEMANTICS_NxM = 3,
 
       SEMANTICS_N = 4,
 
@@ -131,6 +131,80 @@ namespace fccl
         // hash-ID of the target
         std::vector<std::size_t> target_ids_;
     };
+
+    class SemanticObjectNxM : public SemanticObject
+    {
+      public:
+        SemanticObjectNxM();
+        SemanticObjectNxM(const SemanticObjectNxM& other);
+        SemanticObjectNxM(const std::vector<std::string>& reference_names, 
+            const std::vector<std::string>& target_names);
+        SemanticObjectNxM(const std::vector<std::size_t>& reference_ids, 
+            const std::vector<std::size_t>& target_ids);
+  
+        virtual ~SemanticObjectNxM();
+  
+        SemanticObjectNxM& operator=(const SemanticObjectNxM& other);
+
+        const SemanticObjectNxM& getSemantics() const;
+        void setSemantics(const SemanticObjectNxM& semantics);
+
+        std::size_t getReferenceID(std::size_t index) const;
+        void setReferenceID(std::size_t index, std::size_t reference_id);
+  
+        const std::string& getReferenceName(std::size_t index) const;
+        void setReferenceName(std::size_t index, const std::string& reference_name);
+
+        const std::vector<std::size_t>& getReferenceIDs() const;
+        void setReferenceIDs(const std::vector<std::size_t>& reference_ids);
+
+        // not real-time safe
+        std::vector<std::string> getReferenceNames() const;
+        void setReferenceNames(const std::vector<std::string>& reference_names);
+
+        std::size_t getTargetID(std::size_t index) const;
+        void setTargetID(std::size_t index, std::size_t target_id);
+
+        const std::string& getTargetName(std::size_t index) const;
+        void setTargetName(std::size_t index, const std::string& target_name);
+
+        const std::vector<std::size_t>& getTargetIDs() const;
+        void setTargetIDs(const std::vector<std::size_t>& target_ids);
+  
+        // not real-time safe!
+        std::vector<std::string> getTargetNames() const;
+        void setTargetNames(const std::vector<std::string>& target_names);
+  
+        virtual bool semanticsEqual(const SemanticObject& other) const;
+
+        virtual std::pair<std::size_t, std::size_t> size() const;
+        virtual void resize(const std::pair<std::size_t, std::size_t>& new_size);
+
+        std::size_t sizeReferences() const;
+        void resizeReferences(std::size_t new_size);
+
+        std::size_t sizeTargets() const;
+        void resizeTargets(std::size_t new_size);
+
+        bool referenceIndexValid(std::size_t index) const;
+        std::size_t getReferenceIndex(size_t reference_id) const;
+        std::size_t getReferenceIndex(const std::string& reference_name) const;
+
+        bool targetIndexValid(std::size_t index) const;
+        std::size_t getTargetIndex(size_t target_id) const;
+        std::size_t getTargetIndex(const std::string& target_name) const;
+
+        friend std::ostream& operator<<(std::ostream& os, 
+            const SemanticObjectNxM& semantics);
+ 
+      protected:
+        // hash-ID of the reference
+        std::vector<std::size_t> reference_ids_;
+
+        // hash-ID of the target
+        std::vector<std::size_t> target_ids_;
+    };
+
 
     class SemanticObjectN : public SemanticObject
     {
