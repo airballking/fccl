@@ -71,7 +71,7 @@ namespace fccl
       return transform_.getSemantics();
     }
     
-    void KinematicChain::calculateJacobian(const JntArray& joint_state, Jacobian& jacobian) const
+    void KinematicChain::calculateJacobian(const JntArray& joint_state, Jacobian& jacobian)
     {
       assert(jacobian.semanticsEqual(jacobian_));
       assert(Equal(joint_state.getTargetIDs(), jacobian_.getTargetIDs()));
@@ -80,23 +80,17 @@ namespace fccl
       int error = jnt_to_jac_solver_->JntToJac(joint_state.getData(), jacobian.jacobian_);
       assert(error == 0);
 
-      // TODO: change reference point!
+      jacobian.jacobian_.changeRefPoint(-calculateForwardKinematics(joint_state).getTransform().p);
     }
 
     const Jacobian& KinematicChain::calculateJacobian(const JntArray& joint_state)
     {
-      assert(Equal(joint_state.getTargetIDs(), jacobian_.getTargetIDs()));
-      assert(jnt_to_jac_solver_);
-
-      int error = jnt_to_jac_solver_->JntToJac(joint_state.getData(), jacobian_.jacobian_);
-      assert(error == 0);
-
-      // TODO: change reference point! 
+      calculateJacobian(joint_state, jacobian_);
       return jacobian_;
     }
  
     void KinematicChain::calculateForwardKinematics(const JntArray& joint_state, 
-        Transform& transform) const
+        Transform& transform)
     {
       assert(transform.semanticsEqual(transform_));
       assert(Equal(joint_state.getTargetIDs(), jacobian_.getTargetIDs()));
@@ -110,12 +104,7 @@ namespace fccl
 
     const Transform& KinematicChain::calculateForwardKinematics(const JntArray& joint_state)
     {
-      assert(Equal(joint_state.getTargetIDs(), jacobian_.getTargetIDs()));
-      assert(jnt_to_pose_solver_);
-
-      int error = jnt_to_pose_solver_->JntToCart(joint_state.getData(), transform_.transform_);
-
-      assert(error == 0);
+      calculateForwardKinematics(joint_state, transform_);
       return transform_;
     }
  

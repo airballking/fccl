@@ -37,11 +37,11 @@ namespace fccl
         std::size_t getNumberOfJoints() const;
         const SemanticObject1x1& getSemantics() const;
         
-        void calculateJacobian(const JntArray& joint_state, Jacobian& jacobian) const;
+        void calculateJacobian(const JntArray& joint_state, Jacobian& jacobian);
         const Jacobian& calculateJacobian(const JntArray& joint_state);
     
         void calculateForwardKinematics(const JntArray& joint_state, 
-            Transform& transform) const;
+            Transform& transform);
         const Transform& calculateForwardKinematics(const JntArray& joint_state);
     
       private:
