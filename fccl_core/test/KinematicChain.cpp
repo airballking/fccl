@@ -80,4 +80,6 @@ TEST_F(KinematicChainTest, Basics)
   EXPECT_STREQ(jac.getReferenceName().c_str(), arm_base_name.c_str());
   for(std::size_t i=0; i<joint_names.size(); i++)
     EXPECT_STREQ(joint_names[i].c_str(), jac.getTargetName(i).c_str());
+
+  EXPECT_TRUE(kinematics1.getJacobianSemantics().semanticsEqual(SemanticObject1xN(semantics.getReferenceName(), joint_names)));
 }

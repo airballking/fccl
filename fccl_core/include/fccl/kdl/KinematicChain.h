@@ -36,6 +36,7 @@ namespace fccl
         std::size_t getNumberOfJoints() const;
         const SemanticObject1x1& getTransformationSemantics() const;
         const SemanticObjectN& getJointSemantics() const;
+        const SemanticObject1xN& getJacobianSemantics() const;
         
         void calculateJacobian(const JntArray& joint_state, Jacobian& jacobian);
         const Jacobian& calculateJacobian(const JntArray& joint_state);

@@ -72,7 +72,12 @@ namespace fccl
     {
       return hard_lower_joint_limits_.getSemantics();
     }
-    
+
+    const SemanticObject1xN& KinematicChain::getJacobianSemantics() const
+    {
+      return jacobian_.getSemantics();
+    }
+   
     void KinematicChain::calculateJacobian(const JntArray& joint_state, Jacobian& jacobian)
     {
       assert(jacobian.semanticsEqual(jacobian_));
