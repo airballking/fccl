@@ -58,10 +58,15 @@ TEST_F(JacobianTest, Basics)
   j5.setReferenceName(j.getReferenceName());
   j5.setData(j.getData());
 
+  Jacobian j6;
+  j6.init(j.getSemantics());
+  j6.setData(j.getData());
+
   EXPECT_EQ(j, j2);
   EXPECT_EQ(j, j3);
   EXPECT_EQ(j, j4);
   EXPECT_EQ(j, j5);
+  EXPECT_EQ(j, j6);
 
   EXPECT_TRUE(j.columnIndexValid(0));
   EXPECT_TRUE(j.rowIndexValid(5));

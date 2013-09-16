@@ -19,6 +19,8 @@ namespace fccl
         Jacobian(const SemanticObject1xN& semantics, const KDL::Jacobian& data);
  
         virtual ~Jacobian();
+
+        void init(const SemanticObject1xN& semantics);
  
         Jacobian& operator=(const Jacobian& other);
  

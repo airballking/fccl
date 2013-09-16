@@ -32,6 +32,13 @@ namespace fccl
     {
     }
 
+    void Jacobian::init(const SemanticObject1xN& semantics)
+    {
+      resize(semantics.size());
+
+      setSemantics(semantics);
+    }
+
     Jacobian& Jacobian::operator=(const Jacobian& other)
     {
       if(this != &other)
