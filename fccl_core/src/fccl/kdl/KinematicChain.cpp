@@ -24,16 +24,13 @@ namespace fccl
     void KinematicChain::init(const SemanticObject1x1& semantics, 
         const urdf::Model& urdf)
     {
-      KDL::Chain chain = extractChain(semantics, urdf);
-      std::vector<std::string> joint_names = extractJointNames(chain);
+      extractChain(semantics, urdf);
 
-      resize(chain.getNrOfJoints());
+      extractJointNames();
 
-      rememberSemantics(joint_names, semantics);
+      extractJointLimits(urdf);
 
-      initJointLimits(urdf, joint_names);
-
-      initSolvers(chain);
+      prepareReturnValues(semantics);
     }
 
     const JntArray& KinematicChain::getSoftLowerJointLimits() const
@@ -58,12 +55,12 @@ namespace fccl
 
     std::vector<std::string> KinematicChain::getJointNames() const
     {
-      return soft_lower_joint_limits_.getTargetNames();
+      return joint_names_;
     } 
     
     std::size_t KinematicChain::getNumberOfJoints() const
     {
-      return soft_lower_joint_limits_.size();
+      return chain_.getNrOfJoints();
     }
 
     const SemanticObject1x1& KinematicChain::getTransformationSemantics() const
@@ -80,9 +77,11 @@ namespace fccl
     {
       assert(jacobian.semanticsEqual(jacobian_));
       assert(Equal(joint_state.getTargetIDs(), jacobian_.getTargetIDs()));
-      assert(jnt_to_jac_solver_);
 
-      int error = jnt_to_jac_solver_->JntToJac(joint_state.getData(), jacobian.jacobian_);
+      KDL::ChainJntToJacSolver jnt_to_jac_solver(chain_);
+      int error = jnt_to_jac_solver.JntToJac(joint_state.getData(), jacobian.jacobian_);
+
+      // TODO(Georg): turn this into an exception
       assert(error == 0);
 
       jacobian.jacobian_.changeRefPoint(-calculateForwardKinematics(joint_state).getTransform().p);
@@ -99,11 +98,12 @@ namespace fccl
     {
       assert(transform.semanticsEqual(transform_));
       assert(Equal(joint_state.getTargetIDs(), jacobian_.getTargetIDs()));
-      assert(jnt_to_pose_solver_);
 
-      int error = jnt_to_pose_solver_->JntToCart(joint_state.getData(), 
+      KDL::ChainFkSolverPos_recursive jnt_to_pose_solver(chain_);
+      int error = jnt_to_pose_solver.JntToCart(joint_state.getData(), 
           transform.transform_);
  
+      // TODO(Georg): turn this into an exception
       assert(error == 0);
     }
 
@@ -113,46 +113,42 @@ namespace fccl
       return transform_;
     }
  
-    KDL::Chain KinematicChain::extractChain(const SemanticObject1x1& semantics, 
-        const urdf::Model& urdf) const
+    void KinematicChain::extractChain(const SemanticObject1x1& semantics, 
+        const urdf::Model& urdf)
     {
+      // TODO(Georg): make all of these exceptions
       KDL::Tree tree;
       assert(kdl_parser::treeFromUrdfModel(urdf, tree));
 
-      KDL::Chain chain;
       assert(tree.getChain(semantics.getReferenceName(),
-          semantics.getTargetName(), chain));
-
-      return chain;
+          semantics.getTargetName(), chain_));
     }
 
-    void KinematicChain::initSolvers(const KDL::Chain& chain)
+    void KinematicChain::extractJointNames()
     {
-      jnt_to_pose_solver_ = boost::shared_ptr<KDL::ChainFkSolverPos_recursive>(new KDL::ChainFkSolverPos_recursive(chain));
-      jnt_to_jac_solver_ = boost::shared_ptr<KDL::ChainJntToJacSolver>(new KDL::ChainJntToJacSolver(chain));
+      joint_names_.clear();
+
+      for(unsigned int i=0; i<chain_.getNrOfSegments(); i++)
+        if(isJoint(chain_.getSegment(i)))
+          joint_names_.push_back(chain_.getSegment(i).getJoint().getName());
     }
 
-    std::vector<std::string> KinematicChain::extractJointNames(const KDL::Chain& chain) const
+    void KinematicChain::extractJointLimits(const urdf::Model& urdf)
     {
-      std::vector<std::string> joint_names;
+      SemanticObjectN joint_semantics(joint_names_);
+      soft_lower_joint_limits_.init(joint_semantics);
+      soft_upper_joint_limits_.init(joint_semantics);
+      hard_lower_joint_limits_.init(joint_semantics);
+      hard_upper_joint_limits_.init(joint_semantics);
 
-      for(unsigned int i=0; i<chain.getNrOfSegments(); i++)
-        if(isJoint(chain.getSegment(i)))
-          joint_names.push_back(chain.getSegment(i).getJoint().getName());
-
-      return joint_names;
-    }
-
-    void KinematicChain::initJointLimits(const urdf::Model& urdf, 
-        const std::vector<std::string>& joint_names)
-    {
-      for(std::size_t i=0; i<joint_names.size(); i++)
+      for(std::size_t i=0; i<joint_names_.size(); i++)
       {
         const boost::shared_ptr<urdf::JointSafety> soft_safety_limits =
-            urdf.getJoint(joint_names[i])->safety;
+            urdf.getJoint(joint_names_[i])->safety;
         const boost::shared_ptr<urdf::JointLimits> hard_joint_limits =
-            urdf.getJoint(joint_names[i])->limits;
+            urdf.getJoint(joint_names_[i])->limits;
   
+        // TODO(Georg): turn these into exceptions
         assert(soft_safety_limits);
         assert(hard_joint_limits);
   
@@ -163,28 +159,11 @@ namespace fccl
       }
     }
 
-    void KinematicChain::rememberSemantics(const std::vector<std::string>& 
-        joint_names, const SemanticObject1x1& semantics)
+    void KinematicChain::prepareReturnValues(const SemanticObject1x1& semantics)
     {
-      soft_lower_joint_limits_.setTargetNames(joint_names);
-      soft_upper_joint_limits_.setTargetNames(joint_names);
-      hard_lower_joint_limits_.setTargetNames(joint_names);
-      hard_upper_joint_limits_.setTargetNames(joint_names);
-
-      jacobian_.setTargetNames(joint_names);
-      jacobian_.setReferenceName(semantics.getReferenceName());
+      jacobian_.init(SemanticObject1xN(semantics.getReferenceName(), joint_names_));
 
       transform_.setSemantics(semantics);
-    }
-
-    void KinematicChain::resize(std::size_t new_size)
-    {
-      soft_lower_joint_limits_.resize(new_size);
-      soft_upper_joint_limits_.resize(new_size);
-      hard_lower_joint_limits_.resize(new_size);
-      hard_upper_joint_limits_.resize(new_size);
-
-      jacobian_.resize(new_size);
     }
 
   } // namespace kdl

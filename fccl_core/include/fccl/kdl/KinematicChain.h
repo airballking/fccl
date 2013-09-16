@@ -8,7 +8,6 @@
 #include <kdl/chainjnttojacsolver.hpp>
 #include <kdl/chainfksolverpos_recursive.hpp>
 #include <urdf/model.h>
-#include <boost/shared_ptr.hpp>
 #include <string>
 #include <vector>
 #include <map>
@@ -46,27 +45,25 @@ namespace fccl
         const Transform& calculateForwardKinematics(const JntArray& joint_state);
     
       private:
-        KDL::Chain extractChain(const SemanticObject1x1& semantics, 
-            const urdf::Model& urdf) const;
-        std::vector<std::string> extractJointNames(const KDL::Chain& chain) const;
+        void extractChain(const SemanticObject1x1& semantics, 
+            const urdf::Model& urdf);
 
-        void initJointLimits(const urdf::Model& urdf, 
-            const std::vector<std::string>& joint_names);
-        void initSolvers(const KDL::Chain& chain);
+        void extractJointNames();
 
-        void rememberSemantics(const std::vector<std::string>& joint_names,
-            const SemanticObject1x1& semantics);
-        void resize(std::size_t new_size);
+        void extractJointLimits(const urdf::Model& urdf);
 
-        boost::shared_ptr<KDL::ChainFkSolverPos_recursive> jnt_to_pose_solver_;
-        
-        boost::shared_ptr<KDL::ChainJntToJacSolver> jnt_to_jac_solver_;
-    
+        void prepareReturnValues(const SemanticObject1x1& semantics);
+
+        KDL::Chain chain_;
+
+        std::vector<std::string> joint_names_;
+
         JntArray soft_lower_joint_limits_;
         JntArray soft_upper_joint_limits_;
         JntArray hard_lower_joint_limits_;
         JntArray hard_upper_joint_limits_;
 
+        // pre-allocated memory for our return values
         Jacobian jacobian_;
         Transform transform_;
     };
