@@ -110,6 +110,7 @@ catkin_add_gtest(${PROJECT_NAME}-test
                  test/Features.cpp
                  test/Constraints.cpp
                  test/TransformMap.cpp
+                 test/JointMappingMatrix
                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/test_data)
 
 # linking against our own library and all libraries from dependencies
