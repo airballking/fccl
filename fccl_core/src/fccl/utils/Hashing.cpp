@@ -19,6 +19,7 @@ const std::string& fccl::utils::retrieveValue(std::size_t hash)
 {
   std::map<std::size_t, std::string>::iterator it = hash_memory_.find(hash);
 
+  // TODO(Georg): Turns this into an exception
   assert(it != hash_memory_.end());
 
   return it->second;
