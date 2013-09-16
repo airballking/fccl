@@ -17,6 +17,9 @@ namespace fccl
             const Eigen::Matrix< double, Eigen::Dynamic, Eigen::Dynamic >& data);
    
         ~JointMappingMatrix();
+
+        void init(const SemanticObjectNxM& semantics);
+
         const Eigen::Matrix< double, Eigen::Dynamic, Eigen::Dynamic >& getData() const;
         void setData(const Eigen::Matrix< double, Eigen::Dynamic, Eigen::Dynamic >& data);
   

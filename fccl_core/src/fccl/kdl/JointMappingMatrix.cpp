@@ -27,6 +27,12 @@ namespace fccl
     {
     }
 
+    void JointMappingMatrix::init(const SemanticObjectNxM& semantics)
+    {
+      resize(std::pair<std::size_t, std::size_t>(semantics.size()));
+      setSemantics(semantics);
+    }
+
     const Eigen::Matrix< double, Eigen::Dynamic, Eigen::Dynamic >& JointMappingMatrix::getData() const
     {
       return data_;

@@ -81,4 +81,10 @@ TEST_F(JointMappingMatrixTest, Basics)
   EXPECT_NE(A, A3);
   A3.setTargetNames(constraint_names);
   EXPECT_EQ(A, A3);
+
+  JointMappingMatrix A4;
+  A4.init(A.getSemantics());
+  EXPECT_NE(A, A4);
+  A4.setData(A.getData());
+  EXPECT_EQ(A, A4);
 }
