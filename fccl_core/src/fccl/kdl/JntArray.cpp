@@ -24,6 +24,12 @@ namespace fccl
     {
     }
 
+    void JntArray::init(const SemanticObjectN& semantics)
+    {
+      resize(semantics.size());
+      setSemantics(semantics);
+    }
+
     JntArray& JntArray::operator=(const JntArray& other)
     {
       assert(other.isValid());

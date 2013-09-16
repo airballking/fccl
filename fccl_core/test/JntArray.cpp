@@ -68,9 +68,14 @@ TEST_F(JntArrayTest, Basics)
     q6.setTargetName(i, q.getTargetName(i));
   q6.setData(q.getData());
 
+  JntArray q7;
+  q7.init(q.getSemantics());
+  q7.setData(q.getData());
+
   EXPECT_EQ(q, q2);
   EXPECT_EQ(q, q3);
   EXPECT_EQ(q, q4);   
   EXPECT_EQ(q, q5);
   EXPECT_EQ(q, q6);
+  EXPECT_EQ(q, q7);
 }

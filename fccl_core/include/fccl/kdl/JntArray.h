@@ -19,6 +19,8 @@ namespace fccl
 
         virtual ~JntArray();
 
+        void init(const SemanticObjectN& semantics);
+
         JntArray& operator=(const JntArray& other);
         
         const KDL::JntArray& getData() const;
