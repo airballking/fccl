@@ -102,13 +102,13 @@ catkin_add_gtest(${PROJECT_NAME}-test
                  test/main.cpp 
                  test/base/Features.cpp
                  test/base/Constraints.cpp
-                 test/Transform.cpp
-                 test/Twist.cpp
-                 test/InteractionMatrix.cpp
-                 test/Jacobian.cpp
-                 test/JntArray.cpp
-                 test/KinematicChain.cpp
-                 test/JointMappingMatrix.cpp
+                 test/kdl/Transform.cpp
+                 test/kdl/Twist.cpp
+                 test/kdl/InteractionMatrix.cpp
+                 test/kdl/Jacobian.cpp
+                 test/kdl/JntArray.cpp
+                 test/kdl/KinematicChain.cpp
+                 test/kdl/JointMappingMatrix.cpp
                  test/semantics/TransformSemantics.cpp
                  test/semantics/JntArraySemantics.cpp
                  test/semantics/JacobianSemantics.cpp
