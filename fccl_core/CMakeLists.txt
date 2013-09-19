@@ -100,14 +100,14 @@ add_library(${PROJECT_NAME}
 ## Add gtest based cpp test target 
 catkin_add_gtest(${PROJECT_NAME}-test 
                  test/main.cpp 
+                 test/base/Features.cpp
+                 test/base/Constraints.cpp
                  test/Transform.cpp
                  test/Twist.cpp
                  test/InteractionMatrix.cpp
                  test/Jacobian.cpp
                  test/JntArray.cpp
                  test/KinematicChain.cpp
-                 test/Features.cpp
-                 test/Constraints.cpp
                  test/JointMappingMatrix.cpp
                  test/semantics/TransformSemantics.cpp
                  test/semantics/JntArraySemantics.cpp
