@@ -11,6 +11,10 @@ class TransformTest : public ::testing::Test
     {
       parent_frame = "parent";
       child_frame = "child";
+
+      semantics.reference().setName(parent_frame);
+      semantics.target().setName(child_frame);
+
       transform = KDL::Frame(KDL::Rotation::RotX(M_PI/2.0), KDL::Vector(0.0, 0.0, 3.0));
     }
 
@@ -20,44 +24,52 @@ class TransformTest : public ::testing::Test
     }
 
     std::string parent_frame, child_frame;
+    fccl::semantics::TransformSemantics semantics;
     KDL::Frame transform;
 };
 
 TEST_F(TransformTest, Basics)
 {
-  Transform t(SemanticObject1x1(parent_frame, child_frame), transform);
+  Transform t;
+  t.numerics() = transform;
+  t.semantics() = semantics;
+
+  KDL::Equal(transform, t.numerics());
+  EXPECT_TRUE(semantics.equals(t.semantics()));
+
   Transform t2(t);
-  Transform t3(SemanticObject1x1(t.getReferenceID(), t.getTargetID()), t.getTransform());
+  EXPECT_TRUE(t.equals(t2));
 
-  EXPECT_EQ(t, t2);
-  EXPECT_EQ(t, t3);
-}
+  Transform t3;
+  t3.numerics() = transform;
+  
+  Transform t4;
+  t4.semantics() = semantics;
 
-TEST_F(TransformTest, Basics2)
-{
-  Transform t(SemanticObject1x1(parent_frame, child_frame), transform);
-  Transform t2, t3;
-
-  t2.setReferenceID(t.getReferenceID());
-  t2.setTargetID(t.getTargetID());
-  t2.setTransform(t.getTransform());
-
-  t3.setReferenceName(parent_frame);
-  t3.setTargetName(child_frame);
-  t3.setTransform(transform);
-
-  EXPECT_EQ(t, t2);
-  EXPECT_EQ(t, t3);
+  EXPECT_FALSE(t.equals(t3));
+  EXPECT_FALSE(t.equals(t4));
 }
 
 TEST_F(TransformTest, TransformInversion)
 {
-  Transform t(SemanticObject1x1(parent_frame, child_frame), transform);
-  Transform t_inv = t.inverse();
-  Transform t_inv2(SemanticObject1x1(child_frame, parent_frame), transform.Inverse());
+  Transform t;
+  t.numerics() = transform;
+  t.semantics() = semantics;
 
-  EXPECT_EQ(t_inv, t_inv2);
-  EXPECT_NE(t, t_inv);
+  Transform t_inv = t.inverse();
+  
+  Transform t_inv2(t);
+  t_inv2.invert();
+
+  Transform t_inv3;
+  t_inv3.numerics() = transform.Inverse();
+  t_inv3.semantics().reference().setName(child_frame);
+  t_inv3.semantics().target().setName(parent_frame);
+
+  EXPECT_TRUE(t_inv.equals(t_inv2));
+  EXPECT_TRUE(t_inv.equals(t_inv3));
+
+  EXPECT_FALSE(t.equals(t_inv));
 }
 
 TEST_F(TransformTest, TransformMultiplication)
@@ -66,10 +78,23 @@ TEST_F(TransformTest, TransformMultiplication)
   T_f_m1 = KDL::Frame(KDL::Rotation::EulerZYX(M_PI/2.0, M_PI/3.0, M_PI/4.0), KDL::Vector(0.1, 0.2, 0.3));
   T_m1_m2 = transform;
 
-  Transform t(SemanticObject1x1("f", "m1"), T_f_m1);
-  Transform t2(SemanticObject1x1("m1", "m2"), T_m1_m2);
-  Transform t3 = t*t2;
-  Transform t4(SemanticObject1x1("f", "m2"), T_f_m1*T_m1_m2);
+  Transform t;
+  t.numerics() = T_f_m1;
+  t.semantics().reference().setName("f");
+  t.semantics().target().setName("m1");
 
-  EXPECT_EQ(t3, t4);
+  Transform t2;
+  t2.numerics() = T_m1_m2;
+  t2.semantics().reference().setName("m1");
+  t2.semantics().target().setName("m2");
+
+
+  Transform t3 = multiply(t, t2);
+
+  Transform t4;
+  t4.numerics() = T_f_m1*T_m1_m2;
+  t4.semantics().reference().setName("f");
+  t4.semantics().target().setName("m2");
+
+  EXPECT_TRUE(t3.equals(t4));
 }

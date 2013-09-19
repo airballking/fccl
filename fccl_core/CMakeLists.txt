@@ -36,21 +36,20 @@ include_directories(
 
 ## Declare a cpp library
 add_library(${PROJECT_NAME}
-  src/fccl/kdl/Semantics.cpp
-  src/fccl/kdl/Transform.cpp
-  src/fccl/kdl/Twist.cpp
-  src/fccl/kdl/InteractionMatrix.cpp
-  src/fccl/kdl/JntArray.cpp
-  src/fccl/kdl/Jacobian.cpp
-  src/fccl/kdl/KinematicChain.cpp
-  src/fccl/kdl/JointMappingMatrix.cpp
+#  src/fccl/kdl/Semantics.cpp
+#  src/fccl/kdl/Twist.cpp
+#  src/fccl/kdl/InteractionMatrix.cpp
+#  src/fccl/kdl/JntArray.cpp
+#  src/fccl/kdl/Jacobian.cpp
+#  src/fccl/kdl/KinematicChain.cpp
+#  src/fccl/kdl/JointMappingMatrix.cpp
   src/fccl/utils/Equalities.cpp
   src/fccl/utils/Hashing.cpp
   src/fccl/utils/Printing.cpp
-  src/fccl/utils/TransformMap.cpp
-  src/fccl/base/Constraints.cpp
-  src/fccl/base/Features.cpp
-  src/fccl/base/FeatureTypes.cpp
+#  src/fccl/utils/TransformMap.cpp
+#  src/fccl/base/Constraints.cpp
+#  src/fccl/base/Features.cpp
+#  src/fccl/base/FeatureTypes.cpp
 )
 
 ## Specify libraries to link a library or executable target against
@@ -100,22 +99,22 @@ add_library(${PROJECT_NAME}
 ## Add gtest based cpp test target 
 catkin_add_gtest(${PROJECT_NAME}-test 
                  test/main.cpp 
-                 test/base/Features.cpp
-                 test/base/Constraints.cpp
+#                 test/base/Features.cpp
+#                 test/base/Constraints.cpp
                  test/kdl/Transform.cpp
-                 test/kdl/Twist.cpp
-                 test/kdl/InteractionMatrix.cpp
-                 test/kdl/Jacobian.cpp
-                 test/kdl/JntArray.cpp
-                 test/kdl/KinematicChain.cpp
-                 test/kdl/JointMappingMatrix.cpp
+#                 test/kdl/Twist.cpp
+#                 test/kdl/InteractionMatrix.cpp
+#                 test/kdl/Jacobian.cpp
+#                 test/kdl/JntArray.cpp
+#                 test/kdl/KinematicChain.cpp
+#                 test/kdl/JointMappingMatrix.cpp
                  test/semantics/TransformSemantics.cpp
                  test/semantics/JntArraySemantics.cpp
                  test/semantics/JacobianSemantics.cpp
                  test/semantics/JointMappingSemantics.cpp
                  test/semantics/InteractionMatrixSemantics.cpp
                  test/utils/Hashing.cpp
-                 test/utils/TransformMap.cpp
+#                 test/utils/TransformMap.cpp
                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/test_data)
 
 # linking against our own library and all libraries from dependencies
