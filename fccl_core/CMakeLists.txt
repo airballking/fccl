@@ -111,11 +111,11 @@ catkin_add_gtest(${PROJECT_NAME}-test
                  test/Constraints.cpp
                  test/TransformMap.cpp
                  test/JointMappingMatrix.cpp
-                 test/TransformSemantics.cpp
-                 test/JntArraySemantics.cpp
-                 test/JacobianSemantics.cpp
-                 test/JointMappingSemantics.cpp
-                 test/InteractionMatrixSemantics.cpp
+                 test/semantics/TransformSemantics.cpp
+                 test/semantics/JntArraySemantics.cpp
+                 test/semantics/JacobianSemantics.cpp
+                 test/semantics/JointMappingSemantics.cpp
+                 test/semantics/InteractionMatrixSemantics.cpp
                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/test_data)
 
 # linking against our own library and all libraries from dependencies
