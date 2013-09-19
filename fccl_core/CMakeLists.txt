@@ -100,7 +100,6 @@ add_library(${PROJECT_NAME}
 ## Add gtest based cpp test target 
 catkin_add_gtest(${PROJECT_NAME}-test 
                  test/main.cpp 
-                 test/Hashing.cpp
                  test/Transform.cpp
                  test/Twist.cpp
                  test/InteractionMatrix.cpp
@@ -116,6 +115,7 @@ catkin_add_gtest(${PROJECT_NAME}-test
                  test/semantics/JacobianSemantics.cpp
                  test/semantics/JointMappingSemantics.cpp
                  test/semantics/InteractionMatrixSemantics.cpp
+                 test/utils/Hashing.cpp
                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/test_data)
 
 # linking against our own library and all libraries from dependencies
