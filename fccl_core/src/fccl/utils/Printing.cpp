@@ -43,6 +43,22 @@ namespace fccl
       return out;
     }
 
+    std::ostream& operator<<(std::ostream& out, const KDL::JntArray& j)
+    {
+      out << "[ ";
+      for(unsigned int i=0; i<j.rows(); i++)
+      {
+        out << j(i);
+        if(i < (j.rows() - 1 ))
+          out << " ,";
+      }
+     
+      out << " ]";
+
+      return out;
+ 
+    }
+
     std::ostream& operator<<(std::ostream& out, const Eigen::Matrix< double, Eigen::Dynamic, Eigen::Dynamic >& m)
     {
       for(unsigned int row=0; row<m.rows(); row++)
