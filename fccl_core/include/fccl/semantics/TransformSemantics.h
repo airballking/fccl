@@ -82,7 +82,7 @@ namespace fccl
     inline bool operator<(const TransformSemantics& lhs, const TransformSemantics& rhs)
     {
       return (lhs.reference().getID() < rhs.reference().getID()) ||
-          ((lhs.reference().getID() == rhs.reference().getID()) &&
+          ((lhs.reference().equals(rhs.reference())) &&
            (lhs.target().getID() < rhs.target().getID()));
     }
 
