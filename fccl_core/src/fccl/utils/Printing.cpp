@@ -31,6 +31,16 @@ namespace fccl
     {
       out << "p: " << f.p << "\n";
       out << "M:\n" << f.M;
+
+      return out;
+    }
+
+    std::ostream& operator<<(std::ostream& out, const KDL::Twist& t)
+    {
+      out << "translation: " << t.vel << "\n";
+      out << "rotation: " << t.rot;
+ 
+      return out;
     }
 
     std::ostream& operator<<(std::ostream& out, const Eigen::Matrix< double, Eigen::Dynamic, Eigen::Dynamic >& m)

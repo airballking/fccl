@@ -12,6 +12,7 @@ namespace fccl
     std::ostream& operator<<(std::ostream& out, const KDL::Vector& v);
     std::ostream& operator<<(std::ostream& out, const KDL::Rotation& v);
     std::ostream& operator<<(std::ostream& out, const KDL::Frame& f);
+    std::ostream& operator<<(std::ostream& out, const KDL::Twist& t);
     std::ostream& operator<<(std::ostream& out, const Eigen::Matrix< double, Eigen::Dynamic, Eigen::Dynamic >& m);
   } // namespace utils
 } // namespace fccl
