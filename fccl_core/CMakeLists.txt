@@ -104,7 +104,7 @@ catkin_add_gtest(${PROJECT_NAME}-test
                  test/kdl/Twist.cpp
 #                 test/kdl/InteractionMatrix.cpp
 #                 test/kdl/Jacobian.cpp
-#                 test/kdl/JntArray.cpp
+                 test/kdl/JntArray.cpp
 #                 test/kdl/KinematicChain.cpp
 #                 test/kdl/JointMappingMatrix.cpp
                  test/semantics/TransformSemantics.cpp

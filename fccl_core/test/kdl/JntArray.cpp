@@ -6,6 +6,7 @@
 #include <kdl/jntarray.hpp>
 
 using namespace fccl::kdl;
+using namespace fccl::semantics;
 
 class JntArrayTest : public ::testing::Test
 {
@@ -20,13 +21,12 @@ class JntArrayTest : public ::testing::Test
       joint_names[2] = "joint2";
 
       semantics.resize(dof);
-      semantics.setTargetNames(joint_names);
+      for(std::size_t i=0; i<dof; i++)
+        semantics(i).setName(joint_names[i]);
 
       joint_values.resize(dof);
       for(unsigned int i=0; i<dof; i++)
-      {
         joint_values(i) = i;
-      }
     }
 
     virtual void TearDown()
@@ -37,45 +37,30 @@ class JntArrayTest : public ::testing::Test
     std::size_t dof;
     std::vector<std::string> joint_names;
     KDL::JntArray joint_values;
-    SemanticObjectN semantics;
+    JntArraySemantics semantics;
 };
 
 TEST_F(JntArrayTest, Basics)
 {
   JntArray q;
   q.resize(dof);
-  q.setSemantics(semantics);
-  q.setData(joint_values);
+  q.semantics() = semantics;
+  q.numerics() = joint_values;
 
   ASSERT_TRUE(q.isValid());
 
-  JntArray q2(semantics, joint_values);
+  JntArray q2(q);
 
   JntArray q3;
-  q3.resize(dof);
   q3 = q;
 
-  JntArray q4(q.getSemantics(), q.getData());
-
-  JntArray q5;
-  q5.resize(dof);
-  q5.setTargetNames(joint_names);
-  q5.setData(joint_values);
-
-  JntArray q6;
-  q6.resize(dof);
+  JntArray q4;
+  q4.resize(dof);
   for(unsigned int i=0; i<dof; i++)
-    q6.setTargetName(i, q.getTargetName(i));
-  q6.setData(q.getData());
+    q4.numerics()(i) = joint_values(i);
+  q4.semantics() = semantics;
 
-  JntArray q7;
-  q7.init(q.getSemantics());
-  q7.setData(q.getData());
-
-  EXPECT_EQ(q, q2);
-  EXPECT_EQ(q, q3);
-  EXPECT_EQ(q, q4);   
-  EXPECT_EQ(q, q5);
-  EXPECT_EQ(q, q6);
-  EXPECT_EQ(q, q7);
+  EXPECT_TRUE(q.equals(q2));
+  EXPECT_TRUE(q.equals(q3));
+  EXPECT_TRUE(q.equals(q4));   
 }

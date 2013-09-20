@@ -1,47 +1,74 @@
 #ifndef FCCL_KDL_JNTARRAY_H
 #define FCCL_KDL_JNTARRAY_H
 
-#include <fccl/kdl/Semantics.h>
 #include <kdl/jntarray.hpp>
-#include <string>
+#include <fccl/semantics/JntArraySemantics.h>
+#include <fccl/utils/Printing.h>
 #include <iostream>
 
 namespace fccl
 {
   namespace kdl
   {
-    class JntArray : public SemanticObjectN
+    class JntArray
     {
       public:
-        JntArray();
-        JntArray(const JntArray& other);
-        JntArray(const SemanticObjectN& semantics, const KDL::JntArray& data);
+        const KDL::JntArray& numerics() const
+        {
+          return data_;
+        }
 
-        virtual ~JntArray();
+        KDL::JntArray& numerics()
+        {
+          return data_;
+        }
 
-        void init(const SemanticObjectN& semantics);
+        const fccl::semantics::JntArraySemantics& semantics() const
+        {
+          return semantics_;
+        }
 
-        JntArray& operator=(const JntArray& other);
+        fccl::semantics::JntArraySemantics& semantics()
+        {
+          return semantics_;
+        }
+       
+        bool equals(const JntArray& other) const
+        {
+          assert(isValid());
+          assert(other.isValid());
+
+          return semantics().equals(other.semantics()) &&
+              KDL::Equal(numerics(), other.numerics());
+        }
         
-        const KDL::JntArray& getData() const;
-        void setData(const KDL::JntArray& data);
+        bool isValid() const
+        {
+          return numerics().rows() == semantics().size();
+        }
 
-        double& operator()(std::size_t row);
-        double operator()(std::size_t row) const;
- 
-        virtual bool numericsEqual(const JntArray& other) const;
-        
-        bool operator==(const JntArray& other) const;
-        bool operator!=(const JntArray& other) const;
+        void resize(std::size_t new_size)
+        {
+          numerics().resize(new_size);
+          semantics().resize(new_size);
+        }
 
-        virtual void resize(std::size_t new_size);
-        bool isValid() const;
-
-        friend std::ostream& operator<<(std::ostream& os, 
-            const JntArray& jnt_array);
- 
+      private:
+        // semantics
+        fccl::semantics::JntArraySemantics semantics_;
+        // numerics
         KDL::JntArray data_;
     }; 
+
+    inline std::ostream& operator<<(std::ostream& os, const JntArray& jnt_array)
+    {
+      using fccl::utils::operator<<;
+
+      os << "numerics:\n" << jnt_array.numerics() << "\n";
+      os << "semantics:\n" << jnt_array.semantics();
+
+      return os;
+    }
   } // namespace kdl
 } // namespace fccl
 #endif // FCCL_KDL_JNTARRAY_H
