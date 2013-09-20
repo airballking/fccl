@@ -46,7 +46,7 @@ add_library(${PROJECT_NAME}
   src/fccl/utils/Equalities.cpp
   src/fccl/utils/Hashing.cpp
   src/fccl/utils/Printing.cpp
-#  src/fccl/utils/TransformMap.cpp
+  src/fccl/utils/TransformMap.cpp
 #  src/fccl/base/Constraints.cpp
 #  src/fccl/base/Features.cpp
 #  src/fccl/base/FeatureTypes.cpp
@@ -114,7 +114,7 @@ catkin_add_gtest(${PROJECT_NAME}-test
                  test/semantics/JointMappingSemantics.cpp
                  test/semantics/InteractionMatrixSemantics.cpp
                  test/utils/Hashing.cpp
-#                 test/utils/TransformMap.cpp
+                 test/utils/TransformMap.cpp
                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/test_data)
 
 # linking against our own library and all libraries from dependencies

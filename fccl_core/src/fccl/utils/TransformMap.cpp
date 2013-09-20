@@ -5,15 +5,15 @@ namespace fccl
   namespace utils
   {
 
-    typedef std::pair<fccl::kdl::SemanticObject1x1, fccl::kdl::Transform> EntryType;
-    typedef std::map<fccl::kdl::SemanticObject1x1, fccl::kdl::Transform> MapType;
+    typedef std::pair<fccl::semantics::TransformSemantics, fccl::kdl::Transform> EntryType;
+    typedef std::map<fccl::semantics::TransformSemantics, fccl::kdl::Transform> MapType;
 
     void TransformMap::setTransform(const fccl::kdl::Transform& transform)
     {
       boost::mutex::scoped_lock scoped_lock(getMutex());
 
       std::pair<MapType::iterator, bool> insert_result =
-        map_.insert(EntryType(transform.getSemantics(), transform));
+        map_.insert(EntryType(transform.semantics(), transform));
 
       if(!insert_result.second)
         // key was already present, we want to update
@@ -21,14 +21,14 @@ namespace fccl
     }
 
     const fccl::kdl::Transform& TransformMap::getTransform(
-        const fccl::kdl::SemanticObject1x1& semantics)
+        const fccl::semantics::TransformSemantics& semantics)
     {
       boost::mutex::scoped_lock scoped_lock(getMutex());
 
       return map_.at(semantics);
     }
 
-    void TransformMap::removeTransform(const fccl::kdl::SemanticObject1x1& semantics)
+    void TransformMap::removeTransform(const fccl::semantics::TransformSemantics& semantics)
     {
       boost::mutex::scoped_lock scoped_lock(getMutex());
      
@@ -42,7 +42,7 @@ namespace fccl
       map_.clear();
     }
 
-    bool TransformMap::hasTransform(const fccl::kdl::SemanticObject1x1& semantics)
+    bool TransformMap::hasTransform(const fccl::semantics::TransformSemantics& semantics)
     {
       boost::mutex::scoped_lock scoped_lock(getMutex());
      
