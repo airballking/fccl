@@ -36,9 +36,7 @@ include_directories(
 
 ## Declare a cpp library
 add_library(${PROJECT_NAME}
-#  src/fccl/kdl/Semantics.cpp
 #  src/fccl/kdl/InteractionMatrix.cpp
-#  src/fccl/kdl/JntArray.cpp
 #  src/fccl/kdl/Jacobian.cpp
 #  src/fccl/kdl/KinematicChain.cpp
 #  src/fccl/kdl/JointMappingMatrix.cpp
