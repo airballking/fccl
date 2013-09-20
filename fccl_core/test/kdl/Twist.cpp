@@ -28,44 +28,48 @@ class TwistTest : public ::testing::Test
 
 TEST_F(TwistTest, Basics)
 {
-  Twist t(SemanticObject1x1(reference, target), twist);
+  Twist t;
+  t.semantics().reference().setName(reference);
+  t.semantics().target().setName(target);
+  t.numerics() = twist;
+
   Twist t2(t);
-  Twist t3(SemanticObject1x1(t.getReferenceID(), t.getTargetID()), t.getTwist());
 
-  EXPECT_EQ(t, t2);
-  EXPECT_EQ(t, t3);
-}
+  Twist t3 = t;
 
-TEST_F(TwistTest, Basics2)
-{
-  Twist t(SemanticObject1x1(reference, target), twist);
-  Twist t2, t3;
+  Twist t4;
+  t4 = t;
 
-  t2.setReferenceID(t.getReferenceID());
-  t2.setTargetID(t.getTargetID());
-  t2.setTwist(t.getTwist());
-
-  t3.setReferenceName(reference);
-  t3.setTargetName(target);
-  t3.setTwist(twist);
-
-  EXPECT_EQ(t, t2);
-  EXPECT_EQ(t, t3);
+  EXPECT_TRUE(t.equals(t2));
+  EXPECT_TRUE(t.equals(t3));
+  EXPECT_TRUE(t.equals(t4));
 }
 
 TEST_F(TwistTest, ChangeReferenceFrame)
 {
-  Transform trans(SemanticObject1x1(world, reference), transform);
+  Transform trans;
+  trans.semantics().reference().setName(world);
+  trans.semantics().target().setName(reference);
+  trans.numerics() = transform;
 
-  Twist t(SemanticObject1x1(reference, target), twist);
+  Twist t;
+  t.semantics().reference().setName(reference);
+  t.semantics().target().setName(target);
+  t.numerics() = twist;
 
   Twist t2(t);
   t2.changeReferenceFrame(trans);
-  Twist t3(SemanticObject1x1(world, target), KDL::Twist(KDL::Vector(9, -5, 4), KDL::Vector(0, -2, 1)));
 
-  Twist t4(SemanticObject1x1(world, target), transform*twist);
+  Twist t3;
+  t3.semantics().reference().setName(world);
+  t3.semantics().target().setName(target);
+  t3.numerics() = KDL::Twist(KDL::Vector(9, -5, 4), KDL::Vector(0, -2, 1));
 
-  EXPECT_EQ(t2, t3);
-  EXPECT_NE(t, t2);
-  EXPECT_EQ(t3, t4);
+  Twist t4;
+  t4.semantics() = t3.semantics();
+  t4.numerics() = transform*twist;
+
+  EXPECT_TRUE(t2.equals(t3));
+  EXPECT_FALSE(t.equals(t2));
+  EXPECT_TRUE(t3.equals(t4));
 }

@@ -5,43 +5,71 @@
 #include <string>
 #include <iostream>
 #include <fccl/kdl/Transform.h>
-#include <fccl/kdl/Semantics.h>
+#include <fccl/semantics/TwistSemantics.h>
+#include <fccl/utils/Printing.h>
 
 namespace fccl
 {
   namespace kdl
   {
-    class Twist : public SemanticObject1x1
+    class Twist
     {
       public:
-        Twist();
-        Twist(const fccl::kdl::Twist& other);
-        Twist(const SemanticObject1x1& semantics, const KDL::Twist& twist);
-  
-        virtual ~Twist();
-  
-        fccl::kdl::Twist& operator=(const fccl::kdl::Twist& rhs);
+        const KDL::Twist& numerics() const
+        {
+          return twist_;
+        }
+ 
+        KDL::Twist& numerics()
+        {
+          return twist_;
+        }
+ 
+        const fccl::semantics::TwistSemantics& semantics() const
+        {
+          return semantics_;
+        }
 
-        const KDL::Twist& getTwist() const;
-        void setTwist(const KDL::Twist& twist);
+        fccl::semantics::TwistSemantics& semantics()
+        {
+          return semantics_;
+        }
+     
+        bool equals(const Twist& other) const
+        {
+          return semantics().equals(other.semantics()) &&
+              KDL::Equal(numerics(), other.numerics());
+        }
   
-        bool operator==(const fccl::kdl::Twist& other) const;
-        bool operator!=(const fccl::kdl::Twist& other) const;
-  
-        bool numericsEqual(const fccl::kdl::Twist& other) const;
-  
-        void changeReferenceFrame(const fccl::kdl::Transform& transform);
-        bool multiplicationPossible(const fccl::kdl::Transform& transform) const;
-  
-        friend fccl::kdl::Twist operator*(const fccl::kdl::Transform& lhs,
-            const fccl::kdl::Twist& rhs);
-  
-        friend std::ostream& operator<<(std::ostream& os, 
-            const fccl::kdl::Twist& twist);
-   
-        // numeric representation of the derivative 
+        void changeReferenceFrame(const Transform& transform)
+        {
+          semantics().changeReferenceFrame(transform.semantics());
+
+          numerics() = transform.numerics() * numerics();
+        }
+          
+        bool changeReferencePossible(const Transform& transform)
+        {
+          return semantics().changeReferencePossible(transform.semantics());
+        }
+           
+      public:
+        //semantics
+        fccl::semantics::TwistSemantics semantics_;
+        // numerics
         KDL::Twist twist_;
     };
+
+    inline std::ostream& operator<<(std::ostream& os, const Twist& twist)
+    {
+      using fccl::utils::operator<<;
+
+      os << "numerics:\n" << twist.numerics() << "\n";
+      os << "semantics:\n" << twist.semantics();
+
+      return os;
+    }
+
   } // namespace kdl
 } // namespace fccl
 #endif // FCCL_KDL_TWIST_H
