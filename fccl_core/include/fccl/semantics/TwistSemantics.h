@@ -2,6 +2,7 @@
 #define FCCL_SEMANTICS_TWIST_SEMANTICS_H
 
 #include <fccl/semantics/SemanticsBase.h>
+#include <fccl/semantics/TransformSemantics.h>
 
 namespace fccl
 {
@@ -36,6 +37,20 @@ namespace fccl
               target().equals(other.target());
         }
 
+        void changeReferenceFrame(const fccl::semantics::TransformSemantics& 
+            transform_semantics)
+        {
+          assert(changeReferencePossible(transform_semantics));
+
+          reference() = transform_semantics.reference();
+        }
+          
+        bool changeReferencePossible(const fccl::semantics::TransformSemantics& 
+            transform_semantics)
+        {
+          return reference().equals(transform_semantics.target());
+        }
+ 
       private:
         SemanticsBase reference_;
         SemanticsBase target_;
