@@ -79,6 +79,13 @@ namespace fccl
       return result;
     }
 
+    inline bool operator<(const TransformSemantics& lhs, const TransformSemantics& rhs)
+    {
+      return (lhs.reference().getID() < rhs.reference().getID()) ||
+          ((lhs.reference().getID() == rhs.reference().getID()) &&
+           (lhs.target().getID() < rhs.target().getID()));
+    }
+
   } // namespace semantics
 } // namespace fccl
 #endif // FCCL_SEMANTICS_TRANSFORM_SEMANTICS_H
