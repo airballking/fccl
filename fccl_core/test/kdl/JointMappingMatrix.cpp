@@ -21,6 +21,13 @@ class JointMappingMatrixTest : public ::testing::Test
       for(unsigned int i=0; i<data.rows(); i++)
         for(unsigned int j=0; j<data.cols(); j++)
           data(i, j) = i*j;
+
+      semantics.row_joints().resize(constraint_names.size());
+      for(std::size_t i=0; i< constraint_names.size(); i++)
+        semantics.row_joints()(i).setName(constraint_names[i]);
+      semantics.column_joints().resize(joint_names.size());
+      for(std::size_t i=0; i< joint_names.size(); i++)
+        semantics.column_joints()(i).setName(joint_names[i]);
     }
 
     virtual void TearDown()
@@ -30,6 +37,7 @@ class JointMappingMatrixTest : public ::testing::Test
 
     std::vector<std::string> joint_names, constraint_names;
     Eigen::Matrix< double, Eigen::Dynamic, Eigen::Dynamic > data;
+    fccl::semantics::JointMappingSemantics semantics;
 };
 
 TEST_F(JointMappingMatrixTest, Basics)
@@ -37,54 +45,42 @@ TEST_F(JointMappingMatrixTest, Basics)
   JointMappingMatrix A;
   ASSERT_TRUE(A.isValid());
 
-  EXPECT_EQ(A.rows(), 0);
-  EXPECT_EQ(A.columns(), 0);
-  EXPECT_EQ(A.size().first, 0);
-  EXPECT_EQ(A.size().second, 0);
+  EXPECT_EQ(A.numerics().rows(), 0);
+  EXPECT_EQ(A.numerics().cols(), 0);
+  EXPECT_EQ(A.semantics().row_joints().size(), 0);
+  EXPECT_EQ(A.semantics().column_joints().size(), 0);
 
-  A.resize(std::pair<std::size_t, std::size_t>(data.rows(), data.cols()));
-  EXPECT_EQ(A.rows(), data.rows());
-  EXPECT_EQ(A.columns(), data.cols());
-  EXPECT_EQ(A.size().first, data.rows());
-  EXPECT_EQ(A.size().second, data.cols());  
+  A.resize(data.rows(), data.cols());
+  EXPECT_EQ(A.numerics().rows(), data.rows());
+  EXPECT_EQ(A.numerics().cols(), data.cols());
+  EXPECT_EQ(A.semantics().row_joints().size(), data.rows());
+  EXPECT_EQ(A.semantics().column_joints().size(), data.cols());
 
-  EXPECT_TRUE(A.rowIndexValid(0));
-  EXPECT_TRUE(A.rowIndexValid(data.rows() - 1));
-  EXPECT_FALSE(A.rowIndexValid(data.rows()));
+  EXPECT_FALSE(data.isApprox(A.numerics()));
+  A.numerics() = data;
+  EXPECT_TRUE(data.isApprox(A.numerics()));
 
-  EXPECT_TRUE(A.columnIndexValid(0));
-  EXPECT_TRUE(A.columnIndexValid(data.cols() - 1));
-  EXPECT_FALSE(A.columnIndexValid(data.cols()));
-
-  EXPECT_FALSE(data.isApprox(A.getData()));
-  A.setData(data);
-  EXPECT_TRUE(data.isApprox(A.getData()));
-
-  // TODO(Georg): get this in, once hashing throws exceptions
-//  EXPECT_FALSE(fccl::utils::Equal(A.getReferenceNames(), joint_names));
-  A.setReferenceNames(joint_names);
-  EXPECT_TRUE(fccl::utils::Equal(A.getReferenceNames(), joint_names));
-
-  A.setTargetNames(constraint_names);
-  EXPECT_TRUE(fccl::utils::Equal(A.getTargetNames(), constraint_names));
+  A.semantics() = semantics;
+  for(std::size_t i=0; i< constraint_names.size(); i++)
+    EXPECT_STREQ(semantics.row_joints()(i).getName().c_str(),
+        constraint_names[i].c_str());
+  for(std::size_t i=0; i< joint_names.size(); i++)
+    EXPECT_STREQ(semantics.column_joints()(i).getName().c_str(),
+        joint_names[i].c_str());
 
   JointMappingMatrix A2(A);
-  EXPECT_EQ(A, A2);
+  EXPECT_TRUE(A.equals(A2));
 
   JointMappingMatrix A3;
-  EXPECT_NE(A, A3);
-  A3.resize(A.size());
-  EXPECT_NE(A, A3);
-  A3.setData(data);
-  EXPECT_NE(A, A3);
-  A3.setReferenceNames(joint_names);
-  EXPECT_NE(A, A3);
-  A3.setTargetNames(constraint_names);
-  EXPECT_EQ(A, A3);
-
-  JointMappingMatrix A4;
-  A4.init(A.getSemantics());
-  EXPECT_NE(A, A4);
-  A4.setData(A.getData());
-  EXPECT_EQ(A, A4);
+  EXPECT_FALSE(A.equals(A3));
+  A3.resize(A.semantics().row_joints().size(), A.semantics().column_joints().size());
+  EXPECT_FALSE(A.equals(A3));
+  A3.numerics() = data;
+  EXPECT_FALSE(A.equals(A3));
+  for(std::size_t i=0; i< constraint_names.size(); i++)
+    semantics.row_joints()(i).setName(constraint_names[i]);
+  EXPECT_FALSE(A.equals(A3));
+  for(std::size_t i=0; i< joint_names.size(); i++)
+    semantics.column_joints()(i).setName(joint_names[i]);
+  EXPECT_TRUE(A.equals(A2));
 }

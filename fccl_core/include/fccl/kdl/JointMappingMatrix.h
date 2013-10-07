@@ -1,53 +1,75 @@
 #ifndef FCCL_KDL_JOINT_MAPPING_MATRIX_H
 #define FCCL_KDL_JOINT_MAPPING_MATRIX_H
 
-#include <fccl/kdl/Semantics.h>
+#include <fccl/semantics/JointMappingSemantics.h>
+#include <fccl/utils/Printing.h>
 #include <Eigen/Core>
 
 namespace fccl
 {
   namespace kdl
   {
-    class JointMappingMatrix : public SemanticObjectNxM
+    class JointMappingMatrix
     {
       public:
-        JointMappingMatrix();
-        JointMappingMatrix(const JointMappingMatrix& other);
-        JointMappingMatrix(const SemanticObjectNxM& semantics, 
-            const Eigen::Matrix< double, Eigen::Dynamic, Eigen::Dynamic >& data);
-   
-        ~JointMappingMatrix();
+        const Eigen::Matrix< double, Eigen::Dynamic, Eigen::Dynamic >& numerics() const
+        {
+          return data_;
+        }
 
-        void init(const SemanticObjectNxM& semantics);
+        Eigen::Matrix< double, Eigen::Dynamic, Eigen::Dynamic >& numerics()
+        {
+          return data_;
+        }
 
-        const Eigen::Matrix< double, Eigen::Dynamic, Eigen::Dynamic >& getData() const;
-        void setData(const Eigen::Matrix< double, Eigen::Dynamic, Eigen::Dynamic >& data);
+        const fccl::semantics::JointMappingSemantics& semantics() const
+        {
+          return semantics_;
+        }
+
+        fccl::semantics::JointMappingSemantics& semantics()
+        {
+          return semantics_;
+        }
+
+        bool equals(const JointMappingMatrix& other) const
+        {
+          return semantics().equals(other.semantics()) &&
+            numerics().isApprox(other.numerics());
+        }
+
+        void resize(std::size_t rows, std::size_t columns)
+        {
+          numerics().resize(rows, columns);
+
+          semantics().row_joints().resize(rows);
+          semantics().column_joints().resize(columns);
+        }
   
-        virtual std::pair<std::size_t, std::size_t> size() const;
-        virtual void resize(const std::pair<std::size_t, std::size_t>& new_size);
-  
-        bool isValid() const;
+        bool isValid() const
+        {
+          return (semantics().row_joints().size() == numerics().rows()) &&
+              (semantics().column_joints().size() == numerics().cols());
+        }
     
-        std::size_t rows() const;
-        std::size_t columns() const;
   
-        bool rowIndexValid(std::size_t row) const;
-        bool columnIndexValid(std::size_t column) const;
-   
-        double& operator()(std::size_t row, std::size_t column);
-        double operator()(std::size_t row, std::size_t column) const;
-    
-        bool operator==(const JointMappingMatrix& other) const;
-        bool operator!=(const JointMappingMatrix& other) const;
-  
-        bool numericsEqual(const JointMappingMatrix& other) const;
-  
-        friend std::ostream& operator<<(std::ostream& os, 
-            const JointMappingMatrix& joint_mapping_matrix);
-   
+      private:
+        // semantics of the JointMappingMatrices
+        fccl::semantics::JointMappingSemantics semantics_;
         //actual numeric representation of the matrix
         Eigen::Matrix< double, Eigen::Dynamic, Eigen::Dynamic > data_;
     };
+
+    inline std::ostream& operator<<(std::ostream& os,
+            const JointMappingMatrix& joint_mapping_matrix)
+    {
+      using fccl::utils::operator<<;
+
+      os << "numerics:\n" << joint_mapping_matrix.numerics() << "\n";
+      os << "semantics:\n" << joint_mapping_matrix.semantics();
+
+      return os;
+    }
   } // namespace kdl 
 } // namespace fccl
 #endif // FCCL_KDL_JOINT_MAPPING_MATRIX_H
