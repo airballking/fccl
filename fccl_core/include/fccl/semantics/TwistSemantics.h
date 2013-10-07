@@ -46,7 +46,7 @@ namespace fccl
         }
           
         bool changeReferencePossible(const fccl::semantics::TransformSemantics& 
-            transform_semantics)
+            transform_semantics) const
         {
           return reference().equals(transform_semantics.target());
         }
