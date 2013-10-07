@@ -33,6 +33,11 @@ namespace fccl
           return twist_;
         }
 
+        std::size_t size() const
+        {
+          return joints().size();
+        }
+
         void resize(std::size_t number_of_joints)
         {
           joints().resize(number_of_joints);
@@ -44,6 +49,18 @@ namespace fccl
               joints().equals(other.joints());
         }
 
+        void changeReferenceFrame(const fccl::semantics::TransformSemantics& 
+            transform_semantics)
+        {
+          twist().changeReferenceFrame(transform_semantics);
+        }
+          
+        bool changeReferencePossible(const fccl::semantics::TransformSemantics& 
+            transform_semantics) const
+        {
+          return twist().changeReferencePossible(transform_semantics);
+        }
+ 
       private:
         TwistSemantics twist_;
         JntArraySemantics joints_;
