@@ -37,7 +37,6 @@ include_directories(
 ## Declare a cpp library
 add_library(${PROJECT_NAME}
 #  src/fccl/kdl/InteractionMatrix.cpp
-#  src/fccl/kdl/Jacobian.cpp
 #  src/fccl/kdl/KinematicChain.cpp
 #  src/fccl/kdl/JointMappingMatrix.cpp
   src/fccl/utils/Equalities.cpp
@@ -50,9 +49,9 @@ add_library(${PROJECT_NAME}
 )
 
 ## Specify libraries to link a library or executable target against
-# target_link_libraries(fccl_kdl_node
-#   ${catkin_LIBRARIES}
-# )
+target_link_libraries(${PROJECT_NAME}
+  ${catkin_LIBRARIES}
+)
 
 #############
 ## Install ##
@@ -101,7 +100,7 @@ catkin_add_gtest(${PROJECT_NAME}-test
                  test/kdl/Transform.cpp
                  test/kdl/Twist.cpp
 #                 test/kdl/InteractionMatrix.cpp
-#                 test/kdl/Jacobian.cpp
+                 test/kdl/Jacobian.cpp
                  test/kdl/JntArray.cpp
 #                 test/kdl/KinematicChain.cpp
 #                 test/kdl/JointMappingMatrix.cpp

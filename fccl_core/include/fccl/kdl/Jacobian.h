@@ -1,61 +1,87 @@
 #ifndef FCCL_KDL_JACOBIAN_H
 #define FCCL_KDL_JACOBIAN_H
 
-#include <fccl/kdl/Semantics.h>
-#include <fccl/kdl/Twist.h>
-#include <fccl/kdl/Transform.h>
+#include <fccl/semantics/JacobianSemantics.h>
 #include <kdl/jacobian.hpp>
+#include <fccl/utils/Printing.h>
+#include <fccl/kdl/Transform.h>
+#include <iostream>
 
 namespace fccl
 {
   namespace kdl
   {
-    class Jacobian : public SemanticObject1xN
+    class Jacobian
     {
       public:
-        Jacobian();
-        Jacobian(std::size_t columns);
-        Jacobian(const Jacobian& other);
-        Jacobian(const SemanticObject1xN& semantics, const KDL::Jacobian& data);
- 
-        virtual ~Jacobian();
+        const KDL::Jacobian& numerics() const
+        {
+          return numerics_;
+        }
 
-        void init(const SemanticObject1xN& semantics);
- 
-        Jacobian& operator=(const Jacobian& other);
- 
-        const KDL::Jacobian& getData() const;
-        void setData(const KDL::Jacobian& jacobian);
- 
-        virtual void resize(std::size_t columns);
-        virtual std::size_t size() const;
+        KDL::Jacobian& numerics()
+        {
+          return numerics_;
+        }
 
-        bool isValid() const;
- 
-        std::size_t rows() const;
-        std::size_t columns() const;
+        const fccl::semantics::JacobianSemantics& semantics() const
+        {
+          return semantics_;
+        }
 
-        bool rowIndexValid(std::size_t row) const;
-        bool columnIndexValid(std::size_t column) const;
+        fccl::semantics::JacobianSemantics& semantics() 
+        {
+          return semantics_;
+        }
+
+        bool equals(const Jacobian& other) const
+        {
+          assert(isValid());
+          assert(other.isValid());
+
+          // the check for the numerics is not using KDL::Equal because
+          // I could not convince the compile of its existance :/
+          return semantics().equals(other.semantics()) &&
+              numerics().data.isApprox(other.numerics().data);
+        }
+
+        bool isValid() const
+        {
+          return numerics().columns() == semantics().joints().size();
+        }
+
+        void resize(std::size_t columns)
+        {
+          numerics().resize(columns);
+          semantics().resize(columns);
+        }
+
+        void changeReferenceFrame(const Transform& transform)
+        {
+          semantics().changeReferenceFrame(transform.semantics());
+
+          numerics().changeRefFrame(transform.numerics());
+        }
+          
+        bool changeReferencePossible(const Transform& transform)
+        {
+          return semantics().changeReferencePossible(transform.semantics());
+        }
  
-        double& operator()(unsigned int row, unsigned int column);
-        double operator()(unsigned int row, unsigned int column) const;
-  
-        fccl::kdl::Twist getColumn(unsigned int column) const;
-        void setColumn(unsigned int column, const fccl::kdl::Twist& twist);
-  
-        bool operator==(const Jacobian& other) const;
-        bool operator!=(const Jacobian& other) const;
- 
-        bool numericsEqual(const Jacobian& other) const;
- 
-        void changeReferenceFrame(const fccl::kdl::Transform& transform);
-        bool transformationPossible(const fccl::kdl::Transform& transform) const;
-  
-        friend std::ostream& operator<<(std::ostream& os, const Jacobian& jacobian);
- 
-        KDL::Jacobian jacobian_;
+      private:
+        fccl::semantics::JacobianSemantics semantics_;
+        KDL::Jacobian numerics_;
     };
+
+    inline std::ostream& operator<<(std::ostream& os, const Jacobian& jacobian)
+    {
+      using fccl::utils::operator<<;
+
+      os << "numerics:\n" << jacobian.numerics() << "\n";
+      os << "semantics:\n" << jacobian.semantics();
+
+      return os;
+    }
   } // namespace kdl 
 } // namespace fccl
 #endif // FCCL_KDL_JACOBIAN_H
