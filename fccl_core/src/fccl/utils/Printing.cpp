@@ -59,6 +59,13 @@ namespace fccl
  
     }
 
+    std::ostream& operator<<(std::ostream& out, const KDL::Jacobian& j)
+    {
+      out << j.data;
+
+      return out;
+    }
+
     std::ostream& operator<<(std::ostream& out, const Eigen::Matrix< double, Eigen::Dynamic, Eigen::Dynamic >& m)
     {
       for(unsigned int row=0; row<m.rows(); row++)
