@@ -17,6 +17,7 @@ class JacobianSemanticsTest : public ::testing::Test
 
       parent = "parent";
       child = "child";
+      world = "world";
 
       joints.resize(joint_names.size());
       for(std::size_t i=0; i<joints.size(); i++)
@@ -24,6 +25,9 @@ class JacobianSemanticsTest : public ::testing::Test
 
       twist.reference().setName(parent);
       twist.target().setName(child);
+
+      transform.reference().setName(world);
+      transform.target().setName(parent); 
     }
 
     virtual void TearDown()
@@ -31,10 +35,11 @@ class JacobianSemanticsTest : public ::testing::Test
     }
 
     std::vector<std::string> joint_names;
-    std::string parent, child;
+    std::string parent, child, world;
 
     JntArraySemantics joints;
     TwistSemantics twist;
+    TransformSemantics transform;
 };
 
 TEST_F(JacobianSemanticsTest, Basics)
@@ -73,4 +78,19 @@ TEST_F(JacobianSemanticsTest, JntArrayMultiplication)
 
   jac.twist().target().setName("haha");
   EXPECT_TRUE(areMultipliable(jac, joints));
+}
+
+TEST_F(JacobianSemanticsTest, ChangeReference)
+{ 
+  JacobianSemantics jac;
+  jac.twist() = twist;
+  jac.joints() = joints;
+
+  ASSERT_TRUE(jac.changeReferencePossible(transform));
+  ASSERT_FALSE(jac.changeReferencePossible(transform.inverse()));
+
+  jac.changeReferenceFrame(transform);
+
+  EXPECT_STREQ(jac.twist().reference().getName().c_str(), world.c_str());
+  EXPECT_STREQ(jac.twist().target().getName().c_str(), child.c_str());
 }

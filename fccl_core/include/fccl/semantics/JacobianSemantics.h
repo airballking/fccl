@@ -3,6 +3,7 @@
 
 #include <fccl/semantics/JntArraySemantics.h>
 #include <fccl/semantics/TwistSemantics.h>
+#include <fccl/semantics/TransformSemantics.h>
 
 namespace fccl
 {
@@ -37,6 +38,23 @@ namespace fccl
               joints().equals(other.joints());
         }
 
+        void resize(std::size_t columns)
+        {
+          joints().resize(columns);
+        }
+
+        void changeReferenceFrame(const fccl::semantics::TransformSemantics& 
+            transform_semantics)
+        {
+          twist().changeReferenceFrame(transform_semantics);
+        }
+          
+        bool changeReferencePossible(const fccl::semantics::TransformSemantics& 
+            transform_semantics)
+        {
+          return twist().changeReferencePossible(transform_semantics);
+        }
+ 
       private:
         TwistSemantics twist_;
         JntArraySemantics joints_;
