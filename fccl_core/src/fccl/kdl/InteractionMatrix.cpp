@@ -4,158 +4,10 @@ namespace fccl
 {
   namespace kdl
   {
-    InteractionMatrix::InteractionMatrix() : SemanticObject1xN()
-    {
-    }
-  
-    InteractionMatrix::InteractionMatrix(const fccl::kdl::InteractionMatrix& other) :
-        SemanticObject1xN(other), data_(other.getData())
-    {
-      assert(isValid());
-    }
-  
-    InteractionMatrix::InteractionMatrix(const SemanticObject1xN& semantics, 
-            const Eigen::Matrix<double, Eigen::Dynamic, 6>& data) :
-        SemanticObject1xN(semantics), data_(data)
-    {
-      assert(isValid());
-    }
-  
-    InteractionMatrix::~InteractionMatrix()
-    {
-    }
-  
-    fccl::kdl::InteractionMatrix& InteractionMatrix::operator=(const fccl::kdl::InteractionMatrix& rhs)
-    {
-      // need to check for self-allocation
-      if(this != &rhs)
+      Eigen::Matrix<double, 6, 6> InteractionMatrix::calcTwistProjectorTranspose(const KDL::Frame& transform) const
       {
-        assert(rhs.isValid());
-
-        this->resize(rhs.rows());
-        this->setReferenceID(rhs.getReferenceID());
-        this->setTargetIDs(rhs.getTargetIDs());
-        this->setData(rhs.getData());
-      }
-  
-      return *this;
-    }
-  
-    const Eigen::Matrix< double, Eigen::Dynamic, 6>& InteractionMatrix::getData() const
-    {
-      return data_;
-    }
-  
-    void InteractionMatrix::setData(const Eigen::Matrix< double, Eigen::Dynamic, 6>& data)
-    {
-      assert(rows() == data.rows());
-      assert(columns() == data.cols());
-  
-      data_ = data;
-    }
-  
-    void InteractionMatrix::resize(unsigned int number_of_rows)
-    {
-      SemanticObject1xN::resize(number_of_rows);
-      data_.resize(number_of_rows, 6);
-    }
-
-    std::size_t InteractionMatrix::size() const
-    {
-      return rows();
-    }
-
-    bool InteractionMatrix::isValid() const
-    {
-      return data_.rows() == SemanticObject1xN::size();
-    }
-  
-    unsigned int InteractionMatrix::rows() const
-    {
-      assert(isValid());
-
-      return data_.rows();
-    }
-  
-    unsigned int InteractionMatrix::columns() const
-    {
-      return data_.cols();
-    }
-  
-    double& InteractionMatrix::operator()(unsigned int row, unsigned int column)
-    {
-      assert(row < rows());
-      assert(column < columns());
-  
-      return data_(row, column); 
-    }
-  
-    double InteractionMatrix::operator()(unsigned int row, unsigned int column) const
-    {
-      assert(row < rows());
-      assert(column < columns());
-  
-      return data_(row, column); 
-    }
-  
-    fccl::kdl::Twist InteractionMatrix::getRow(unsigned int row) const
-    {
-      assert(row < rows());
-      assert(isValid());
-   
-      Twist result;
-      result.setReferenceID(getReferenceID());
-      result.setTargetID(getTargetID(row));
-  
-      KDL::Vector trans(data_(row,0), data_(row,1), data_(row,2));
-      KDL::Vector angular(data_(row,3), data_(row,4), data_(row,5));
-  
-      result.setTwist(KDL::Twist(trans, angular)); 
-    
-      return result;
-    }
-  
-    void InteractionMatrix::setRow(unsigned int row, const fccl::kdl::Twist& twist)
-    {
-      assert(row < rows());
-      assert(isValid());
-  
-      setTargetID(row, twist.getTargetID());
-      setReferenceID(twist.getReferenceID());
-  
-      data_(row, 0) = twist.getTwist().vel.x();
-      data_(row, 1) = twist.getTwist().vel.y();
-      data_(row, 2) = twist.getTwist().vel.z();
-      data_(row, 3) = twist.getTwist().rot.x();
-      data_(row, 4) = twist.getTwist().rot.y();
-      data_(row, 5) = twist.getTwist().rot.z();
-  
-    }
-  
-    bool InteractionMatrix::operator==(const fccl::kdl::InteractionMatrix& other) const
-    {
-      return semanticsEqual(other) && numericsEqual(other);
-    }
-  
-    bool InteractionMatrix::operator!=(const fccl::kdl::InteractionMatrix& other) const
-    {
-      return !(*this == other);
-    }
-  
-    bool InteractionMatrix::numericsEqual(const fccl::kdl::InteractionMatrix& other) const
-    {
-      return getData().isApprox(other.getData());
-    }
-  
-    void InteractionMatrix::changeReferenceFrame(const fccl::kdl::Transform& transform)
-    {
-      // take care of semantics
-      assert(transformationPossible(transform));
-
-      setReferenceID(transform.getReferenceID());
-  
       // copy frame because some of Eigens functions do not guarantee constness
-      KDL::Frame f = transform.getTransform();
+      KDL::Frame f = transform;
   
       // (transposed) Rotation matrix of f
       Eigen::Matrix3d Rt = Eigen::Map<Eigen::Matrix3d>(f.M.data);
@@ -175,28 +27,8 @@ namespace fccl
       Mi.block<3,3>(3,0) = -Rt*px;
       Mi.block<3,3>(0,3) = Eigen::Matrix3d::Zero();
   
-      // actual multiplication
-      setData(getData() * Mi);
-    }
-  
-    bool InteractionMatrix::transformationPossible(const fccl::kdl::Transform& transform) const
-    {
-      return getReferenceID() == transform.getTargetID();
-    }
-  
-    std::ostream& operator<<(std::ostream& os, const fccl::kdl::InteractionMatrix& interaction_matrix)
-    {
-      os << "data:\n";
-      for(unsigned int row=0; row<interaction_matrix.rows(); row++)
-      {
-        for(unsigned int column=0; column<interaction_matrix.columns(); column++)
-        {
-          os << "  " << interaction_matrix(row, column);
-        }
-        os << "    (target_id: " << interaction_matrix.getTargetIDs()[row] << ")\n";
-      }  
-  
-      os << "reference: " << interaction_matrix.getReferenceID() << "\n";
+      // return result
+      return Mi;
     }
   } // namespace kdl
 } // namespace fccl

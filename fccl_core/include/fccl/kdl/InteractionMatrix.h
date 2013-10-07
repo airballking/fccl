@@ -7,57 +7,83 @@
 #include <Eigen/Core> 
 #include <fccl/kdl/Twist.h>
 #include <fccl/kdl/Transform.h>
+#include <fccl/semantics/InteractionMatrixSemantics.h>
 
 namespace fccl
 {
   namespace kdl
   {
-    class InteractionMatrix : public SemanticObject1xN
+    class InteractionMatrix
     {
       public:
-        InteractionMatrix();
-        InteractionMatrix(const fccl::kdl::InteractionMatrix& other);
-        InteractionMatrix(const SemanticObject1xN& semantics, 
-            const Eigen::Matrix<double, Eigen::Dynamic, 6>& data);
-  
-        virtual ~InteractionMatrix();
-  
-        fccl::kdl::InteractionMatrix& operator=(const fccl::kdl::InteractionMatrix& rhs);
-  
-        const Eigen::Matrix< double, Eigen::Dynamic, 6>& getData() const;
-        void setData(const Eigen::Matrix< double, Eigen::Dynamic, 6>& data);
-  
-        virtual void resize(unsigned int number_of_rows);
-        virtual std::size_t size() const;
+        const Eigen::Matrix< double, Eigen::Dynamic, 6>& numerics() const
+        {
+          return data_;
+        }
 
-        bool isValid() const;
+        Eigen::Matrix< double, Eigen::Dynamic, 6>& numerics()
+        {
+          return data_;
+        }
+
+        const fccl::semantics::InteractionMatrixSemantics& semantics() const
+        {
+          return semantics_;
+        }
+
+        fccl::semantics::InteractionMatrixSemantics& semantics()
+        {
+          return semantics_;
+        }
+
+        bool equals(const InteractionMatrix& other) const
+        {
+          return semantics().equals(other.semantics()) &&
+              numerics().isApprox(other.numerics());
+        }
+
+        void resize(std::size_t number_of_rows)
+        {
+          numerics().resize(number_of_rows, 6);
+ 
+          semantics().resize(number_of_rows);
+        }
+
+        std::size_t size() const
+        {
+          assert(isValid());
+
+          return semantics().size();
+        }
+
+        bool isValid() const
+        {
+          return numerics().rows() == semantics().size();
+        }
   
-        unsigned int rows() const;
-        unsigned int columns() const;
-  
-        double& operator()(unsigned int row, unsigned int column);
-        double operator()(unsigned int row, unsigned int column) const;
-  
-        fccl::kdl::Twist getRow(unsigned int row) const;
-        void setRow(unsigned int row, const fccl::kdl::Twist& twist);
-  
-        bool operator==(const fccl::kdl::InteractionMatrix& other) const;
-        bool operator!=(const fccl::kdl::InteractionMatrix& other) const;
-  
-        bool numericsEqual(const fccl::kdl::InteractionMatrix& other) const;
-  
-        void changeReferenceFrame(const fccl::kdl::Transform& transform);
-        bool transformationPossible(const fccl::kdl::Transform& transform) const;
+        void changeReferenceFrame(const fccl::kdl::Transform& transform)
+        {
+          semantics().changeReferenceFrame(transform.semantics());
+
+          numerics() = numerics() * calcTwistProjectorTranspose(transform.numerics());
+        }
+
+        bool changeReferencePossible(const fccl::kdl::Transform& transform) const
+        {
+          return semantics().changeReferencePossible(transform.semantics());
+        }
   
         friend std::ostream& operator<<(std::ostream& os, 
             const fccl::kdl::InteractionMatrix& interaction_matrix);
   
+      private:
+        // semantics
+        fccl::semantics::InteractionMatrixSemantics semantics_;
         // actual numeric representation of interaction matrix
         Eigen::Matrix< double, Eigen::Dynamic, 6 > data_;
+
+        Eigen::Matrix<double, 6, 6> calcTwistProjectorTranspose(const KDL::Frame& transform) const;
     };
-  
-    // auxiliary function providing transposed twist transformation matrix
-    Eigen::Matrix< double, 6, 6> getTransposedTwistTransformationMatrix(const KDL::Frame& frame);
   } // namespace kdl 
 } // namespace fccl
 #endif // FCCL_KDL_INTERACTION_MATRIX_H
