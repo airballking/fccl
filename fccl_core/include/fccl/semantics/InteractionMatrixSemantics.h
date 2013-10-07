@@ -33,6 +33,11 @@ namespace fccl
           return twist_;
         }
 
+        void resize(std::size_t number_of_joints)
+        {
+          joints().resize(number_of_joints);
+        }
+
         bool equals(const InteractionMatrixSemantics& other) const
         {
           return twist().equals(other.twist()) &&

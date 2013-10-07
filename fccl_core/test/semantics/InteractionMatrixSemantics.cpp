@@ -69,6 +69,11 @@ TEST_F(InteractionMatrixSemanticsTest, Basics)
 
   EXPECT_FALSE(H.equals(H4));
   EXPECT_FALSE(H.equals(H5));
+
+  InteractionMatrixSemantics H6;
+  EXPECT_EQ(H6.joints().size(), 0);
+  H6.resize(2);
+  EXPECT_EQ(H6.joints().size(), 2);
 }
 
 TEST_F(InteractionMatrixSemanticsTest, JacobianMultiplication)
