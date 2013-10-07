@@ -36,6 +36,12 @@ namespace fccl
                column_joints().equals(other.column_joints());
         }
 
+        void resize(std::size_t rows, std::size_t columns)
+        {
+          row_joints().resize(rows);
+          column_joints().resize(columns);
+        }
+
       private:
         JntArraySemantics row_joints_;
         JntArraySemantics column_joints_;

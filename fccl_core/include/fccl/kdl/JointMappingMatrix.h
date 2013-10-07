@@ -42,8 +42,7 @@ namespace fccl
         {
           numerics().resize(rows, columns);
 
-          semantics().row_joints().resize(rows);
-          semantics().column_joints().resize(columns);
+          semantics().resize(rows, columns);
         }
   
         bool isValid() const
