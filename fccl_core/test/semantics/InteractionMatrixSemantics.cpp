@@ -5,6 +5,7 @@
 #include <fccl/semantics/JacobianSemantics.h>
 #include <fccl/semantics/JntArraySemantics.h>
 #include <fccl/semantics/JointMappingSemantics.h>
+#include <fccl/semantics/TransformSemantics.h>
 
 using namespace fccl::semantics;
 
@@ -13,8 +14,12 @@ class InteractionMatrixSemanticsTest : public ::testing::Test
   protected:
     virtual void SetUp()
     {
-      twist.reference().setName("world");
-      twist.target().setName("tool");
+      world = "world";
+      reference = "reference";
+      target = "target";
+
+      twist.reference().setName(reference);
+      twist.target().setName(target);
 
       constraints.resize(3);
       constraints(0).setName("height");
@@ -32,17 +37,22 @@ class InteractionMatrixSemanticsTest : public ::testing::Test
 
       A.row_joints() = constraints;
       A.column_joints() = joints;
+
+      transform.reference().setName(world);
+      transform.target().setName(reference);
     }
 
     virtual void TearDown()
     {
     }
 
+    std::string world, reference, target;
     TwistSemantics twist;
     JntArraySemantics constraints;
     JntArraySemantics joints;
     JacobianSemantics jacobian;
     JointMappingSemantics A;
+    TransformSemantics transform;
 };
 
 TEST_F(InteractionMatrixSemanticsTest, Basics)
@@ -74,6 +84,7 @@ TEST_F(InteractionMatrixSemanticsTest, Basics)
   EXPECT_EQ(H6.joints().size(), 0);
   H6.resize(2);
   EXPECT_EQ(H6.joints().size(), 2);
+  EXPECT_EQ(H6.size(), 2);
 }
 
 TEST_F(InteractionMatrixSemanticsTest, JacobianMultiplication)
@@ -87,4 +98,19 @@ TEST_F(InteractionMatrixSemanticsTest, JacobianMultiplication)
   multiply(H, jacobian, A2);
   
   EXPECT_TRUE(A.equals(A2));
+}
+
+TEST_F(InteractionMatrixSemanticsTest, ChangeReferenceFrame)
+{ 
+  InteractionMatrixSemantics H;
+  H.joints() = constraints;
+  H.twist() = twist;
+
+  ASSERT_TRUE(H.changeReferencePossible(transform));
+  
+  H.changeReferenceFrame(transform);
+
+  EXPECT_STREQ(H.twist().reference().getName().c_str(), world.c_str());
+  EXPECT_STREQ(H.twist().target().getName().c_str(), target.c_str());
+  EXPECT_TRUE(H.joints().equals(constraints));
 }
