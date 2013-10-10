@@ -1,9 +1,13 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(fccl_core)
 
-find_package(catkin REQUIRED COMPONENTS roscpp urdf kdl_parser)
+# Catkin dependencies
+find_package(catkin REQUIRED COMPONENTS 
+  roscpp 
+  urdf 
+  kdl_parser)
 
-## System dependencies are found with CMake's conventions
+## System dependencies 
 find_package(Boost REQUIRED COMPONENTS thread)
 find_package(Eigen REQUIRED)
 find_package(orocos_kdl REQUIRED)
@@ -30,10 +34,12 @@ catkin_package(
 
 ## Specify additional locations of header files
 ## Your package locations should be listed before other locations
+
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
   ${orocos_kdl_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIRS}
 )
 include_directories(
   SYSTEM
