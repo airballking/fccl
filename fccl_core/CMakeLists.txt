@@ -1,11 +1,12 @@
 cmake_minimum_required(VERSION 2.8.3)
 project(fccl_core)
 
-find_package(catkin REQUIRED COMPONENTS roscpp orocos_kdl urdf kdl_parser)
+find_package(catkin REQUIRED COMPONENTS roscpp urdf kdl_parser)
 
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS thread)
-
+find_package(Eigen REQUIRED)
+find_package(orocos_kdl REQUIRED)
 
 ###################################
 ## catkin specific configuration ##
@@ -19,8 +20,8 @@ find_package(Boost REQUIRED COMPONENTS thread)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS roscpp orocos_kdl urdf
-  DEPENDS eigen
+  CATKIN_DEPENDS roscpp urdf
+  DEPENDS Eigen orocos_kdl
 )
 
 ###########
@@ -32,6 +33,11 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
+  ${orocos_kdl_INCLUDE_DIRS}
+)
+include_directories(
+  SYSTEM
+  ${EIGEN_INCLUDE_DIRS}
 )
 
 ## Declare a cpp library
@@ -50,7 +56,10 @@ add_library(${PROJECT_NAME}
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
+  ${orocos_kdl_LIBRARIES}
 )
+set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS
+  -L${orocos_kdl_LIBRARY_DIRS})
 
 #############
 ## Install ##
@@ -116,5 +125,8 @@ catkin_add_gtest(${PROJECT_NAME}-test
 if(TARGET ${PROJECT_NAME}-test)
   target_link_libraries(${PROJECT_NAME}-test 
                         ${PROJECT_NAME} 
-                        ${catkin_LIBRARIES})
+                        ${catkin_LIBRARIES}
+                        ${orocos_kdl_LIBRARIES})
+  set_target_properties(${PROJECT_NAME}-test PROPERTIES LINK_FLAGS
+    -L${orocos_kdl_LIBRARY_DIRS})
 endif()
