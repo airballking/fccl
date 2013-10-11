@@ -8,6 +8,7 @@
 #include <fccl/kdl/Twist.h>
 #include <fccl/kdl/Transform.h>
 #include <fccl/semantics/InteractionMatrixSemantics.h>
+#include <fccl/utils/Printing.h>
 
 namespace fccl
 {
@@ -73,9 +74,6 @@ namespace fccl
           return semantics().changeReferencePossible(transform.semantics());
         }
   
-        friend std::ostream& operator<<(std::ostream& os, 
-            const fccl::kdl::InteractionMatrix& interaction_matrix);
-  
       private:
         // semantics
         fccl::semantics::InteractionMatrixSemantics semantics_;
@@ -84,6 +82,18 @@ namespace fccl
 
         Eigen::Matrix<double, 6, 6> calcTwistProjectorTranspose(const KDL::Frame& transform) const;
     };
+
+    inline std::ostream& operator<<(std::ostream& os,
+        const InteractionMatrix& interaction_matrix)
+    {
+      using fccl::utils::operator<<;
+
+      os << "semantics: " << interaction_matrix.semantics() << "\n";
+      os << "numerics: " << interaction_matrix.numerics();
+
+      return os;
+    }
+ 
   } // namespace kdl 
 } // namespace fccl
 #endif // FCCL_KDL_INTERACTION_MATRIX_H
