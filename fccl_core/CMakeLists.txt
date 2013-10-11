@@ -55,7 +55,6 @@ add_library(${PROJECT_NAME}
   src/fccl/utils/Printing.cpp
   src/fccl/utils/TransformMap.cpp
 #  src/fccl/base/Constraints.cpp
-#  src/fccl/base/Features.cpp
 #  src/fccl/base/FeatureTypes.cpp
 )
 
@@ -109,7 +108,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS
 ## Add gtest based cpp test target 
 catkin_add_gtest(${PROJECT_NAME}-test 
                  test/main.cpp 
-#                 test/base/Features.cpp
+                 test/base/Features.cpp
 #                 test/base/Constraints.cpp
                  test/kdl/Transform.cpp
                  test/kdl/Twist.cpp

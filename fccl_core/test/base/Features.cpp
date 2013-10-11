@@ -15,73 +15,131 @@ class FeaturesTest : public ::testing::Test
       // names/identifers of stuff
       name = "corner";
       parent = "parent";
-      child = "child";
       world = "world"; 
 
       // kdl data
       pos = KDL::Vector(0, 0, 0);
       dir = KDL::Vector(0, 0, 1);
       transform_data = KDL::Frame(KDL::Rotation::RotZ(M_PI/2.0), KDL::Vector(0, 0, 1));
-      // semantic kdl ;)
-      transform = Transform(SemanticObject1x1(world, parent), transform_data);
+      // semantic kdl
+      transform.numerics() = transform_data;
+      transform.semantics().reference().setName(world);
+      transform.semantics().target().setName(parent);
+
+      // semantics for our feature
+      feature_semantics.name().setName(name);
+      feature_semantics.reference().setName(parent);
+      feature_semantics.type() = fccl::semantics::POINT_FEATURE;
     }
 
     virtual void TearDown()
     {
     }
 
-    std::string name, parent, child, world;
+    std::string name, parent, world;
     KDL::Vector pos, dir;
     KDL::Frame transform_data;
     Transform transform;
+    fccl::semantics::FeatureSemantics feature_semantics;
 };
 
 TEST_F(FeaturesTest, Basics)
 {
   Feature f;
-  f.setTargetName(name);
-  f.setReferenceName(parent);
-  f.setPosition(pos); 
-  f.setOrientation(dir);
-  f.setType(LINE_FEATURE);
+  f.semantics() = feature_semantics;
+  f.position() = pos; 
+  f.orientation() = dir;
 
-  Feature f2(SemanticObject1x1(parent, name), pos, dir, LINE_FEATURE);
+  Feature f2;
+  f2 = f;
 
   Feature f3(f);
 
-  Feature f4(SemanticObject1x1(f.getReferenceID(), f.getTargetID()), f.getPosition(), f.getOrientation(), f.getType());
+  Feature f4 = f;
 
   Feature f5;
-  f5.setTargetID(f.getTargetID());
-  f5.setReferenceID(f.getReferenceID());
-  f5.setPosition(f.getPosition());
-  f5.setOrientation(f.getOrientation());
-  f5.setType(f.getType());
+  f5.semantics() = f.semantics();
+  f5.position() = f.position();
+  f5.orientation() = f.orientation();
 
-  Feature f6 = f;
+  Feature f6;
+  f6.semantics().reference() = f.semantics().reference();
+  f6.semantics().name() = f.semantics().name();
+  f6.semantics().type() = f.semantics().type();
+  f6.position() = f.position();
+  f6.orientation() = f.orientation();
 
-  EXPECT_EQ(f, f2);
-  EXPECT_EQ(f, f3);
-  EXPECT_EQ(f, f4);
-  EXPECT_EQ(f, f5);
-  EXPECT_EQ(f, f6);
+  EXPECT_TRUE(f.equals(f2));
+  EXPECT_TRUE(f.equals(f3));
+  EXPECT_TRUE(f.equals(f4));
+  EXPECT_TRUE(f.equals(f5));
+  EXPECT_TRUE(f.equals(f6));
+
+  EXPECT_STREQ(f.semantics().reference().getName().c_str(), parent.c_str());
+  EXPECT_STREQ(f.semantics().name().getName().c_str(), name.c_str());
+  EXPECT_EQ(f.semantics().type(), fccl::semantics::POINT_FEATURE);
+  EXPECT_TRUE(KDL::Equal(f.position(), pos));
+  EXPECT_TRUE(KDL::Equal(f.orientation(), dir));
+
+  EXPECT_STREQ(f2.semantics().reference().getName().c_str(), parent.c_str());
+  EXPECT_STREQ(f2.semantics().name().getName().c_str(), name.c_str());
+  EXPECT_EQ(f2.semantics().type(), fccl::semantics::POINT_FEATURE);
+  EXPECT_TRUE(KDL::Equal(f2.position(), pos));
+  EXPECT_TRUE(KDL::Equal(f2.orientation(), dir));
 
   Feature f7(f);
-  f7.changeReference(transform);
-  
-  EXPECT_NE(f, f7);
-  EXPECT_EQ(f7, Feature(SemanticObject1x1(world, name), transform.getTransform() * pos, transform.getTransform() * dir, LINE_FEATURE));
+  f7.position().x(f7.position().x() + 1);
+  EXPECT_FALSE(f.equals(f7));
+
+  Feature f8(f);
+  f8.orientation().x(f8.orientation().x() +1);
+  EXPECT_FALSE(f.equals(f8));
+
+  Feature f9(f);
+  f9.semantics().name().setName("gibberish");
+  EXPECT_FALSE(f.equals(f9));
 }
 
-TEST_F(FeaturesTest, Equalities)
+TEST_F(FeaturesTest, ValidityCheck)
 {
-  Feature f(SemanticObject1x1(parent, name), pos, dir, POINT_FEATURE);
-  Feature f2(f);
-  f2.setType(PLANE_FEATURE);
-  Feature f3(f);
-  f3.setType(LINE_FEATURE);
+  Feature f;
+  f.semantics() = feature_semantics;
+  f.position() = pos; 
+  f.orientation() = dir;
 
-  EXPECT_NE(f, f2);
-  EXPECT_NE(f, f3);
-  EXPECT_NE(f2, f3);
+  EXPECT_TRUE(f.isValid());
+
+  f.semantics().type() = fccl::semantics::UNKNOWN_FEATURE;
+  EXPECT_FALSE(f.isValid());
+
+  f.semantics().type() = fccl::semantics::FEATURE_COUNT;
+  EXPECT_FALSE(f.isValid());
+}
+
+TEST_F(FeaturesTest, ChangeReferenceFrame)
+{
+  Feature f;
+  f.semantics() = feature_semantics;
+  f.position() = pos; 
+  f.orientation() = dir;
+
+  Feature f2(f);
+  ASSERT_TRUE(f2.changeReferencePossible(transform));
+  f2.changeReferenceFrame(transform);
+  EXPECT_STREQ(f2.semantics().reference().getName().c_str(), world.c_str());
+  EXPECT_STREQ(f2.semantics().name().getName().c_str(), name.c_str());
+  EXPECT_EQ(f2.semantics().type(), fccl::semantics::POINT_FEATURE);
+  EXPECT_TRUE(KDL::Equal(f2.position(), transform.numerics() * pos));
+  EXPECT_TRUE(KDL::Equal(f2.orientation(), transform.numerics() * dir));
+  EXPECT_TRUE(KDL::Equal(f2.position(), KDL::Vector(0, 0, 1)));  
+  EXPECT_TRUE(KDL::Equal(f2.orientation(), KDL::Vector(0, 0, 2)));
+
+  EXPECT_FALSE(f.equals(f2));
+  Feature f3;
+  f3.semantics().reference() = transform.semantics().reference();
+  f3.semantics().name() = f.semantics().name();
+  f3.semantics().type() = f.semantics().type();
+  f3.position() =  transform.numerics() * pos;
+  f3.orientation() = transform.numerics() * dir;
+  EXPECT_TRUE(f2.equals(f3));
 }
