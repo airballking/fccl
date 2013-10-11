@@ -22,7 +22,7 @@ namespace fccl
       FEATURE_COUNT
     };
 
-    bool featureTypeValid(int feature_type)
+    inline bool featureTypeValid(int feature_type)
     {
       return (UNKNOWN_FEATURE < feature_type) && (feature_type < FEATURE_COUNT);
     }
