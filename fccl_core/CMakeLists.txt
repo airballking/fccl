@@ -123,6 +123,7 @@ catkin_add_gtest(${PROJECT_NAME}-test
                  test/semantics/JacobianSemantics.cpp
                  test/semantics/JointMappingSemantics.cpp
                  test/semantics/InteractionMatrixSemantics.cpp
+                 test/semantics/FeatureSemantics.cpp
                  test/utils/Hashing.cpp
                  test/utils/TransformMap.cpp
                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/test_data)
