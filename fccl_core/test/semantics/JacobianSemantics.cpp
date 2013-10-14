@@ -98,3 +98,15 @@ TEST_F(JacobianSemanticsTest, ChangeReference)
   EXPECT_STREQ(jac.twist().reference().getName().c_str(), world.c_str());
   EXPECT_STREQ(jac.twist().target().getName().c_str(), child.c_str());
 }
+
+TEST_F(JacobianSemanticsTest, Init)
+{ 
+  JacobianSemantics jac;
+  jac.init(joint_names, parent, child);
+ 
+  ASSERT_EQ(jac.size(), joint_names.size());
+  for(std::size_t i=0; i<jac.size(); i++)
+    EXPECT_STREQ(jac.joints()(i).getName().c_str(), joint_names[i].c_str());
+  EXPECT_STREQ(jac.twist().reference().getName().c_str(), parent.c_str());
+  EXPECT_STREQ(jac.twist().target().getName().c_str(), child.c_str());
+}
