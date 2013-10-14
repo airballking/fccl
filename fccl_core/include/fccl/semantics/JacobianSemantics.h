@@ -43,6 +43,11 @@ namespace fccl
           joints().resize(columns);
         }
 
+        std::size_t size() const
+        {
+          return joints().size();
+        }
+
         void changeReferenceFrame(const fccl::semantics::TransformSemantics& 
             transform_semantics)
         {

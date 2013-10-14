@@ -55,6 +55,10 @@ TEST_F(JacobianSemanticsTest, Basics)
 
   EXPECT_TRUE(jac.equals(jac2)); 
   EXPECT_TRUE(jac.equals(jac3)); 
+
+  EXPECT_EQ(jac.size(), joint_names.size());
+  EXPECT_TRUE(jac.joints().equals(joints));
+  EXPECT_TRUE(jac.twist().equals(twist));
 }
 
 TEST_F(JacobianSemanticsTest, JntArrayMultiplication)
