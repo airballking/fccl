@@ -55,7 +55,6 @@ add_library(${PROJECT_NAME}
   src/fccl/utils/Printing.cpp
   src/fccl/utils/TransformMap.cpp
   src/fccl/base/Constraints.cpp
-#  src/fccl/base/FeatureTypes.cpp
 )
 
 ## Specify libraries to link a library or executable target against
