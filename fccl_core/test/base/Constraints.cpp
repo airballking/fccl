@@ -28,26 +28,32 @@ class ConstraintsTest : public ::testing::Test
       T_view_tool_data = KDL::Frame(KDL::Rotation::RotZ(M_PI/2.0), KDL::Vector(0.4, -0.3, -0.2));
       T_view_object_data = KDL::Frame(KDL::Rotation::Identity(), KDL::Vector(0.5, 0.0, -0.5));
  
-      // semanitic KLD ;)
-      T_view_tool = Transform(SemanticObject1x1(view_frame_name, tool_frame_name), T_view_tool_data);
-      T_view_object = Transform(SemanticObject1x1(view_frame_name, object_frame_name), T_view_object_data);
+      // semanitic transforms
+      T_view_tool.semantics().reference().setName(view_frame_name);
+      T_view_tool.semantics().target().setName(tool_frame_name);
+      T_view_tool.numerics() = T_view_tool_data;
+
+      T_view_object.semantics().reference().setName(view_frame_name);
+      T_view_object.semantics().target().setName(object_frame_name);
+      T_view_object.numerics() = T_view_object_data;
       
       // features
-      object_feature = Feature(SemanticObject1x1(object_frame_name, object_feature_name), object_feature_pos, object_feature_dir, PLANE_FEATURE);
-      tool_feature = Feature(SemanticObject1x1(tool_frame_name, tool_feature_name), tool_feature_pos, tool_feature_dir, LINE_FEATURE);
+      object_feature.semantics().reference().setName(object_frame_name);
+      object_feature.semantics().name().setName(object_feature_name);
+      object_feature.semantics().type() = fccl::semantics::PLANE_FEATURE;
+      object_feature.position() = object_feature_pos;
+      object_feature.orientation() = object_feature_dir;
+
+      tool_feature.semantics().reference().setName(tool_frame_name);
+      tool_feature.semantics().name().setName(tool_feature_name);
+      tool_feature.semantics().type() = fccl::semantics::LINE_FEATURE;
+      tool_feature.position() = tool_feature_pos;
+      tool_feature.orientation() = tool_feature_dir;
 
       //actual constraint values
       lower_boundary = 0.1; 
       upper_boundary = 0.2;
-
-      // our sample constraint
-      ac.setReferenceName(view_frame_name);
-      ac.setTargetName(constraint_name);
-      ac.setToolFeature(tool_feature);
-      ac.setObjectFeature(object_feature);
-      ac.setLowerBoundary(lower_boundary);
-      ac.setUpperBoundary(upper_boundary);
-    }
+   }
 
     virtual void TearDown()
     {
@@ -63,42 +69,83 @@ class ConstraintsTest : public ::testing::Test
     Transform T_view_tool, T_view_object;
     Feature object_feature, tool_feature;
     double lower_boundary, upper_boundary;
-    AboveConstraint ac;
 };
 
 TEST_F(ConstraintsTest, Basics)
 {
+  AboveConstraint ac;
+  ac.semantics().reference().setName(view_frame_name);
+  ac.semantics().name().setName(constraint_name);
+  ac.toolFeature() = tool_feature;
+  ac.objectFeature() = object_feature;
+  ac.lowerBoundary() = lower_boundary;
+  ac.upperBoundary() = upper_boundary;
+ 
   AboveConstraint ac2(ac);
 
-  AboveConstraint ac3(SemanticObject1x1(view_frame_name, constraint_name), tool_feature,
-      object_feature, lower_boundary, upper_boundary);
+  AboveConstraint ac3 = ac;
 
   AboveConstraint ac4;
   ac4 = ac;
 
-  AboveConstraint ac5(SemanticObject1x1(ac.getReferenceID(), ac.getTargetID()), ac.getToolFeature(),
-    ac.getObjectFeature(), ac.getLowerBoundary(), ac.getUpperBoundary());
+  AboveConstraint ac5;
+  ac5.semantics() = ac.semantics();
+  ac5.toolFeature() = ac.toolFeature();
+  ac5.objectFeature() = ac.objectFeature();
+  ac5.lowerBoundary() = ac.lowerBoundary();
+  ac5.upperBoundary() = ac.upperBoundary();
 
   Constraint c(ac);
 
-  EXPECT_EQ(ac, ac2);
-  EXPECT_EQ(ac, ac3);
-  EXPECT_EQ(ac, ac4);
-  EXPECT_EQ(ac, ac5);
+  EXPECT_TRUE(ac.equals(ac2));
+  EXPECT_TRUE(ac.equals(ac3));
+  EXPECT_TRUE(ac.equals(ac4));
+  EXPECT_TRUE(ac.equals(ac5));
 
-  EXPECT_NE(ac, c);
+  EXPECT_FALSE(ac.equals(c));
 
-  EXPECT_EQ(ac.getType(), ABOVE_CONSTRAINT);
-  EXPECT_EQ(c.getType(), UNKNOWN_CONSTRAINT);
+  EXPECT_EQ(ac.semantics().type(), fccl::semantics::ABOVE_CONSTRAINT);
+  EXPECT_EQ(ac2.semantics().type(), fccl::semantics::ABOVE_CONSTRAINT);
+  EXPECT_EQ(c.semantics().type(), fccl::semantics::UNKNOWN_CONSTRAINT);
+
+  EXPECT_STREQ(ac.semantics().reference().getName().c_str(), view_frame_name.c_str());
+  EXPECT_STREQ(ac.semantics().name().getName().c_str(), constraint_name.c_str());
+  EXPECT_TRUE(ac.toolFeature().equals(tool_feature));
+  EXPECT_TRUE(ac.objectFeature().equals(object_feature));
+  EXPECT_EQ(ac.lowerBoundary(), lower_boundary);
+  EXPECT_EQ(ac.upperBoundary(), upper_boundary);
+
+  EXPECT_STREQ(ac2.semantics().reference().getName().c_str(), view_frame_name.c_str());
+  EXPECT_STREQ(ac2.semantics().name().getName().c_str(), constraint_name.c_str());
+  EXPECT_TRUE(ac2.toolFeature().equals(tool_feature));
+  EXPECT_TRUE(ac2.objectFeature().equals(object_feature));
+  EXPECT_EQ(ac2.lowerBoundary(), lower_boundary);
+  EXPECT_EQ(ac2.upperBoundary(), upper_boundary);
 }
 
 TEST_F(ConstraintsTest, Evaluation)
 {
+  AboveConstraint ac;
+  ac.semantics().reference().setName(view_frame_name);
+  ac.semantics().name().setName(constraint_name);
+  ac.toolFeature() = tool_feature;
+  ac.objectFeature() = object_feature;
+  ac.lowerBoundary() = lower_boundary;
+  ac.upperBoundary() = upper_boundary;
+ 
   EXPECT_DOUBLE_EQ(ac.calculateValue(T_view_tool, T_view_object), 0.3);
 }
 
 TEST_F(ConstraintsTest, TypeConversion)
 {
+  AboveConstraint ac;
+  ac.semantics().reference().setName(view_frame_name);
+  ac.semantics().name().setName(constraint_name);
+  ac.toolFeature() = tool_feature;
+  ac.objectFeature() = object_feature;
+  ac.lowerBoundary() = lower_boundary;
+  ac.upperBoundary() = upper_boundary;
+
   AboveConstraint* ac_pointer = &ac;
   Constraint* c_pointer = static_cast<Constraint*>(ac_pointer);
   AboveConstraint* ac_pointer2 = static_cast<AboveConstraint*>(c_pointer);
@@ -110,16 +157,26 @@ TEST_F(ConstraintsTest, TypeConversion)
 
 TEST_F(ConstraintsTest, FirstDerivative)
 {
+  AboveConstraint ac;
+  ac.semantics().reference().setName(view_frame_name);
+  ac.semantics().name().setName(constraint_name);
+  ac.toolFeature() = tool_feature;
+  ac.objectFeature() = object_feature;
+  ac.lowerBoundary() = lower_boundary;
+  ac.upperBoundary() = upper_boundary;
+ 
   InteractionMatrix m = ac.calculateFirstDerivative(T_view_tool, T_view_object);
-  EXPECT_EQ(m.getReferenceID(), tool_feature.getReferenceID());
-  ASSERT_EQ(m.getTargetIDs().size(), 1);
-  EXPECT_EQ(m.getTargetIDs()[0], ac.getTargetID());
-  ASSERT_EQ(m.rows(), 1);
-  ASSERT_EQ(m.columns(), 6);
-  EXPECT_DOUBLE_EQ(m(0,0), 0);
-  EXPECT_DOUBLE_EQ(m(0,1), 0);
-  EXPECT_DOUBLE_EQ(m(0,2), 1);
-  EXPECT_DOUBLE_EQ(m(0,3), 0);
-  EXPECT_DOUBLE_EQ(m(0,4), 0);
-  EXPECT_DOUBLE_EQ(m(0,5), 0);
+  EXPECT_EQ(m.semantics().twist().reference().getID(), tool_feature.semantics().reference().getID());
+  ASSERT_EQ(m.size(), 1);
+  EXPECT_EQ(m.semantics().joints()(0).getID(), ac.semantics().name().getID());
+  ASSERT_EQ(m.numerics().rows(), 1);
+  ASSERT_EQ(m.numerics().cols(), 6);
+  EXPECT_DOUBLE_EQ(m.numerics()(0,0), 0);
+  EXPECT_DOUBLE_EQ(m.numerics()(0,1), 0);
+  EXPECT_DOUBLE_EQ(m.numerics()(0,2), 1);
+  EXPECT_DOUBLE_EQ(m.numerics()(0,3), 0);
+  EXPECT_DOUBLE_EQ(m.numerics()(0,4), 0);
+  EXPECT_DOUBLE_EQ(m.numerics()(0,5), 0);
+
+  std::cout << "\n" << m << "\n";
 }
