@@ -90,3 +90,12 @@ TEST_F(TransformSemanticsTest, Multiplication)
 
   EXPECT_TRUE(ts3.equals(ts4));
 }
+
+TEST_F(TransformSemanticsTest, Init)
+{
+  TransformSemantics ts;
+  ts.init(parent_frame, child_frame);
+
+  EXPECT_STREQ(ts.reference().getName().c_str(), parent_frame.c_str());
+  EXPECT_STREQ(ts.target().getName().c_str(), child_frame.c_str());
+}

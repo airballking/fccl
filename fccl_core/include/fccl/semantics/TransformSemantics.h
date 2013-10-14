@@ -36,6 +36,12 @@ namespace fccl
               target().equals(other.target());
         }
 
+        void init(const std::string& reference_name, const std::string& target_name)
+        {
+          reference().setName(reference_name);
+          target().setName(target_name);
+        }
+
         TransformSemantics inverse() const
         {
           TransformSemantics result(*this);
