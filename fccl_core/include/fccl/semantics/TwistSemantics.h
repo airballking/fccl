@@ -3,6 +3,7 @@
 
 #include <fccl/semantics/SemanticsBase.h>
 #include <fccl/semantics/TransformSemantics.h>
+#include <string>
 
 namespace fccl
 {
@@ -35,6 +36,12 @@ namespace fccl
         {
           return reference().equals(other.reference()) &&
               target().equals(other.target());
+        }
+
+        void init(const std::string& reference_name, const std::string& target_name)
+        {
+          reference().setName(reference_name);
+          target().setName(target_name);
         }
 
         void changeReferenceFrame(const fccl::semantics::TransformSemantics& 
