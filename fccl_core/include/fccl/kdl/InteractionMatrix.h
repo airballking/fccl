@@ -14,6 +14,12 @@ namespace fccl
 {
   namespace kdl
   {
+    // TODO(GEORG): 
+    // In some use-cases InteractionMatrix should be dynamic at run-time, while
+    // for other cases their size is already determined at compile-time. An
+    // example of the former is the controller, while constraints only produce
+    // InteractionMatrices of size 1. Make this class templated to mirror this 
+    // effect!
     class InteractionMatrix
     {
       public:
