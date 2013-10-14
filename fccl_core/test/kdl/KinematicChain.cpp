@@ -9,7 +9,7 @@ class KinematicChainTest : public ::testing::Test
   protected:
     virtual void SetUp()
     {
-      urdf.initFile("/home/georg/ros/hydro/catkin_ws/src/fccl/fccl_core/test_data/pr2.urdf");
+      urdf.initFile("pr2.urdf");
       arm_base_name = "torso_lift_link";
       arm_tip_name = "l_gripper_tool_frame";
       semantics.init(arm_base_name, arm_tip_name);
