@@ -47,6 +47,19 @@ namespace fccl
           return numerics().rows() == semantics().size();
         }
 
+        void init(const std::vector<std::string>& joint_names)
+        {
+          resize(joint_names.size());
+          semantics().init(joint_names);
+        }
+
+        std::size_t size() const
+        {
+          assert(isValid());
+
+          return semantics().size();
+        }
+
         void resize(std::size_t new_size)
         {
           numerics().resize(new_size);

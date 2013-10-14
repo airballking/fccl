@@ -64,3 +64,16 @@ TEST_F(JntArrayTest, Basics)
   EXPECT_TRUE(q.equals(q3));
   EXPECT_TRUE(q.equals(q4));   
 }
+
+TEST_F(JntArrayTest, init)
+{
+  JntArray q;
+  q.init(joint_names);
+
+  ASSERT_TRUE(q.isValid());
+  ASSERT_EQ(q.size(), joint_names.size());
+
+  JntArraySemantics s;
+  s.init(joint_names);
+  EXPECT_TRUE(q.semantics().equals(s));
+}
