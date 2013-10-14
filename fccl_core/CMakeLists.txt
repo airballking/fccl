@@ -49,7 +49,7 @@ include_directories(
 ## Declare a cpp library
 add_library(${PROJECT_NAME}
   src/fccl/kdl/InteractionMatrix.cpp
-#  src/fccl/kdl/KinematicChain.cpp
+  src/fccl/kdl/KinematicChain.cpp
   src/fccl/utils/Equalities.cpp
   src/fccl/utils/Hashing.cpp
   src/fccl/utils/Printing.cpp
@@ -114,7 +114,7 @@ catkin_add_gtest(${PROJECT_NAME}-test
                  test/kdl/InteractionMatrix.cpp
                  test/kdl/Jacobian.cpp
                  test/kdl/JntArray.cpp
-#                 test/kdl/KinematicChain.cpp
+                 test/kdl/KinematicChain.cpp
                  test/kdl/JointMappingMatrix.cpp
                  test/semantics/TransformSemantics.cpp
                  test/semantics/JntArraySemantics.cpp

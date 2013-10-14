@@ -3,14 +3,12 @@
 
 #include <fccl/kdl/Jacobian.h>
 #include <fccl/kdl/Transform.h>
-#include <fccl/kdl/Semantics.h>
 #include <fccl/kdl/JntArray.h>
-#include <kdl/chainjnttojacsolver.hpp>
-#include <kdl/chainfksolverpos_recursive.hpp>
+#include <fccl/utils/Equalities.h>
 #include <urdf/model.h>
+#include <kdl/chain.hpp>
 #include <string>
 #include <vector>
-#include <map>
 
 namespace fccl
 {
@@ -19,25 +17,53 @@ namespace fccl
     class KinematicChain
     {
       public:
-        KinematicChain();
-        KinematicChain(const SemanticObject1x1& semantics, const urdf::Model& urdf);
-        virtual ~KinematicChain();
-    
-        void init(const SemanticObject1x1& semantics, const urdf::Model& urdf);
-    
-        const JntArray& getSoftLowerJointLimits() const;
-        const JntArray& getSoftUpperJointLimits() const;
-    
-        const JntArray& getHardLowerJointLimits() const;
-        const JntArray& getHardUpperJointLimits() const;
+        void init(const fccl::semantics::TransformSemantics& semantics, 
+            const urdf::Model& urdf)
+        {
+          extractChain(semantics, urdf);
+   
+          extractJointLimits(urdf);
+  
+          prepareReturnValues(semantics);
+        }
 
-        // not real-time safe
-        std::vector<std::string> getJointNames() const;
-        std::size_t getNumberOfJoints() const;
-        const SemanticObject1x1& getTransformationSemantics() const;
-        const SemanticObjectN& getJointSemantics() const;
-        const SemanticObject1xN& getJacobianSemantics() const;
-        
+        const JntArray& softLowerJointLimits() const
+        {
+          return soft_lower_joint_limits_;
+        }
+
+        const JntArray& softUpperJointLimits() const
+        {
+          return soft_upper_joint_limits_;
+        }
+    
+        const JntArray& hardLowerJointLimits() const
+        {
+          return hard_lower_joint_limits_;
+        }
+
+        const JntArray& hardUpperJointLimits() const
+        {
+          return hard_upper_joint_limits_;
+        }
+
+        std::vector<std::string> jointNames() const
+        {
+          std::vector<std::string> joint_names;
+          joint_names.clear();
+    
+          for(unsigned int i=0; i<chain_.getNrOfSegments(); i++)
+            if(fccl::utils::isJoint(chain_.getSegment(i)))
+              joint_names.push_back(chain_.getSegment(i).getJoint().getName());
+    
+          return joint_names;
+        }
+
+        std::size_t size() const
+        {
+          return softLowerJointLimits().size();
+        }
+
         void calculateJacobian(const JntArray& joint_state, Jacobian& jacobian);
         const Jacobian& calculateJacobian(const JntArray& joint_state);
     
@@ -46,25 +72,21 @@ namespace fccl
         const Transform& calculateForwardKinematics(const JntArray& joint_state);
     
       private:
-        void extractChain(const SemanticObject1x1& semantics, 
+        void extractChain(const fccl::semantics::TransformSemantics& semantics, 
             const urdf::Model& urdf);
-
-        void extractJointNames();
 
         void extractJointLimits(const urdf::Model& urdf);
 
-        void prepareReturnValues(const SemanticObject1x1& semantics);
+        void prepareReturnValues(const fccl::semantics::TransformSemantics& semantics);
 
+        // numerics of the chain
         KDL::Chain chain_;
 
-        std::vector<std::string> joint_names_;
-
+        // pre-allocated memory for our return values
         JntArray soft_lower_joint_limits_;
         JntArray soft_upper_joint_limits_;
         JntArray hard_lower_joint_limits_;
         JntArray hard_upper_joint_limits_;
-
-        // pre-allocated memory for our return values
         Jacobian jacobian_;
         Transform transform_;
     };

@@ -9,10 +9,10 @@ class KinematicChainTest : public ::testing::Test
   protected:
     virtual void SetUp()
     {
-      urdf.initFile("/home/georg/ros/groovy/catkin_ws/src/fccl/fccl_core/test_data/pr2.urdf");
+      urdf.initFile("/home/georg/ros/hydro/catkin_ws/src/fccl/fccl_core/test_data/pr2.urdf");
       arm_base_name = "torso_lift_link";
       arm_tip_name = "l_gripper_tool_frame";
-      semantics = SemanticObject1x1(arm_base_name, arm_tip_name);
+      semantics.init(arm_base_name, arm_tip_name);
 
       joint_names.push_back("l_shoulder_pan_joint");
       joint_names.push_back("l_shoulder_lift_joint");
@@ -24,8 +24,8 @@ class KinematicChainTest : public ::testing::Test
 
       joint_state.resize(7);
       for(std::size_t i=0; i<7; i++)
-        joint_state(i) = 0.;
-      joint_state.setTargetNames(joint_names);
+        joint_state.numerics()(i) = 0.0;
+      joint_state.init(joint_names);
     }
 
     virtual void TearDown()
@@ -35,51 +35,70 @@ class KinematicChainTest : public ::testing::Test
 
     std::string arm_base_name, arm_tip_name;
     std::vector<std::string> joint_names;
-    SemanticObject1x1 semantics;
+    fccl::semantics::TransformSemantics semantics;
     JntArray joint_state;
     urdf::Model urdf;
 };
 
 TEST_F(KinematicChainTest, Basics)
 {
-  KinematicChain kinematics1(semantics, urdf);
-  
-  EXPECT_TRUE(kinematics1.getTransformationSemantics().semanticsEqual(semantics));
-  EXPECT_TRUE(kinematics1.getJointSemantics().semanticsEqual(joint_state));
+  KinematicChain kinematics1;
+  kinematics1.init(semantics, urdf);
+ 
+  EXPECT_EQ(kinematics1.softLowerJointLimits().size(), 
+      kinematics1.size());
+  EXPECT_EQ(kinematics1.softUpperJointLimits().size(), 
+      kinematics1.size());
+  EXPECT_EQ(kinematics1.hardLowerJointLimits().size(), 
+      kinematics1.size());
+  EXPECT_EQ(kinematics1.hardLowerJointLimits().size(), 
+      kinematics1.size());
+  EXPECT_EQ(kinematics1.jointNames().size(), 
+      kinematics1.size());
+  EXPECT_EQ(kinematics1.size(), 7);
 
-  EXPECT_EQ(kinematics1.getSoftLowerJointLimits().size(), 
-      kinematics1.getNumberOfJoints());
-  EXPECT_EQ(kinematics1.getSoftUpperJointLimits().size(), 
-      kinematics1.getNumberOfJoints());
-  EXPECT_EQ(kinematics1.getHardLowerJointLimits().size(), 
-      kinematics1.getNumberOfJoints());
-  EXPECT_EQ(kinematics1.getHardLowerJointLimits().size(), 
-      kinematics1.getNumberOfJoints());
-  EXPECT_EQ(kinematics1.getJointNames().size(), 
-      kinematics1.getNumberOfJoints());
-  EXPECT_EQ(kinematics1.getNumberOfJoints(), 7);
+  EXPECT_TRUE(kinematics1.softLowerJointLimits().semantics().equals(
+      joint_state.semantics()));
+  EXPECT_TRUE(kinematics1.softUpperJointLimits().semantics().equals(
+      joint_state.semantics()));
+  EXPECT_TRUE(kinematics1.hardLowerJointLimits().semantics().equals(
+      joint_state.semantics()));
+  EXPECT_TRUE(kinematics1.hardUpperJointLimits().semantics().equals(
+      joint_state.semantics()));
 
-  ASSERT_EQ(joint_names.size(), kinematics1.getJointNames().size());
+  ASSERT_EQ(joint_names.size(), kinematics1.jointNames().size());
   for(std::size_t i=0; i<joint_names.size(); i++)
-    EXPECT_STREQ(joint_names[i].c_str(), kinematics1.getJointNames()[i].c_str());
+    EXPECT_STREQ(joint_names[i].c_str(), kinematics1.jointNames()[i].c_str());
 
   Transform ee_pose = kinematics1.calculateForwardKinematics(joint_state);  
-  EXPECT_STREQ(ee_pose.getReferenceName().c_str(), arm_base_name.c_str());
-  EXPECT_STREQ(ee_pose.getTargetName().c_str(), arm_tip_name.c_str());
+  EXPECT_TRUE(ee_pose.semantics().equals(semantics));
+  EXPECT_STREQ(ee_pose.semantics().reference().getName().c_str(), 
+      arm_base_name.c_str());
+  EXPECT_STREQ(ee_pose.semantics().target().getName().c_str(), 
+      arm_tip_name.c_str());
 
   kinematics1.calculateForwardKinematics(joint_state, ee_pose);
-  EXPECT_STREQ(ee_pose.getReferenceName().c_str(), arm_base_name.c_str());
-  EXPECT_STREQ(ee_pose.getTargetName().c_str(), arm_tip_name.c_str());
+  EXPECT_TRUE(ee_pose.semantics().equals(semantics));
+  EXPECT_STREQ(ee_pose.semantics().reference().getName().c_str(), 
+      arm_base_name.c_str());
+  EXPECT_STREQ(ee_pose.semantics().target().getName().c_str(), 
+      arm_tip_name.c_str());
+
+  fccl::semantics::JacobianSemantics jac_sem;
+  jac_sem.init(joint_names, arm_base_name, arm_tip_name);
 
   Jacobian jac = kinematics1.calculateJacobian(joint_state);
-  EXPECT_STREQ(jac.getReferenceName().c_str(), arm_base_name.c_str());
-  for(std::size_t i=0; i<joint_names.size(); i++)
-    EXPECT_STREQ(joint_names[i].c_str(), jac.getTargetName(i).c_str());
+  EXPECT_TRUE(jac.semantics().equals(jac_sem));
 
   kinematics1.calculateJacobian(joint_state, jac);
-  EXPECT_STREQ(jac.getReferenceName().c_str(), arm_base_name.c_str());
-  for(std::size_t i=0; i<joint_names.size(); i++)
-    EXPECT_STREQ(joint_names[i].c_str(), jac.getTargetName(i).c_str());
+  EXPECT_TRUE(jac.semantics().equals(jac_sem));
 
-  EXPECT_TRUE(kinematics1.getJacobianSemantics().semanticsEqual(SemanticObject1xN(semantics.getReferenceName(), joint_names)));
+  EXPECT_STREQ(jac.semantics().twist().reference().getName().c_str(),
+      arm_base_name.c_str());
+  EXPECT_STREQ(jac.semantics().twist().target().getName().c_str(),
+      arm_tip_name.c_str());
+  ASSERT_EQ(jac.size(), joint_names.size());
+  for(std::size_t i=0; i<jac.size(); i++)
+    EXPECT_STREQ(jac.semantics().joints()(i).getName().c_str(),
+        joint_names[i].c_str());
 }
