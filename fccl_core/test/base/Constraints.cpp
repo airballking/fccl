@@ -177,6 +177,4 @@ TEST_F(ConstraintsTest, FirstDerivative)
   EXPECT_DOUBLE_EQ(m.numerics()(0,3), 0);
   EXPECT_DOUBLE_EQ(m.numerics()(0,4), 0);
   EXPECT_DOUBLE_EQ(m.numerics()(0,5), 0);
-
-  std::cout << "\n" << m << "\n";
 }
