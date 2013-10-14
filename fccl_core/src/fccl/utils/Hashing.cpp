@@ -1,8 +1,6 @@
 #include <fccl/utils/Hashing.h>
 #include <assert.h>
 
-static std::string empty_string = "";
-
 std::size_t fccl::utils::hash(const std::string& value)
 {
   std::size_t result = string_hash_(value);

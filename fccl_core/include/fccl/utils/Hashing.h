@@ -9,6 +9,8 @@ namespace fccl
 {
   namespace utils
   {  
+    static const std::string empty_string = "";
+
     static std::map<std::size_t, std::string> hash_memory_;
 
     static boost::hash<std::string> string_hash_;
