@@ -81,3 +81,13 @@ TEST_F(JntArraySemanticsTest, partialAssignement)
   
   EXPECT_TRUE(js.equals(js3));
 }
+
+TEST_F(JntArraySemanticsTest, init)
+{
+  JntArraySemantics js;
+  js.init(joint_names);
+
+  ASSERT_EQ(js.size(), joint_names.size());
+  for(std::size_t i=0; i<js.size(); i++)
+    EXPECT_STREQ(js(i).getName().c_str(), joint_names[i].c_str());
+}

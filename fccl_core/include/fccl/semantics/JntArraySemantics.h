@@ -3,6 +3,8 @@
 
 #include <fccl/semantics/SemanticsBase.h>
 #include <iostream>
+#include <string>
+#include <vector>
 
 namespace fccl
 {
@@ -11,6 +13,14 @@ namespace fccl
     class JntArraySemantics
     {
       public:
+        void init(const std::vector<std::string>& joint_names)
+        {
+          resize(joint_names.size());
+
+          for(std::size_t i=0; i<size(); i++)
+            this->operator()(i).setName(joint_names[i]);
+        }
+
         std::size_t size() const
         {
           return joints_.rows();
@@ -40,7 +50,6 @@ namespace fccl
         {
           return joints_;
         }
-
 
         bool equals(const JntArraySemantics& other) const
         {
