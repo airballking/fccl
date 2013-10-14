@@ -56,6 +56,13 @@ namespace fccl
           semantics().resize(columns);
         }
 
+        std::size_t size() const
+        {
+          assert(isValid());
+
+          return semantics().size();
+        }
+
         void changeReferenceFrame(const Transform& transform)
         {
           semantics().changeReferenceFrame(transform.semantics());

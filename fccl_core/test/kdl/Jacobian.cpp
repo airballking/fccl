@@ -90,6 +90,7 @@ TEST_F(JacobianTest, Basics)
   EXPECT_STREQ(j.semantics().twist().target().getName().c_str(), joint_name.c_str());
   for(std::size_t i=0; i<j.semantics().joints().size(); i++)
     EXPECT_STREQ(j.semantics().joints()(i).getName().c_str(), joint_names[i].c_str());
+  EXPECT_EQ(j.size(), joint_names.size());
 }
 
 TEST_F(JacobianTest, ChangeReferenceFrame)
