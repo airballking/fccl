@@ -1,6 +1,8 @@
 #include <fccl/utils/Hashing.h>
 #include <assert.h>
 
+static std::string empty_string = "";
+
 std::size_t fccl::utils::hash(const std::string& value)
 {
   std::size_t result = string_hash_(value);
@@ -15,12 +17,19 @@ void fccl::utils::rememberHashValuePair(std::size_t hash, const std::string& val
   ret = hash_memory_.insert(std::pair<std::size_t, std::string>(hash, value));
 }
 
-const std::string& fccl::utils::retrieveValue(std::size_t hash)
+bool fccl::utils::hasValue(std::size_t hash)
 {
   std::map<std::size_t, std::string>::iterator it = hash_memory_.find(hash);
 
-  // TODO(Georg): Turns this into an exception
-  assert(it != hash_memory_.end());
+  return it != hash_memory_.end();
+}
+
+const std::string& fccl::utils::retrieveValue(std::size_t hash)
+{
+  if(!hasValue(hash))
+    return empty_string;
+
+  std::map<std::size_t, std::string>::iterator it = hash_memory_.find(hash);
 
   return it->second;
 }

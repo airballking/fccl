@@ -13,6 +13,8 @@ namespace fccl
 
     static boost::hash<std::string> string_hash_;
 
+    bool hasValue(std::size_t hash);
+
     std::size_t hash(const std::string& value);
   
     void rememberHashValuePair(std::size_t hash, const std::string& value);
