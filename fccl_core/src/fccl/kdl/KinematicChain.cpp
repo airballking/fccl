@@ -80,6 +80,15 @@ namespace fccl
       }
     }
 
+    void KinematicChain::initSemantics(const fccl::semantics::TransformSemantics&
+        transform_semantics)
+    {
+      std::vector<std::string> joint_names = extractJointNames(chain_);    
+
+      semantics_.joints().init(joint_names);
+      semantics_.transform() = transform_semantics;
+    }
+
     void KinematicChain::prepareReturnValues(const fccl::semantics::TransformSemantics& semantics)
     {
       jacobian_.init(jointNames(), semantics.reference().getName(), 

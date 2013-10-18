@@ -4,6 +4,7 @@
 #include <fccl/kdl/Jacobian.h>
 #include <fccl/kdl/Transform.h>
 #include <fccl/kdl/JntArray.h>
+#include <fccl/semantics/KinematicChainSemantics.h>
 #include <fccl/utils/Equalities.h>
 #include <urdf/model.h>
 #include <kdl/chain.hpp>
@@ -17,14 +18,21 @@ namespace fccl
     class KinematicChain
     {
       public:
-        void init(const fccl::semantics::TransformSemantics& semantics, 
+        void init(const fccl::semantics::TransformSemantics& transform_semantics, 
             const urdf::Model& urdf)
         {
-          extractChain(semantics, urdf);
+          extractChain(transform_semantics, urdf);
+
+          initSemantics(transform_semantics);
    
           extractJointLimits(urdf);
   
-          prepareReturnValues(semantics);
+          prepareReturnValues(transform_semantics);
+        }
+
+        const fccl::semantics::KinematicChainSemantics& semantics() const
+        {
+          return semantics_;
         }
 
         const JntArray& softLowerJointLimits() const
@@ -47,16 +55,23 @@ namespace fccl
           return hard_upper_joint_limits_;
         }
 
+        bool isValid() const
+        {
+          return semantics().joints().equals(softLowerJointLimits().semantics()) &&
+            semantics().joints().equals(softUpperJointLimits().semantics()) &&
+            semantics().joints().equals(hardLowerJointLimits().semantics()) &&
+            semantics().joints().equals(hardUpperJointLimits().semantics()) &&
+            semantics().joints().equals(jacobian_.semantics().joints()) &&
+            semantics().transform().equals(transform_.semantics()) &&
+            semantics().transform().target().equals(
+                jacobian_.semantics().twist().target()) &&
+            semantics().transform().reference().equals(
+                jacobian_.semantics().twist().reference());
+        }
+
         std::vector<std::string> jointNames() const
         {
-          std::vector<std::string> joint_names;
-          joint_names.clear();
-    
-          for(unsigned int i=0; i<chain_.getNrOfSegments(); i++)
-            if(fccl::utils::isJoint(chain_.getSegment(i)))
-              joint_names.push_back(chain_.getSegment(i).getJoint().getName());
-    
-          return joint_names;
+          return semantics().joints().jointNames();
         }
 
         std::size_t size() const
@@ -77,8 +92,13 @@ namespace fccl
 
         void extractJointLimits(const urdf::Model& urdf);
 
+        void initSemantics(const fccl::semantics::TransformSemantics& 
+            transform_semantics);
+
         void prepareReturnValues(const fccl::semantics::TransformSemantics& semantics);
 
+        // semantics of the chain
+        fccl::semantics::KinematicChainSemantics semantics_;
         // numerics of the chain
         KDL::Chain chain_;
 
@@ -90,6 +110,17 @@ namespace fccl
         Jacobian jacobian_;
         Transform transform_;
     };
+
+    inline std::vector<std::string> extractJointNames(const KDL::Chain& chain)
+    {
+      std::vector<std::string> joint_names;
+    
+      for(unsigned int i=0; i<chain.getNrOfSegments(); i++)
+        if(fccl::utils::isJoint(chain.getSegment(i)))
+          joint_names.push_back(chain.getSegment(i).getJoint().getName());
+ 
+      return joint_names;
+    }
   } // namespace kdl
 } // namespace fccl
 #endif // FCCL_KDL_KINEMATIC_CHAIN_H

@@ -44,6 +44,8 @@ TEST_F(KinematicChainTest, Basics)
 {
   KinematicChain kinematics1;
   kinematics1.init(semantics, urdf);
+
+  ASSERT_TRUE(kinematics1.isValid());
  
   EXPECT_EQ(kinematics1.softLowerJointLimits().size(), 
       kinematics1.size());
@@ -65,6 +67,7 @@ TEST_F(KinematicChainTest, Basics)
       joint_state.semantics()));
   EXPECT_TRUE(kinematics1.hardUpperJointLimits().semantics().equals(
       joint_state.semantics()));
+  EXPECT_TRUE(kinematics1.semantics().joints().equals(joint_state.semantics()));
 
   ASSERT_EQ(joint_names.size(), kinematics1.jointNames().size());
   for(std::size_t i=0; i<joint_names.size(); i++)
@@ -76,6 +79,7 @@ TEST_F(KinematicChainTest, Basics)
       arm_base_name.c_str());
   EXPECT_STREQ(ee_pose.semantics().target().getName().c_str(), 
       arm_tip_name.c_str());
+  EXPECT_TRUE(ee_pose.semantics().equals(kinematics1.semantics().transform()));
 
   kinematics1.calculateForwardKinematics(joint_state, ee_pose);
   EXPECT_TRUE(ee_pose.semantics().equals(semantics));
@@ -83,6 +87,7 @@ TEST_F(KinematicChainTest, Basics)
       arm_base_name.c_str());
   EXPECT_STREQ(ee_pose.semantics().target().getName().c_str(), 
       arm_tip_name.c_str());
+  EXPECT_TRUE(ee_pose.semantics().equals(kinematics1.semantics().transform()));
 
   fccl::semantics::JacobianSemantics jac_sem;
   jac_sem.init(joint_names, arm_base_name, arm_tip_name);
