@@ -15,6 +15,9 @@ class InteractionMatrixTest : public ::testing::Test
       reference = "parent";
       target = "child";
       joint = "joint";
+
+      joint_names.push_back(joint);
+
       transform_data = KDL::Frame(KDL::Rotation::RotX(M_PI/2.0), KDL::Vector(0.0, 0.0, 3.0));
       twist_data = KDL::Twist(KDL::Vector(3, 4, 5), KDL::Vector(0,1,2));
 
@@ -39,6 +42,7 @@ class InteractionMatrixTest : public ::testing::Test
     }
 
     std::string reference, target, world, joint;
+    std::vector<std::string> joint_names;
     KDL::Frame transform_data;
     KDL::Twist twist_data;
     Transform transform;
@@ -95,4 +99,24 @@ TEST_F(InteractionMatrixTest, ChangeReferenceFrame)
 
   EXPECT_TRUE(m2.equals(m3));
   EXPECT_FALSE(m.equals(m2));
+}
+
+TEST_F(InteractionMatrixTest, Init)
+{
+  InteractionMatrix m;
+  m.init(joint_names, reference, target);
+
+  ASSERT_TRUE(m.isValid());
+  ASSERT_EQ(m.size(), joint_names.size());
+  ASSERT_EQ(m.numerics().rows(), joint_names.size());
+  ASSERT_EQ(m.numerics().cols(), 6);
+  ASSERT_EQ(joint_names.size(), 1);
+
+  EXPECT_STREQ(m.semantics().twist().reference().getName().c_str(),
+      reference.c_str());
+  EXPECT_STREQ(m.semantics().twist().target().getName().c_str(),
+      target.c_str());
+  for(std::size_t i=0; i<m.size(); i++)
+    EXPECT_STREQ(m.semantics().joints()(i).getName().c_str(), 
+        joint_names[i].c_str());
 }

@@ -49,6 +49,14 @@ namespace fccl
               numerics().isApprox(other.numerics());
         }
 
+        void init(const std::vector<std::string>& joint_names,
+            const std::string& reference_name, const std::string& target_name)
+        {
+          resize(joint_names.size());
+
+          semantics().init(joint_names, reference_name, target_name);
+        }
+ 
         void resize(std::size_t number_of_rows)
         {
           numerics().resize(number_of_rows, 6);
