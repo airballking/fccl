@@ -38,6 +38,14 @@ namespace fccl
             numerics().isApprox(other.numerics());
         }
 
+        void init(const std::vector<std::string>& row_names,
+            const std::vector<std::string>& column_names)
+        {
+          resize(row_names.size(), column_names.size());
+
+          semantics().init(row_names, column_names);
+        }
+
         void resize(std::size_t rows, std::size_t columns)
         {
           numerics().resize(rows, columns);
@@ -50,7 +58,6 @@ namespace fccl
           return (semantics().row_joints().size() == numerics().rows()) &&
               (semantics().column_joints().size() == numerics().cols());
         }
-    
   
       private:
         // semantics of the JointMappingMatrices

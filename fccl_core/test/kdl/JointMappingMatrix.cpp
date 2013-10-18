@@ -84,3 +84,25 @@ TEST_F(JointMappingMatrixTest, Basics)
     semantics.column_joints()(i).setName(joint_names[i]);
   EXPECT_TRUE(A.equals(A2));
 }
+
+TEST_F(JointMappingMatrixTest, Init)
+{
+  JointMappingMatrix A;
+  A.init(constraint_names, joint_names);
+
+  ASSERT_EQ(A.numerics().rows(), constraint_names.size());
+  ASSERT_EQ(A.numerics().cols(), joint_names.size());
+
+  ASSERT_EQ(A.semantics().row_joints().size(), constraint_names.size());
+  ASSERT_EQ(A.semantics().column_joints().size(), joint_names.size());
+
+  ASSERT_EQ(constraint_names.size(), 3);
+  ASSERT_EQ(joint_names.size(), 2);
+ 
+  for(std::size_t i=0; i< constraint_names.size(); i++)
+    EXPECT_STREQ(semantics.row_joints()(i).getName().c_str(),
+        constraint_names[i].c_str());
+  for(std::size_t i=0; i< joint_names.size(); i++)
+    EXPECT_STREQ(semantics.column_joints()(i).getName().c_str(),
+        joint_names[i].c_str());
+}
