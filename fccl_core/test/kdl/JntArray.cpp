@@ -76,4 +76,11 @@ TEST_F(JntArrayTest, init)
   JntArraySemantics s;
   s.init(joint_names);
   EXPECT_TRUE(q.semantics().equals(s));
+
+  JntArray q2;
+  q2.init(s);
+  
+  ASSERT_TRUE(q2.isValid());
+  ASSERT_EQ(q2.size(), joint_names.size());
+  EXPECT_TRUE(q2.semantics().equals(s));
 }

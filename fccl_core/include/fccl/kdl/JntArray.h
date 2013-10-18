@@ -53,6 +53,12 @@ namespace fccl
           semantics().init(joint_names);
         }
 
+        void init(const fccl::semantics::JntArraySemantics& semantics)
+        {
+          resize(semantics.size());
+          this->semantics() = semantics;
+        }
+
         std::size_t size() const
         {
           assert(isValid());
