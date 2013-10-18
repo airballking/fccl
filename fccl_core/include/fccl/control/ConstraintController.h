@@ -14,22 +14,27 @@ namespace fccl
   {
     class ConstraintController
       public:
-        void init(const std::vector<fccl::base::Constraint>& constraints, 
+        void init(const fccl::base::ConstraintArray& constraints, 
             const fccl::kdl::KinematicChain& kinematics);
         void update(const fccl::kdl::JntArray& joint_state,
-            const fccl::utils::TransformMap& transform_map);
+            const fccl::utils::TransformMap& transform_map, double delta=0.001);
 
         const fccl::kdl::JntArray& getDesiredJointVelocities() const;
-        const fccl::kdl::MatrixNxN& getNullSpaceProjector() const;
+        const fccl::kdl::JointMappingMatrix& getNullSpaceProjector() const;
 
-        const std::vector<fccl::base::Constraint>& getConstraints() const;
+        const fccl::base::ConstraintArray& getConstraints() const;
         const fccl::kdl::KinematicChain& getKinematics() const;
  
       private:
+        // actual state variables of the controller
         std::vector<fccl::base::Constraint> constraints_;
         fccl::kdl::KinematicChain& kinematics_;
+
+        // memory for output values
         fccl::kdl::JntArray desired_joint_velocities_;
         fccl::kdl::JointMappingMatrix null_space_projector_;
+
+        // intermediates results...
         fccl::kdl::JointMappingMatrix A_;
         fccl::kdl::InteractionMatrix H_;
         fccl::kdl::Jacobian JR_;

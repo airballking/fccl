@@ -4,21 +4,32 @@ namespace fccl
 {
   namespace control
   {
-    void ConstraintController::init(const std::vector<fccl::base::Constraint>& constraints, const fccl::kdl::KinematicChain& kinematics)
+    void ConstraintController::init(const fccl::base::ConstraintArray& constraints,
+        const fccl::kdl::KinematicChain& kinematics)
     {
+      assert(kinematics.isValid());
+      assert(constraints.isValid());
+
       constraints_ = constraints;
       kinematics_ = kinematics;
 
-      desired_joint_velocities_.init(kinematics.getJointSemantics());
+      desired_joint_velocities_.init(kinematics.semantics().joints());
 
-      null_space_projector_.init(SemanticObjectNxM(kinematics.getJointNames(), kinematics.getJointNames()));
+      null_space_projector_.init(kinematics.semantics().joints(), kinematics.semantics().joints());
 
-      A_.init(SemanticObjectNxM(constraints.getSemantics().getTargetIDs(),
-          kinematics.getJointSemantics().getTargetIDs()));
+      // TODO(Georg):
+      //  - implement init of JointMappingMatrix 
+      A_.init(constraints.semantics().joints(), kinematics.semantics().joints());
 
-      H_.init(SemanticObject1xN(kinematics.getTransformationSemantics().getReferenceID(), constraints.getSemantics().getTargetIDs()));
+      // TODO(Georg):
+      //  - implement init of InteractionMatrix
+      //  - implement ConstraintsArray
+      //  - add function toolTwistSemantics
+      H_.init(constraints.semantics().joints(), constraints.toolTwistSemantics());
 
-      JR_.init(kinematics.getJacobianSemantics());
+      // TODO(Georg):
+      //  - implement init of Jacobian
+      JR_.init(constraints.toolTwistSemantics(), kinematics.semantics().joints());
     }
 
     void ConstraintController::update(const JntArray& joint_state,
@@ -30,6 +41,12 @@ namespace fccl
 
       task_weights_ = constraints_.getTaskWeights();
 
+      // TODO(Georg):
+      //  - add interpolator
+
+      // TODO(Georg):
+      //  - add control law
+ 
       H_ = constraints.getFirstDerivative();
 
       // get robot jacobian in reference frame w.r.t. which constraints are defined
