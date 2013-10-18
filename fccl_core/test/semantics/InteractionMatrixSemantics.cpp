@@ -28,9 +28,12 @@ class InteractionMatrixSemanticsTest : public ::testing::Test
 
       joints.resize(4);
       joints(0).setName("joint0");
-      joints(1).setName("joint0");
-      joints(2).setName("joint0");
-      joints(3).setName("joint0");
+      joints(1).setName("joint1");
+      joints(2).setName("joint2");
+      joints(3).setName("joint3");
+
+      for(std::size_t i=0; i<joints.size(); i++)
+        joint_names.push_back(joints(i).getName());
 
       jacobian.twist() = twist;
       jacobian.joints() = joints;
@@ -47,6 +50,7 @@ class InteractionMatrixSemanticsTest : public ::testing::Test
     }
 
     std::string world, reference, target;
+    std::vector<std::string> joint_names;
     TwistSemantics twist;
     JntArraySemantics constraints;
     JntArraySemantics joints;
@@ -114,3 +118,17 @@ TEST_F(InteractionMatrixSemanticsTest, ChangeReferenceFrame)
   EXPECT_STREQ(H.twist().target().getName().c_str(), target.c_str());
   EXPECT_TRUE(H.joints().equals(constraints));
 }
+
+TEST_F(InteractionMatrixSemanticsTest, Init)
+{ 
+  InteractionMatrixSemantics H;
+  H.init(joint_names, twist.reference().getName(), twist.target().getName());
+
+  ASSERT_EQ(H.size(), joint_names.size());
+  
+  EXPECT_STREQ(H.twist().reference().getName().c_str(), reference.c_str());
+  EXPECT_STREQ(H.twist().target().getName().c_str(), target.c_str());
+ 
+  for(std::size_t i=0; i<H.size(); i++)
+    EXPECT_STREQ(H.joints()(i).getName().c_str(), joint_names[i].c_str());
+} 

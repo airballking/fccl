@@ -49,6 +49,13 @@ namespace fccl
               joints().equals(other.joints());
         }
 
+        void init(const std::vector<std::string>& joint_names,
+            const std::string& reference_name, const std::string& target_name)
+        {
+          joints().init(joint_names);
+          twist().init(reference_name, target_name);
+        }
+
         void changeReferenceFrame(const fccl::semantics::TransformSemantics& 
             transform_semantics)
         {
