@@ -51,6 +51,17 @@ namespace fccl
           return joints_;
         }
 
+        // NOT REAL-TIME-SAFE
+        std::vector<std::string> jointNames() const
+        {
+          std::vector<std::string> result;
+
+          for(std::size_t i=0; i<size(); i++)
+            result.push_back(this->operator()(i).getName());
+
+          return result;
+        }
+
         bool equals(const JntArraySemantics& other) const
         {
           if(size() != other.size())

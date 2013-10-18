@@ -90,4 +90,9 @@ TEST_F(JntArraySemanticsTest, init)
   ASSERT_EQ(js.size(), joint_names.size());
   for(std::size_t i=0; i<js.size(); i++)
     EXPECT_STREQ(js(i).getName().c_str(), joint_names[i].c_str());
+
+  std::vector<std::string> joint_names2 = js.jointNames();
+  ASSERT_EQ(joint_names2.size(), joint_names.size());
+  for(std::size_t i=0; i<joint_names2.size(); i++)
+    EXPECT_STREQ(joint_names2[i].c_str(), joint_names[i].c_str());
 }
