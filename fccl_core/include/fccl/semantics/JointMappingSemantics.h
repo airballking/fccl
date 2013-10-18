@@ -36,6 +36,14 @@ namespace fccl
                column_joints().equals(other.column_joints());
         }
 
+        void init(const std::vector<std::string>& row_names,
+            const std::vector<std::string>& column_names)
+        {
+          row_joints().init(row_names);
+
+          column_joints().init(column_names);
+        }
+ 
         void resize(std::size_t rows, std::size_t columns)
         {
           row_joints().resize(rows);

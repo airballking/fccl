@@ -84,3 +84,18 @@ TEST_F(JointMappingSemanticsTest, Basics)
   EXPECT_FALSE(A.equals(A7));
   EXPECT_FALSE(A.equals(A8));
 }
+
+TEST_F(JointMappingSemanticsTest, Init)
+{ 
+  JointMappingSemantics A;
+  A.init(constraint_names, joint_names);
+  ASSERT_EQ(A.row_joints().size(), constraint_names.size());
+  ASSERT_EQ(A.column_joints().size(), joint_names.size());
+
+  for(std::size_t i=0; i<constraint_names.size(); i++)
+    EXPECT_STREQ(A.row_joints()(i).getName().c_str(),
+        constraint_names[i].c_str());
+  for(std::size_t i=0; i<joint_names.size(); i++)
+    EXPECT_STREQ(A.column_joints()(i).getName().c_str(),
+        joint_names[i].c_str());
+}
