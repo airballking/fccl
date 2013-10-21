@@ -67,6 +67,14 @@ namespace fccl
         {
           return twist().changeReferencePossible(transform_semantics);
         }
+
+        void partialAssignment(std::size_t start, std::size_t elements,
+            const InteractionMatrixSemantics& other)
+        {
+          assert(twist().equals(other.twist()));
+
+          joints().partialAssignment(start, elements, other.joints());
+        }
  
       private:
         TwistSemantics twist_;

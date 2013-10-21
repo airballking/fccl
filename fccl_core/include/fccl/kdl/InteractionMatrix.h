@@ -87,6 +87,14 @@ namespace fccl
         {
           return semantics().changeReferencePossible(transform.semantics());
         }
+
+        void partialAssignment(std::size_t start, std::size_t elements,
+            const InteractionMatrix& other)
+        {
+          semantics().partialAssignment(start, elements, other.semantics());
+
+          numerics().block(start, 0, elements, 6) = other.numerics();
+        }
   
       private:
         // semantics
