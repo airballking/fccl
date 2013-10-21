@@ -16,11 +16,16 @@ namespace fccl
         void setTransform(const fccl::kdl::Transform& transform);
         const fccl::kdl::Transform& getTransform(
             const fccl::semantics::TransformSemantics& semantics);
+        const fccl::kdl::Transform& getTransform(
+            const fccl::semantics::SemanticsBase& reference,
+            const fccl::semantics::SemanticsBase& target);
         void removeTransform(const fccl::semantics::TransformSemantics& semantics);
 
         void clear();
         bool hasTransform(const fccl::semantics::TransformSemantics& semantics);
-
+        bool hasTransform(const fccl::semantics::SemanticsBase& reference,
+            const fccl::semantics::SemanticsBase& target);
+ 
         boost::mutex& getMutex(); 
 
       private:

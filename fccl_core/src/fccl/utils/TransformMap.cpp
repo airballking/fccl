@@ -28,6 +28,17 @@ namespace fccl
       return map_.at(semantics);
     }
 
+    const fccl::kdl::Transform& TransformMap::getTransform(
+        const fccl::semantics::SemanticsBase& reference,
+        const fccl::semantics::SemanticsBase& target)
+    {
+      fccl::semantics::TransformSemantics semantics;
+      semantics.reference() = reference;
+      semantics.target() = target;
+
+      return getTransform(semantics);
+    }
+ 
     void TransformMap::removeTransform(const fccl::semantics::TransformSemantics& semantics)
     {
       boost::mutex::scoped_lock scoped_lock(getMutex());
@@ -49,6 +60,16 @@ namespace fccl
       return map_.find(semantics) != map_.end();
     }
 
+    bool TransformMap::hasTransform(const fccl::semantics::SemanticsBase& reference,
+        const fccl::semantics::SemanticsBase& target)
+    {
+      fccl::semantics::TransformSemantics semantics;
+      semantics.reference() = reference;
+      semantics.target() = target;
+
+      return hasTransform(semantics);
+    }
+ 
     INLINE 
     boost::mutex& TransformMap::getMutex()
     {

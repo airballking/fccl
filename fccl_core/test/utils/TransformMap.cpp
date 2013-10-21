@@ -56,6 +56,14 @@ TEST_F(TransformMapTest, Basics)
   EXPECT_TRUE(tm.getTransform(T_torso_left_semantics).equals(T_torso_left));
   EXPECT_TRUE(tm.hasTransform(T_base_torso_semantics));
   EXPECT_TRUE(tm.hasTransform(T_torso_left_semantics));
+  EXPECT_TRUE(tm.getTransform(T_base_torso_semantics.reference(), 
+      T_base_torso_semantics.target()).equals(T_base_torso));
+  EXPECT_TRUE(tm.getTransform(T_torso_left_semantics.reference(), 
+      T_torso_left_semantics.target()).equals(T_torso_left));
+  EXPECT_TRUE(tm.hasTransform(T_base_torso_semantics.reference(), 
+      T_base_torso_semantics.target()));
+  EXPECT_TRUE(tm.hasTransform(T_torso_left_semantics.reference(), 
+      T_torso_left_semantics.target()));
   
   EXPECT_NO_THROW(tm.removeTransform(T_base_torso_semantics));
   EXPECT_ANY_THROW(tm.getTransform(T_base_torso_semantics));
