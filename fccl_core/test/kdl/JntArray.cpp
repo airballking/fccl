@@ -13,12 +13,16 @@ class JntArrayTest : public ::testing::Test
   protected:
     virtual void SetUp()
     {
-      dof = 3;
+      dof = 4;
 
       joint_names.resize(dof);
       joint_names[0] = "joint0";
       joint_names[1] = "joint1";
       joint_names[2] = "joint2";
+      joint_names[3] = "joint3";
+
+      foo = "foo";
+      bar = "bar";
 
       semantics.resize(dof);
       for(std::size_t i=0; i<dof; i++)
@@ -36,6 +40,7 @@ class JntArrayTest : public ::testing::Test
 
     std::size_t dof;
     std::vector<std::string> joint_names;
+    std::string foo, bar;
     KDL::JntArray joint_values;
     JntArraySemantics semantics;
 };
@@ -83,4 +88,32 @@ TEST_F(JntArrayTest, init)
   ASSERT_TRUE(q2.isValid());
   ASSERT_EQ(q2.size(), joint_names.size());
   EXPECT_TRUE(q2.semantics().equals(s));
+}
+
+TEST_F(JntArrayTest, partialAssignment)
+{
+  JntArray q;
+  q.init(joint_names);
+  q.numerics() = joint_values;
+
+  JntArray q2;
+  q2.resize(2);
+  q2.semantics()(0).setName(foo);
+  q2.semantics()(1).setName(bar);
+  q2.numerics()(0) = 42;
+  q2.numerics()(1) = 43;
+
+  q.partialAssignment(1, 2, q2);
+
+  ASSERT_TRUE(q.isValid());
+  
+  EXPECT_STREQ(q.semantics()(0).getName().c_str(), joint_names[0].c_str());
+  EXPECT_STREQ(q.semantics()(1).getName().c_str(), foo.c_str());
+  EXPECT_STREQ(q.semantics()(2).getName().c_str(), bar.c_str());
+  EXPECT_STREQ(q.semantics()(3).getName().c_str(), joint_names[3].c_str());
+ 
+  EXPECT_EQ(q.numerics()(0), joint_values(0));
+  EXPECT_EQ(q.numerics()(1), 42); 
+  EXPECT_EQ(q.numerics()(2), 43);
+  EXPECT_EQ(q.numerics()(3), joint_values(3));
 }

@@ -72,6 +72,14 @@ namespace fccl
           semantics().resize(new_size);
         }
 
+        void partialAssignment(std::size_t start, std::size_t elements,
+            const JntArray& other)
+        {
+          semantics().partialAssignment(start, elements, other.semantics());
+
+          numerics().data.segment(start, elements) = other.numerics().data;
+        }
+ 
       private:
         // semantics
         fccl::semantics::JntArraySemantics semantics_;
