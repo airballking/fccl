@@ -5,6 +5,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include <Eigen/Core>
 
 namespace fccl
 {
@@ -43,13 +44,6 @@ namespace fccl
         ConstraintSemantics& operator()(std::size_t index)
         {
           return constraints_(index, 0);
-        }
-
-        void init(const std::vector<ConstraintSemantics>& constraints)
-        {
-          resize(constraints.size());
-          for(std::size_t i=0; i<size(); i++)
-            this->operator()(i) = constraints[i];
         }
 
         std::size_t size() const
