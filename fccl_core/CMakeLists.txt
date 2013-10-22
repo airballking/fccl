@@ -26,7 +26,7 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS roscpp urdf reflexxes_type2
-  DEPENDS Eigen orocos_kdl
+  DEPENDS Boost Eigen orocos_kdl
 )
 
 ###########
