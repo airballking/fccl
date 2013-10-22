@@ -5,7 +5,8 @@ project(fccl_core)
 find_package(catkin REQUIRED COMPONENTS 
   roscpp 
   urdf 
-  kdl_parser)
+  kdl_parser
+  reflexxes_type2)
 
 ## System dependencies 
 find_package(Boost REQUIRED COMPONENTS thread)
@@ -24,7 +25,7 @@ find_package(orocos_kdl REQUIRED)
 catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
-  CATKIN_DEPENDS roscpp urdf
+  CATKIN_DEPENDS roscpp urdf reflexxes_type2
   DEPENDS Eigen orocos_kdl
 )
 
