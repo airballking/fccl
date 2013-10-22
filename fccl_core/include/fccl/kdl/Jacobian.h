@@ -52,6 +52,13 @@ namespace fccl
           semantics().init(joint_names, reference_name, target_name); 
         }
 
+        void init(const fccl::semantics::JntArraySemantics& joint_semantics,
+            const fccl::semantics::TwistSemantics& twist_semantics)
+        {
+          resize(joint_semantics.size());
+          semantics().init(joint_semantics, twist_semantics);
+        }
+
         bool isValid() const
         {
           return numerics().columns() == semantics().joints().size();
@@ -60,6 +67,7 @@ namespace fccl
         void resize(std::size_t columns)
         {
           numerics().resize(columns);
+          numerics().data.setZero();
           semantics().resize(columns);
         }
 

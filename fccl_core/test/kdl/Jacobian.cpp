@@ -74,16 +74,22 @@ TEST_F(JacobianTest, Basics)
   j5.init(joint_names, reference_frame, joint_name);
   j5.numerics() = jacobian_data;
 
+  Jacobian j6;
+  j6.init(j.semantics().joints(), j.semantics().twist());
+  j6.numerics() = jacobian_data;
+
   EXPECT_TRUE(j.equals(j2));
   EXPECT_TRUE(j.equals(j3));
   EXPECT_TRUE(j.equals(j4));
   EXPECT_TRUE(j.equals(j5));
+  EXPECT_TRUE(j.equals(j6));
 
   EXPECT_TRUE(j.isValid());
   EXPECT_TRUE(j2.isValid());
   EXPECT_TRUE(j3.isValid());
   EXPECT_TRUE(j4.isValid());
   EXPECT_TRUE(j5.isValid());
+  EXPECT_TRUE(j6.isValid());
 
   EXPECT_DOUBLE_EQ(j.numerics()(0,0), 3);
   EXPECT_DOUBLE_EQ(j.numerics()(1,0), 4);
