@@ -105,4 +105,8 @@ TEST_F(JointMappingMatrixTest, Init)
   for(std::size_t i=0; i< joint_names.size(); i++)
     EXPECT_STREQ(semantics.column_joints()(i).getName().c_str(),
         joint_names[i].c_str());
+
+  JointMappingMatrix A2;
+  A2.init(semantics.row_joints(), semantics.column_joints());
+  EXPECT_TRUE(A.equals(A2));
 }
