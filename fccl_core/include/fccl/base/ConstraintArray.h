@@ -10,7 +10,7 @@
 
 namespace fccl
 {
-  namespace kdl
+  namespace base
   {
     class ConstraintArray
     {
@@ -55,15 +55,13 @@ namespace fccl
           return task_weights_;
         }
 
-        fccl::kdl::JntArray& taskWeights() 
-        {
-          return task_weights_;
-        }
-
         bool equals(const ConstraintArray& other) const
         {
           assert(isValid());
           assert(other.isValid());
+
+          if(size() != other.size())
+            return false;
 
           for(std::size_t i=0; i<size(); i++)
             if(!this->operator()(i).equals(other(i)))
@@ -87,6 +85,11 @@ namespace fccl
 
           copyConstraints(constraints);
 
+          prepare();
+       }
+
+        void prepare()
+        {
           initFirstDerivative();
 
           initOutputValuesAndWeights();
@@ -148,7 +151,7 @@ namespace fccl
         void calculateDerivative(fccl::utils::TransformMap& transform_map, 
             double delta)
         {
-          assert(size() == first_derivative_.size());
+          assert(size() == firstDerivative().size());
 
           for(std::size_t i=0; i<size(); i++)
           {
@@ -168,8 +171,8 @@ namespace fccl
 
         void calculateWeightsAndDesiredOutputs()
         {
-          assert(size() == desired_output_values_.size());
-          assert(size() == task_weights_.size());
+          assert(size() == desiredOutputValues().size());
+          assert(size() == taskWeights().size());
 
           // TODO(Georg): refactor this param into every constraint
           double s = 0.05;
@@ -256,7 +259,7 @@ namespace fccl
 
         void initFirstDerivative()
         {
-          assert(size() == first_derivative_.size());
+          assert(size() == firstDerivative().size());
           assert(hasCommonToolReference());
 
           for(std::size_t i=0; i<size(); i++)
@@ -273,8 +276,8 @@ namespace fccl
         void initOutputValuesAndWeights()
         {
           assert(size() == output_values_.size());
-          assert(size() == desired_output_values_.size());
-          assert(size() == task_weights_.size());
+          assert(size() == desiredOutputValues().size());
+          assert(size() == taskWeights().size());
 
           for(std::size_t i=0; i<size(); i++)
           {
