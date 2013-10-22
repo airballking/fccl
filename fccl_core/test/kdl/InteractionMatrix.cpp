@@ -124,6 +124,10 @@ TEST_F(InteractionMatrixTest, Init)
   for(std::size_t i=0; i<m.size(); i++)
     EXPECT_STREQ(m.semantics().joints()(i).getName().c_str(), 
         joint_names[i].c_str());
+
+  InteractionMatrix m2;
+  m2.init(m.semantics());
+  EXPECT_TRUE(m.equals(m2));
 }
 
 TEST_F(InteractionMatrixTest, PartialAssignment)

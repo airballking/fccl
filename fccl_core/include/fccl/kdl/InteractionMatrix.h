@@ -56,10 +56,17 @@ namespace fccl
 
           semantics().init(joint_names, reference_name, target_name);
         }
+
+        void init(const fccl::semantics::InteractionMatrixSemantics& semantics)
+        {
+          resize(semantics.size());
+          this->semantics() = semantics;
+        }
  
         void resize(std::size_t number_of_rows)
         {
           numerics().resize(number_of_rows, 6);
+          numerics().setZero();
  
           semantics().resize(number_of_rows);
         }
