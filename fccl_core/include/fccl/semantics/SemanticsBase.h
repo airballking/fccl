@@ -47,6 +47,37 @@ namespace fccl
       os << obj.getName() << " (" << obj.getID() << ")";
       return os;
     }
+
+    inline bool operator==(const SemanticsBase& lhs, const SemanticsBase& rhs)
+    { 
+      return lhs.equals(rhs);
+    }
+
+    inline bool operator!=(const SemanticsBase& lhs, const SemanticsBase& rhs)
+    {
+      return !operator==(lhs,rhs);
+    }
+
+    // necessary to use SemanticsBase as key in std::map
+    inline bool operator<(const SemanticsBase& lhs, const SemanticsBase& rhs)
+    { 
+      return lhs.getID() < rhs.getID();
+    }
+
+    inline bool operator>(const SemanticsBase& lhs, const SemanticsBase& rhs)
+    {
+      return operator<(rhs,lhs);
+    }
+
+    inline bool operator<=(const SemanticsBase& lhs, const SemanticsBase& rhs)
+    {
+      return !operator>(lhs,rhs);
+    }
+
+    inline bool operator>=(const SemanticsBase& lhs, const SemanticsBase& rhs)
+    {
+      return !operator<(lhs,rhs);
+    }
   } // namespace semantics
 } // namespace fccl
 #endif // FCCL_SEMANTICS_SEMANTICS_BASE_H
