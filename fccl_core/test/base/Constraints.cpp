@@ -73,40 +73,36 @@ class ConstraintsTest : public ::testing::Test
 
 TEST_F(ConstraintsTest, Basics)
 {
-  AboveConstraint ac;
+  Constraint ac;
   ac.semantics().reference().setName(view_frame_name);
   ac.semantics().name().setName(constraint_name);
+  ac.semantics().type().setName("above");
   ac.toolFeature() = tool_feature;
   ac.objectFeature() = object_feature;
   ac.lowerBoundary() = lower_boundary;
   ac.upperBoundary() = upper_boundary;
  
-  AboveConstraint ac2(ac);
+  Constraint ac2(ac);
 
-  AboveConstraint ac3 = ac;
+  Constraint ac3 = ac;
 
-  AboveConstraint ac4;
+  Constraint ac4;
   ac4 = ac;
 
-  AboveConstraint ac5;
+  Constraint ac5;
   ac5.semantics() = ac.semantics();
   ac5.toolFeature() = ac.toolFeature();
   ac5.objectFeature() = ac.objectFeature();
   ac5.lowerBoundary() = ac.lowerBoundary();
   ac5.upperBoundary() = ac.upperBoundary();
 
-  Constraint c(ac);
-
   EXPECT_TRUE(ac.equals(ac2));
   EXPECT_TRUE(ac.equals(ac3));
   EXPECT_TRUE(ac.equals(ac4));
   EXPECT_TRUE(ac.equals(ac5));
 
-  EXPECT_FALSE(ac.equals(c));
-
-  EXPECT_EQ(ac.semantics().type(), fccl::semantics::ABOVE_CONSTRAINT);
-  EXPECT_EQ(ac2.semantics().type(), fccl::semantics::ABOVE_CONSTRAINT);
-  EXPECT_EQ(c.semantics().type(), fccl::semantics::UNKNOWN_CONSTRAINT);
+  EXPECT_STREQ(ac.semantics().type().getName().c_str(), "above");
+  EXPECT_STREQ(ac2.semantics().type().getName().c_str(), "above");
 
   EXPECT_STREQ(ac.semantics().reference().getName().c_str(), view_frame_name.c_str());
   EXPECT_STREQ(ac.semantics().name().getName().c_str(), constraint_name.c_str());
@@ -125,41 +121,35 @@ TEST_F(ConstraintsTest, Basics)
 
 TEST_F(ConstraintsTest, Evaluation)
 {
-  AboveConstraint ac;
+  Constraint ac;
   ac.semantics().reference().setName(view_frame_name);
   ac.semantics().name().setName(constraint_name);
+  ac.semantics().type().setName("above");
   ac.toolFeature() = tool_feature;
   ac.objectFeature() = object_feature;
   ac.lowerBoundary() = lower_boundary;
   ac.upperBoundary() = upper_boundary;
  
+  ASSERT_TRUE(ac.functionValid());
+  ASSERT_TRUE(ac.isValid());
   EXPECT_DOUBLE_EQ(ac.calculateValue(T_view_tool, T_view_object), 0.3);
 }
 
-TEST_F(ConstraintsTest, TypeConversion)
+TEST_F(ConstraintsTest, FunctionValid)
 {
-  AboveConstraint ac;
-  ac.semantics().reference().setName(view_frame_name);
-  ac.semantics().name().setName(constraint_name);
-  ac.toolFeature() = tool_feature;
-  ac.objectFeature() = object_feature;
-  ac.lowerBoundary() = lower_boundary;
-  ac.upperBoundary() = upper_boundary;
+  Constraint c;
+  EXPECT_FALSE(c.functionValid());
 
-  AboveConstraint* ac_pointer = &ac;
-  Constraint* c_pointer = static_cast<Constraint*>(ac_pointer);
-  AboveConstraint* ac_pointer2 = static_cast<AboveConstraint*>(c_pointer);
-
-  EXPECT_DOUBLE_EQ(ac_pointer->calculateValue(T_view_tool, T_view_object), 0.3);
-  EXPECT_DOUBLE_EQ(ac_pointer2->calculateValue(T_view_tool, T_view_object), 0.3);
-  EXPECT_DOUBLE_EQ(c_pointer->calculateValue(T_view_tool, T_view_object), 0.3);
+  c.semantics().type().setName("above");
+  EXPECT_TRUE(c.functionValid());
 }
 
 TEST_F(ConstraintsTest, FirstDerivative)
 {
-  AboveConstraint ac;
+  Constraint ac;
   ac.semantics().reference().setName(view_frame_name);
   ac.semantics().name().setName(constraint_name);
+  ac.semantics().type().setName("above");
   ac.toolFeature() = tool_feature;
   ac.objectFeature() = object_feature;
   ac.lowerBoundary() = lower_boundary;

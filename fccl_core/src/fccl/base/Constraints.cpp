@@ -1,36 +1,43 @@
 #include <fccl/base/Constraints.h>
 
+using namespace fccl::kdl;
+using namespace fccl::semantics;
+
 namespace fccl
 {
   namespace base
   {
-    double Constraint::calculateValue(const fccl::kdl::Transform& tool_transform,
-        const fccl::kdl::Transform& object_transform) const
+    // perform definition and init of our static function map
+    const std::map<SemanticsBase, ConstraintFunction> 
+       Constraint::function_map_ = Constraint::createFunctionMap();
+
+    // register new constraint functions here
+    std::map<SemanticsBase, ConstraintFunction> Constraint::createFunctionMap()
     {
-      // IF THIS FUNCTION GETS CALLED, SOMEONE F'D UP.
-      // BY THE WAY, I ALSO DON'T LIKE THIS DESIGN BUT IT'S
-      // RESEARCH CODE, YOU KNOW? ;)
-      assert(false);
-      
-      return 0.0;
+      std::map<SemanticsBase, ConstraintFunction> result;
+
+      // TODO(Georg): refactor this because we'll need it more often
+      SemanticsBase function_identifier;
+      function_identifier.setName("above");
+      result[function_identifier] = above;
+
+      return result;
     }
 
-    const fccl::kdl::InteractionMatrix& Constraint::calculateFirstDerivative(const
-        fccl::kdl::Transform& tool_transform, const fccl::kdl::Transform& 
-        object_transform, double delta)
+    const InteractionMatrix& Constraint::calculateFirstDerivative(const Transform&
+        tool_transform, const Transform& object_transform, double delta)
     {
       assert(delta != 0.0);
       assert(first_derivative_.size() == 1);
       
       // prepare semantics of result
-      first_derivative_.semantics() = 
-      semantics().calculateFirstDerivative(tool_transform.semantics());
+      calculateInteractionSemantics(tool_transform.semantics());
       
       // get current constraint value around which we differentiate
       double value = calculateValue(tool_transform, object_transform);
       
       // prepare six delta-transforms to simulate delta motions of tool
-      fccl::kdl::Transform T[6];
+      Transform T[6];
       for(unsigned int i=0; i<6; i++)
       {
         T[i].semantics().reference() = tool_transform.semantics().target();
@@ -55,26 +62,31 @@ namespace fccl
   
       return first_derivative_;
     }
-  
-    double AboveConstraint::calculateValue(const fccl::kdl::Transform& tool_transform,
-        const fccl::kdl::Transform& object_transform) const
+
+    void Constraint::calculateInteractionSemantics(const TransformSemantics& 
+        tool_transform)
     {
-      assert(semantics().reference().equals(tool_transform.semantics().reference()));
-      assert(semantics().reference().equals(object_transform.semantics().reference()));
-//      assert(tool_feature_.semantics().reference().equals(
-//        tool_transform.semantics().target()));
-//      assert(object_feature_.semantics().reference().equals(
-//        object_transform.semantics().target());
+      assert(first_derivative_.size() == 1);
+ 
+      first_derivative_.semantics().twist().reference() = tool_transform.target();
+      first_derivative_.semantics().twist().target() = tool_transform.target();
+      first_derivative_.semantics().joints()(0) = semantics().name(); 
+    }
+ 
+    double above(const SemanticsBase& view_frame,
+        const Feature& tool_feature, const Feature& object_feature,
+        const Transform& tool_transform, const Transform& object_transform)
+    {
+      assert(view_frame.equals(tool_transform.semantics().reference()));
+      assert(view_frame.equals(object_transform.semantics().reference()));
   
-      Feature tool = toolFeature();
-      Feature object = objectFeature();
+      Feature tool = tool_feature;
+      Feature object = object_feature;
       
       tool.changeReferenceFrame(tool_transform);
       object.changeReferenceFrame(object_transform);
-//      KDL::Vector tool_position_in_view = tool_transform.getTransform() * tool_feature_.getPosition();
-//      KDL::Vector object_position_in_view = object_transform.getTransform() * object_feature_.getPosition();
   
-      return  tool.position().z() - object.position().z();
+      return tool.position().z() - object.position().z();
     }
   } // namespace base
 } // namespace fccl

@@ -10,38 +10,9 @@ namespace fccl
 {
   namespace semantics
   {
-    enum ConstraintTypes
-    {
-      UNKNOWN_CONSTRAINT = 0,
-      
-      ABOVE_CONSTRAINT = 1,
-
-      CONSTRAINT_COUNT
-    };
-
-    inline bool constraintTypeValid(int constraint_type)
-    {
-      return (UNKNOWN_CONSTRAINT < constraint_type) && (constraint_type < CONSTRAINT_COUNT);
-    }
- 
     class ConstraintSemantics
     {
       public:
-        ConstraintSemantics() : 
-            reference_( fccl::semantics::SemanticsBase() ),
-            name_( fccl::semantics::SemanticsBase() ),
-            type_( UNKNOWN_CONSTRAINT )
-        {
-          first_derivative_.resize(1);
-        }
-
-        ConstraintSemantics(const ConstraintSemantics& other) :
-            reference_( other.reference() ), name_( other.name() ), 
-            type_( other.type() )
-        {
-          first_derivative_.resize(1);
-        }
-
         const SemanticsBase& reference() const
         {
           return reference_;
@@ -62,46 +33,26 @@ namespace fccl
           return name_;
         }
 
-        const ConstraintTypes& type() const
+        const SemanticsBase& type() const
         {
           return type_;
         }
 
-        ConstraintTypes& type() 
+        SemanticsBase& type() 
         {
           return type_;
         }
 
         bool equals(const ConstraintSemantics& other) const
         {
-          return (type() == other.type()) &&
-              reference().equals(other.reference()) &&
-              name().equals(other.name());
+          return type().equals(other.type()) && name().equals(other.name()) &&
+              reference().equals(other.reference());
         }
 
-        bool isValid() const
-        {
-          return constraintTypeValid(type());
-        }
-
-        const fccl::semantics::InteractionMatrixSemantics& calculateFirstDerivative(
-            const fccl::semantics::TransformSemantics& tool_transform)
-        {
-          assert(first_derivative_.size() == 1);
-
-          first_derivative_.twist().reference() = tool_transform.target();
-          first_derivative_.twist().target() = tool_transform.target();
-          first_derivative_.joints()(0) = name(); 
-          
-          return first_derivative_;
-        }
-            
       private:
         SemanticsBase reference_;
         SemanticsBase name_;
-        ConstraintTypes type_; 
-        // pre-allocated memory to return first derivative
-        InteractionMatrixSemantics first_derivative_;
+        SemanticsBase type_; 
     };
 
     inline std::ostream& operator<<(std::ostream& os, const ConstraintSemantics& obj)
