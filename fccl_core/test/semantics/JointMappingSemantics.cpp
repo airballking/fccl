@@ -98,4 +98,11 @@ TEST_F(JointMappingSemanticsTest, Init)
   for(std::size_t i=0; i<joint_names.size(); i++)
     EXPECT_STREQ(A.column_joints()(i).getName().c_str(),
         joint_names[i].c_str());
+
+  JntArraySemantics rows, columns;
+  rows.init(constraint_names);
+  columns.init(joint_names);
+  JointMappingSemantics A2;
+  A2.init(rows, columns);
+  EXPECT_TRUE(A.equals(A2));
 }

@@ -40,8 +40,14 @@ namespace fccl
             const std::vector<std::string>& column_names)
         {
           row_joints().init(row_names);
-
           column_joints().init(column_names);
+        }
+
+        void init(const JntArraySemantics& row_semantics,
+            const JntArraySemantics& column_semantics)
+        {
+          row_joints() = row_semantics;
+          column_joints() = column_semantics;
         }
  
         void resize(std::size_t rows, std::size_t columns)
