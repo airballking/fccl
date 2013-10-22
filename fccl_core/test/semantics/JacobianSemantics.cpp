@@ -109,4 +109,8 @@ TEST_F(JacobianSemanticsTest, Init)
     EXPECT_STREQ(jac.joints()(i).getName().c_str(), joint_names[i].c_str());
   EXPECT_STREQ(jac.twist().reference().getName().c_str(), parent.c_str());
   EXPECT_STREQ(jac.twist().target().getName().c_str(), child.c_str());
+
+  JacobianSemantics jac2;
+  jac2.init(jac.joints(), jac.twist());
+  EXPECT_TRUE(jac.equals(jac2));
 }

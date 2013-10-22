@@ -45,6 +45,13 @@ namespace fccl
           twist().init(reference_name, target_name);
         }
 
+        void init(const JntArraySemantics& joint_semantics,
+            const TwistSemantics& twist_semantics)
+        {
+          joints() = joint_semantics;
+          twist() = twist_semantics;
+        }
+
         void resize(std::size_t columns)
         {
           joints().resize(columns);
