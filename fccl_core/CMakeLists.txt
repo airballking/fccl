@@ -112,6 +112,7 @@ catkin_add_gtest(${PROJECT_NAME}-test
                  test/base/Constraints.cpp
                  test/base/ConstraintArray.cpp
                  test/control/Interpolator.cpp
+                 test/estimation/LimitEstimator.cpp
                  test/kdl/Transform.cpp
                  test/kdl/Twist.cpp
                  test/kdl/InteractionMatrix.cpp
