@@ -69,6 +69,7 @@ namespace fccl
         void resize(std::size_t new_size)
         {
           numerics().resize(new_size);
+          KDL::SetToZero(numerics());
           semantics().resize(new_size);
         }
 
