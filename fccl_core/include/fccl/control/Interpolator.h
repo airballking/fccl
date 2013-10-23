@@ -14,6 +14,24 @@ namespace fccl
     class Interpolator
     {
       public:
+        Interpolator() :
+            generator_(NULL), input_(NULL), output_(NULL), 
+            flags_(RMLPositionFlags()), result_value_(0),
+            next_position_(JntArray()), next_velocity_(JntArray()),
+            next_acceleration_(JntArray())
+        {
+        }
+
+        Interpolator(const Interpolator& other) :
+            generator_(other.generator_), input_(other.input_), 
+            output_(other.output_), flags_(other.flags_), 
+            result_value_(other.result_value_),
+            next_position_(other.next_position_),
+            next_velocity_(other.next_velocity_),
+            next_acceleration_(other.next_acceleration_)
+        {
+        }
+
         ~Interpolator()
         {
           deletePointers();
@@ -22,29 +40,40 @@ namespace fccl
         void init(JntArraySemantics semantics, double delta_t)
         {
           deletePointers();
- 
+
           generator_ = new ReflexxesAPI(semantics.size(), delta_t);
           input_ = new RMLPositionInputParameters(semantics.size());
           output_ = new RMLPositionOutputParameters(semantics.size());
+          result_value_ = 0;
 
           next_position_.init(semantics);
           next_velocity_.init(semantics);
+          next_acceleration_.init(semantics);
+        }
+
+        bool inputValid() const
+        {
+          assert(input_);
+
+          return input_->CheckForValidity();
         }
 
         void interpolate()
         {
           assert(input_);
+          assert(inputValid());
           assert(output_);
           assert(generator_);
           assert(output_->NumberOfDOFs == nextPosition().size());
           assert(output_->NumberOfDOFs == nextVelocity().size());
+          assert(output_->NumberOfDOFs == nextAcceleration().size());
 
-          int return_value = generator_->RMLPosition(*input_, output_, flags_);
+          result_value_ = generator_->RMLPosition(*input_, output_, flags_);
 
-          if(return_value < 0)
+          if(result_value_ < 0)
           {
             std::cout << "Reflexxes interpolator returned with error: " << 
-                return_value << "\n";
+                result_value_ << "\n";
             return;
           }
 
@@ -52,17 +81,21 @@ namespace fccl
               nextPosition().size()*sizeof(double));
           output_->GetNewVelocityVector(next_velocity_.numerics().data.data(), 
               nextVelocity().size()*sizeof(double));
+          output_->GetNewAccelerationVector(
+              next_acceleration_.numerics().data.data(), 
+              nextAcceleration().size()*sizeof(double));
         }
 
         void interpolate(const JntArray& target_pos, const JntArray& target_vel,
             const JntArray& current_pos, const JntArray& current_vel,
-            const JntArray& max_vel, const JntArray& max_acc, 
-            const JntArray max_jerk)
+            const JntArray& current_acc, const JntArray& max_vel, 
+            const JntArray& max_acc, const JntArray max_jerk)
         {
           setTargetPosition(target_pos);
           setTargetVelocity(target_vel);
           setCurrentPosition(current_pos);
           setCurrentVelocity(current_vel);
+          setCurrentAcceleration(current_acc);
           setMaxVelocity(max_vel);
           setMaxAcceleration(max_acc);
           setMaxJerk(max_jerk);
@@ -70,9 +103,15 @@ namespace fccl
           interpolate();
         }
 
+        bool interpolationFinished() const
+        {
+          return result_value_ == ReflexxesAPI::RML_FINAL_STATE_REACHED;
+        }
+
         const JntArraySemantics& semantics() const
         {
           assert(nextPosition().semantics().equals(nextVelocity().semantics()));
+          assert(nextPosition().semantics().equals(nextAcceleration().semantics()));
 
           return nextPosition().semantics();
         }
@@ -85,6 +124,11 @@ namespace fccl
         const JntArray& nextVelocity() const
         {
           return next_velocity_;
+        }
+
+        const JntArray& nextAcceleration() const
+        {
+          return next_acceleration_;
         }
 
         void setCurrentPosition(const JntArray& current_position)
@@ -103,6 +147,15 @@ namespace fccl
           assert(input_->NumberOfDOFs == semantics().size());
 
           input_->SetCurrentVelocityVector(current_velocity.numerics().data.data());
+        }
+
+        void setCurrentAcceleration(const JntArray& current_acceleration)
+        {
+          assert(semantics().equals(current_acceleration.semantics()));
+          assert(input_);
+          assert(input_->NumberOfDOFs == semantics().size());
+
+          input_->SetCurrentAccelerationVector(current_acceleration.numerics().data.data());
         }
 
         void setDimensionActivity(std::size_t dim, bool active)
@@ -165,16 +218,20 @@ namespace fccl
         RMLPositionInputParameters* input_;
         RMLPositionOutputParameters* output_;
         RMLPositionFlags flags_;
+        int result_value_;
         // pre-allocated memory for output
         JntArray next_position_;
         JntArray next_velocity_;
+        JntArray next_acceleration_;
 
         void deletePointers()
         {
           if(generator_)
             delete generator_;
+
           if(input_)
             delete input_;
+
           if(output_)
             delete output_;
         }
