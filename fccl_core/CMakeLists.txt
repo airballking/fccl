@@ -6,7 +6,8 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp 
   urdf 
   kdl_parser
-  reflexxes_type2)
+  reflexxes_type2
+  control_toolbox)
 
 ## System dependencies 
 find_package(Boost REQUIRED COMPONENTS thread)
@@ -112,6 +113,7 @@ catkin_add_gtest(${PROJECT_NAME}-test
                  test/base/Constraints.cpp
                  test/base/ConstraintArray.cpp
                  test/control/Interpolator.cpp
+                 test/control/PID.cpp
                  test/estimation/LimitEstimator.cpp
                  test/estimation/StateEstimator.cpp
                  test/kdl/Transform.cpp
