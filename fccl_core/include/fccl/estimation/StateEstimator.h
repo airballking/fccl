@@ -32,6 +32,15 @@ namespace fccl
           return current_acceleration_;
         }
 
+        void start(const fccl::kdl::JntArray& pos_init,
+            const fccl::kdl::JntArray& vel_init, 
+            const fccl::kdl::JntArray& acc_init)
+        {
+          current_position_ = pos_init;
+          current_velocity_ = vel_init;
+          current_acceleration_ = acc_init;
+        }
+ 
         void sensor_update(const fccl::kdl::JntArray& pos_estimate)
         {
           // TODO(Georg): implement sth more useful in the future

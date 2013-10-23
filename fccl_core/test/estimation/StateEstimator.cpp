@@ -21,6 +21,8 @@ class StateEstimatorTest : public ::testing::Test
       acc.numerics().data.setConstant(2.0);
       zero.init(joint_names);
       zero.numerics().data.setZero();
+      one.init(joint_names);
+      one.numerics().data.setConstant(1.0);
     }
 
     virtual void TearDown()
@@ -28,7 +30,7 @@ class StateEstimatorTest : public ::testing::Test
     }
 
     std::vector<std::string> joint_names;
-    JntArray pos, vel, acc, zero;
+    JntArray pos, vel, acc, zero, one;
 };
 
 TEST_F(StateEstimatorTest, Basics)
@@ -39,10 +41,15 @@ TEST_F(StateEstimatorTest, Basics)
   EXPECT_TRUE(se.currentVelocity().equals(zero));
   EXPECT_TRUE(se.currentAcceleration().equals(zero));
 
+  se.start(zero, one, one);
+  EXPECT_TRUE(se.currentPosition().equals(zero));
+  EXPECT_TRUE(se.currentVelocity().equals(one));
+  EXPECT_TRUE(se.currentAcceleration().equals(one));
+
   se.sensor_update(pos);
   EXPECT_TRUE(se.currentPosition().equals(pos));
-  EXPECT_TRUE(se.currentVelocity().equals(zero));
-  EXPECT_TRUE(se.currentAcceleration().equals(zero));
+  EXPECT_TRUE(se.currentVelocity().equals(one));
+  EXPECT_TRUE(se.currentAcceleration().equals(one));
 
   se.control_update(zero, vel, acc);
   EXPECT_TRUE(se.currentPosition().equals(pos));
