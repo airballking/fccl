@@ -13,22 +13,33 @@ namespace fccl
   namespace control
   {
     class ConstraintController
+    {
       public:
         void init(const fccl::base::ConstraintArray& constraints, 
-            const fccl::kdl::KinematicChain& kinematics);
-        void update(const fccl::kdl::JntArray& joint_state,
+            const fccl::kdl::KinematicChain& kinematics, double cycle_time);
+
+        void start(const fccl::kdl::JntArray& joint_state,
             const fccl::utils::TransformMap& transform_map, double delta=0.001);
 
-        const fccl::kdl::JntArray& getDesiredJointVelocities() const;
-        const fccl::kdl::JointMappingMatrix& getNullSpaceProjector() const;
+        void update(const fccl::kdl::JntArray& joint_state,
+            const fccl::utils::TransformMap& transform_map, double delta=0.001);
+ 
+        void stop();
 
-        const fccl::base::ConstraintArray& getConstraints() const;
-        const fccl::kdl::KinematicChain& getKinematics() const;
+        const fccl::kdl::JntArray& desiredJointVelocities() const;
+        const fccl::kdl::JointMappingMatrix& nullSpaceProjector() const;
+
+        const fccl::base::ConstraintArray& constraints() const;
+        const fccl::kdl::KinematicChain& kinematics() const;
  
       private:
         // actual state variables of the controller
         std::vector<fccl::base::Constraint> constraints_;
         fccl::kdl::KinematicChain& kinematics_;
+        fccl::control::Interpolator interpolator_;
+        fccl::estimation::LimitEstimator limit_estimator_;
+        fccl::estimation::StateEstimator constraint_estimator_;
+        fccl::control::PID pid_;
 
         // memory for output values
         fccl::kdl::JntArray desired_joint_velocities_;
@@ -38,6 +49,14 @@ namespace fccl
         fccl::kdl::JointMappingMatrix A_;
         fccl::kdl::InteractionMatrix H_;
         fccl::kdl::Jacobian JR_;
+        fccl::kdl::JntArray desired_output_velocities_;
+        fccl::kdl::JntArray desired_target_velocities_;
+        fccl::kdl::JntArray tmp_constraint_space_;
+        fccl::kdl::JntArray joint_weights_;
+
+        void changeInterpolatorActivity(const fccl::kdl::JntArray& task_weights);
+        void interpolate();
+        void assembleEquation();
     }; 
   } // namespace control
 } // namespace fccl
