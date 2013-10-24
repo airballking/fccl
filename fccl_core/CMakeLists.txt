@@ -50,13 +50,14 @@ include_directories(
 
 ## Declare a cpp library
 add_library(${PROJECT_NAME}
+  src/fccl/base/Constraints.cpp
   src/fccl/kdl/InteractionMatrix.cpp
   src/fccl/kdl/KinematicChain.cpp
+  src/fccl/solvers/WDLSSolver.cpp
   src/fccl/utils/Equalities.cpp
   src/fccl/utils/Hashing.cpp
   src/fccl/utils/Printing.cpp
   src/fccl/utils/TransformMap.cpp
-  src/fccl/base/Constraints.cpp
 )
 
 ## Specify libraries to link a library or executable target against

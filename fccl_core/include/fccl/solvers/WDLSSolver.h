@@ -30,61 +30,67 @@
  */
 
 /*
- * SolverWeighted.hpp
+ * WDLSSolver.h
  *
  *  Created on: Mar 1, 2012
  *      Author: bartelsg
  */
 
-#ifndef SOLVERWEIGHTED_HPP_
-#define SOLVERWEIGHTED_HPP_
+#ifndef FCCL_SOLVERS_WDLS_SOLVER_H
+#define FCCL_SOLVERS_WDLS_SOLVER_H
 
 #include <Eigen/Core>
 
-class SolverWeighted {
-public:
-	SolverWeighted();
-	SolverWeighted(const unsigned int num_constraints,
-			const unsigned int num_joints);
-	~SolverWeighted();
-
-	/* This solves the equation A qdot = ydot for qdot using the weighted
-	 * pseudoinverse, where Wq denotes the weights of the joints and
-	 * Wy denotes the weights of the constraints.
-	 *
-	 * Note: Wq is a num_joints x num_joints matrix.
-	 * 	 Wy is a num_constraints x num_constraints matrix.
-	 */
-	bool solve(const Eigen::MatrixXd &A, const Eigen::VectorXd &ydot,
-			const Eigen::MatrixXd &Wq, const Eigen::MatrixXd & Wy,
-			Eigen::VectorXd &qdot);
-
-        /* This solves the equation A qdot = ydot for qdot using the weighted
-	 * pseudoinverse A_inv_weighted, where Wq denotes the weights of the joints and
-	 * Wy denotes the weights of the constraints.
-	 *
-	 * Note: Wq is a num_joints x num_joints matrix.
-	 * 	 Wy is a num_constraints x num_constraints matrix.
-	 */
-	bool solve(const Eigen::MatrixXd &A, const Eigen::VectorXd &ydot,
-			const Eigen::MatrixXd &Wq, const Eigen::MatrixXd & Wy,
-			Eigen::VectorXd &qdot, Eigen::MatrixXd &A_inv_weighted);
-
-	void reinitialise(const unsigned int num_constraints, const unsigned int num_joints);
-
-private:
-	unsigned int num_constraints, num_joints;
-
-	// value used during inversion of the diagonal matrix
-	// I got this value 0.1 from Ingo; he looked it up in some robot-specific config file
-	// the file also said:
-	// lambda = 0.01 --> high tracking accuracy
-	// lambda = 0.5 --> high clearance of singularities
-	double lambda;
-
-	Eigen::MatrixXd A_Wq, Wy_A_Wq, A_inv;
-	Eigen::MatrixXd U, V, Sinv, Wy_U, Wq_V, U2, Sinv2;
-	Eigen::VectorXd S, tmp, Ut_Wyt_ydot, Sinv_Ut_Wyt_ydot, S2;
-};
-
-#endif /* SOLVERWEIGHTED_HPP_ */
+namespace fccl
+{
+  namespace solvers
+  {
+    class WDLSSolver 
+    {
+      public:
+    	WDLSSolver();
+    	WDLSSolver(const unsigned int num_constraints,
+    			const unsigned int num_joints);
+    	~WDLSSolver();
+    
+    	/* This solves the equation A qdot = ydot for qdot using the weighted
+    	 * pseudoinverse, where Wq denotes the weights of the joints and
+    	 * Wy denotes the weights of the constraints.
+    	 *
+    	 * Note: Wq is a num_joints x num_joints matrix.
+    	 * 	 Wy is a num_constraints x num_constraints matrix.
+    	 */
+    	bool solve(const Eigen::MatrixXd &A, const Eigen::VectorXd &ydot,
+    			const Eigen::MatrixXd &Wq, const Eigen::MatrixXd & Wy,
+    			Eigen::VectorXd &qdot);
+    
+            /* This solves the equation A qdot = ydot for qdot using the weighted
+    	 * pseudoinverse A_inv_weighted, where Wq denotes the weights of the joints and
+    	 * Wy denotes the weights of the constraints.
+    	 *
+    	 * Note: Wq is a num_joints x num_joints matrix.
+    	 * 	 Wy is a num_constraints x num_constraints matrix.
+    	 */
+    	bool solve(const Eigen::MatrixXd &A, const Eigen::VectorXd &ydot,
+    			const Eigen::MatrixXd &Wq, const Eigen::MatrixXd & Wy,
+    			Eigen::VectorXd &qdot, Eigen::MatrixXd &A_inv_weighted);
+    
+    	void reinitialise(const unsigned int num_constraints, const unsigned int num_joints);
+    
+      private:
+    	unsigned int num_constraints, num_joints;
+    
+    	// value used during inversion of the diagonal matrix
+    	// I got this value 0.1 from Ingo; he looked it up in some robot-specific config file
+    	// the file also said:
+    	// lambda = 0.01 --> high tracking accuracy
+    	// lambda = 0.5 --> high clearance of singularities
+    	double lambda;
+    
+    	Eigen::MatrixXd A_Wq, Wy_A_Wq, A_inv;
+    	Eigen::MatrixXd U, V, Sinv, Wy_U, Wq_V, U2, Sinv2;
+    	Eigen::VectorXd S, tmp, Ut_Wyt_ydot, Sinv_Ut_Wyt_ydot, S2;
+    };
+  } // namespace solvers
+} // namespace fccl
+#endif /* FCCL_SOLVERS_WDLS_SOLVER_H */
