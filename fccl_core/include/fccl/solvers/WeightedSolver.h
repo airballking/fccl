@@ -11,7 +11,7 @@ namespace fccl
 {
   namespace solvers
   {
-    class SolverWeighted
+    class WeightedSolver
     { 
       public:
         void init(const fccl::semantics::JntArraySemantics& row_semantics,

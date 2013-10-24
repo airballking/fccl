@@ -49,7 +49,7 @@ class WeightedSolverTest : public ::testing::Test
 
 TEST_F(WeightedSolverTest, Basics)
 {
-  SolverWeighted solver;
+  WeightedSolver solver;
   solver.init(ydot.semantics(), qdot.semantics());
   ASSERT_TRUE(solver.solve(A, ydot, Wq, Wy, qdot));  
   
