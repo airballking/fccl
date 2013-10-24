@@ -25,12 +25,12 @@ namespace fccl
      
         const std::string& getName() const
         {
-          return fccl::utils::retrieveValue(getID());
+          return fccl::utils::Hasher::retrieveValue(getID());
         }
 
         void setName(const std::string& name)
         {
-          setID(fccl::utils::hash(name));
+          setID(fccl::utils::Hasher::hash(name));
         }
 
         bool equals(const SemanticsBase& other) const

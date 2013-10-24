@@ -9,19 +9,23 @@ namespace fccl
 {
   namespace utils
   {  
-    static const std::string empty_string = "";
+    class Hasher
+    {
+      public:
+        static std::size_t hash(const std::string& value); 
+        static const std::string& retrieveValue(std::size_t hash);
 
-    static std::map<std::size_t, std::string> hash_memory_;
+      private:
+        // auxiliary functions
+        static bool hasValue(std::size_t hash);
+        static void rememberHashValuePair(std::size_t hash, const std::string& value);
 
-    static boost::hash<std::string> string_hash_;
-
-    bool hasValue(std::size_t hash);
-
-    std::size_t hash(const std::string& value);
-  
-    void rememberHashValuePair(std::size_t hash, const std::string& value);
-
-    const std::string& retrieveValue(std::size_t hash);
+        // internal getters to members and constants; need to avoid the
+        // 'static initialization order fiasco'
+        static std::map<std::size_t, std::string>& getMap();
+        static const std::string& getEmptyString();
+        static boost::hash<std::string>& getHashFunction();
+    };
   } // namespace fccl::utils
 } // namespace fccl
 #endif // FCCL_UTILS_HASHING_H
