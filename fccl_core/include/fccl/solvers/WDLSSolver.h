@@ -64,7 +64,7 @@ namespace fccl
     			const Eigen::MatrixXd &Wq, const Eigen::MatrixXd & Wy,
     			Eigen::VectorXd &qdot);
     
-            /* This solves the equation A qdot = ydot for qdot using the weighted
+        /* This solves the equation A qdot = ydot for qdot using the weighted
     	 * pseudoinverse A_inv_weighted, where Wq denotes the weights of the joints and
     	 * Wy denotes the weights of the constraints.
     	 *
