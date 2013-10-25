@@ -14,7 +14,7 @@ namespace fccl
     class PID
     {
       public:
-        void init(fccl::semantics::JntArraySemantics& semantics)
+        void init(const fccl::semantics::JntArraySemantics& semantics)
         {
           effort_out_.init(semantics);
           pids_.resize(semantics.size());
