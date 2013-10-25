@@ -186,3 +186,50 @@ TEST_F(InteractionMatrixTest, PartialAssignment)
   for(std::size_t col=0; col<m.numerics().cols(); col++)
     EXPECT_EQ(m.numerics()(3, col), col + 30);
 }
+
+TEST_F(InteractionMatrixTest, Multiplication)
+{
+  std::vector<std::string> robot_joints;
+  robot_joints.push_back("elbow");
+  robot_joints.push_back("shoulder");
+  robot_joints.push_back("hip");
+
+  std::vector<std::string> constraints;
+  constraints.push_back("above");
+  constraints.push_back("behind");
+  constraints.push_back("left");
+  constraints.push_back("facing");
+
+  InteractionMatrix H;
+  H.init(constraints, reference, target);
+
+  Jacobian J;
+  J.init(robot_joints, reference, target);
+  
+  using Eigen::operator<<;
+  H.numerics() << 1, 0, 0, 0, 0, 0,
+                  0, 1, 0, 0, 0, 0,
+                  0, 0, 0, 0, 0, 0,
+                  0, 0, 0, 0, 0, 0;
+
+  J.numerics().data << 0, 1, 2,
+                       3, 4, 5,
+                       10, 11, 12,
+                       13, 14, 15,
+                       20, 21, 22,
+                       23, 24, 25;
+
+  JointMappingMatrix A;
+  A.init(constraints, robot_joints);
+  ASSERT_TRUE(areMultipliable(H, J));
+  multiply(H, J, A);
+  EXPECT_TRUE(A.semantics().row_joints().equals(H.semantics().joints()));
+  EXPECT_TRUE(A.semantics().column_joints().equals(J.semantics().joints()));
+
+  Eigen::Matrix<double, 4, 3> result_data;
+  result_data <<  0, 1, 2,
+                  3, 4, 5,
+                  0, 0, 0,
+                  0, 0, 0;
+  EXPECT_TRUE(result_data.isApprox(A.numerics()));
+}

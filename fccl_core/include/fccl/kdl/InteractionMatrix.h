@@ -7,6 +7,8 @@
 #include <Eigen/Core> 
 #include <fccl/kdl/Twist.h>
 #include <fccl/kdl/Transform.h>
+#include <fccl/kdl/Jacobian.h>
+#include <fccl/kdl/JointMappingMatrix.h>
 #include <fccl/semantics/InteractionMatrixSemantics.h>
 #include <fccl/utils/Printing.h>
 
@@ -122,7 +124,25 @@ namespace fccl
 
       return os;
     }
- 
+
+    inline bool areMultipliable(const InteractionMatrix& interaction_matrix,
+        const Jacobian& jacobian)
+    {
+      assert(interaction_matrix.isValid());
+      assert(jacobian.isValid());
+
+      return areMultipliable(interaction_matrix.semantics(), jacobian.semantics());
+    }
+
+    inline void multiply(const InteractionMatrix& interaction_matrix, 
+        const Jacobian& jacobian, JointMappingMatrix& result)
+    {
+      assert(areMultipliable(interaction_matrix, jacobian));
+      
+      multiply(interaction_matrix.semantics(), jacobian.semantics(),
+          result.semantics());
+      result.numerics() = interaction_matrix.numerics() * jacobian.numerics().data;
+    }
   } // namespace kdl 
 } // namespace fccl
 #endif // FCCL_KDL_INTERACTION_MATRIX_H
