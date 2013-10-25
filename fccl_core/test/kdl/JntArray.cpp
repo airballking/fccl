@@ -117,3 +117,22 @@ TEST_F(JntArrayTest, partialAssignment)
   EXPECT_EQ(q.numerics()(2), 43);
   EXPECT_EQ(q.numerics()(3), joint_values(3));
 }
+
+TEST_F(JntArrayTest, subtraction)
+{
+  JntArray q1, q2, res;
+  q1.init(joint_names);
+  q2.init(joint_names);
+  res.init(joint_names);
+  
+  using Eigen::operator<<;
+  q1.numerics().data << 10, 10, 10, 10;
+  q2.numerics().data << 6, 6, 6, 6;
+  res.numerics().data.setZero();
+
+  substract(q1, q2, res);
+  ASSERT_TRUE(q1.semantics().equals(res.semantics()));
+  Eigen::Matrix<double, 4, 1> data;
+  data << 4, 4, 4, 4;
+  EXPECT_TRUE(data.isApprox(res.numerics().data));
+}

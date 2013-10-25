@@ -97,6 +97,17 @@ namespace fccl
 
       return os;
     }
+
+    inline void substract(const JntArray& lhs, const JntArray& rhs, JntArray& res)
+    {
+      assert(lhs.semantics().equals(rhs.semantics()));
+      assert(lhs.semantics().equals(res.semantics()));
+      assert(lhs.isValid());
+      assert(rhs.isValid());
+      assert(res.isValid());
+
+      res.numerics().data = lhs.numerics().data - rhs.numerics().data;
+    }
   } // namespace kdl
 } // namespace fccl
 #endif // FCCL_KDL_JNTARRAY_H
