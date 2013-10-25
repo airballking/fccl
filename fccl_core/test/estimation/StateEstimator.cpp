@@ -56,3 +56,27 @@ TEST_F(StateEstimatorTest, Basics)
   EXPECT_TRUE(se.currentVelocity().equals(vel));
   EXPECT_TRUE(se.currentAcceleration().equals(acc));
 }
+
+TEST_F(StateEstimatorTest, Basics2)
+{
+  StateEstimator se;
+  se.init(zero.semantics());
+  EXPECT_TRUE(se.currentPosition().equals(zero));
+  EXPECT_TRUE(se.currentVelocity().equals(zero));
+  EXPECT_TRUE(se.currentAcceleration().equals(zero));
+
+  se.start(zero);
+  EXPECT_TRUE(se.currentPosition().equals(zero));
+  EXPECT_TRUE(se.currentVelocity().equals(zero));
+  EXPECT_TRUE(se.currentAcceleration().equals(zero));
+
+  se.sensor_update(pos);
+  EXPECT_TRUE(se.currentPosition().equals(pos));
+  EXPECT_TRUE(se.currentVelocity().equals(zero));
+  EXPECT_TRUE(se.currentAcceleration().equals(zero));
+
+  se.control_update(zero, vel, acc);
+  EXPECT_TRUE(se.currentPosition().equals(pos));
+  EXPECT_TRUE(se.currentVelocity().equals(vel));
+  EXPECT_TRUE(se.currentAcceleration().equals(acc));
+}

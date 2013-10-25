@@ -15,6 +15,7 @@ namespace fccl
           current_position_.init(semantics);
           current_velocity_.init(semantics);
           current_acceleration_.init(semantics);
+          tmp_.init(semantics);
         }
 
         const fccl::kdl::JntArray& currentPosition() const
@@ -40,6 +41,12 @@ namespace fccl
           current_velocity_ = vel_init;
           current_acceleration_ = acc_init;
         }
+
+        void start(const fccl::kdl::JntArray& pos_init)
+        {
+          tmp_.numerics().data.setZero();
+          start(pos_init, tmp_, tmp_);
+        }
  
         void sensor_update(const fccl::kdl::JntArray& pos_estimate)
         {
@@ -59,6 +66,7 @@ namespace fccl
         fccl::kdl::JntArray current_position_;
         fccl::kdl::JntArray current_velocity_;
         fccl::kdl::JntArray current_acceleration_;
+        fccl::kdl::JntArray tmp_;
     };
   } // namespace estimation
 } // namespace fccl
