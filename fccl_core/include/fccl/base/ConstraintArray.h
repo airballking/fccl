@@ -86,7 +86,29 @@ namespace fccl
           copyConstraints(constraints);
 
           prepare();
-       }
+        }
+
+        bool areFulfilled() const
+        {
+          // TODO(Georg): refactor this into Constraint
+          assert(taskWeights().size() == size());
+
+          for(std::size_t i=0; i<size(); i++)
+            if(!(taskWeights().numerics()(i) < 1.0))
+              return false;
+
+          return true;
+        }
+
+        // NOT REAL-TIME-SAFE
+        std::vector<std::string> names() const
+        {
+          std::vector<std::string> result;
+          for(std::size_t i=0; i<size(); i++)
+            result.push_back(operator()(i).semantics().name().getName());
+
+          return result;
+        }
 
         void prepare()
         {
@@ -111,6 +133,7 @@ namespace fccl
 
         void update(fccl::utils::TransformMap& transform_map, double delta)
         {
+          // TODO(Georg): refactor this into Constraint
           calculateOutputValues(transform_map, delta);
           calculateDerivative(transform_map, delta);
           calculateWeightsAndDesiredOutputs();
