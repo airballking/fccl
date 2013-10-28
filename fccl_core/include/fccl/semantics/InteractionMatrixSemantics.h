@@ -91,7 +91,7 @@ namespace fccl
     inline bool areMultipliable(const InteractionMatrixSemantics& interaction_matrix,
         const JacobianSemantics& jacobian)
     {
-      return interaction_matrix.twist().equals(jacobian.twist());
+      return interaction_matrix.twist().reference().equals(jacobian.twist().reference());
     }
 
     inline void multiply(const InteractionMatrixSemantics& interaction_matrix, 
