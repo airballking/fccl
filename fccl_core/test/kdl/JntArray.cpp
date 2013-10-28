@@ -136,3 +136,22 @@ TEST_F(JntArrayTest, subtraction)
   data << 4, 4, 4, 4;
   EXPECT_TRUE(data.isApprox(res.numerics().data));
 }
+
+TEST_F(JntArrayTest, addition)
+{
+  JntArray q1, q2, res;
+  q1.init(joint_names);
+  q2.init(joint_names);
+  res.init(joint_names);
+  
+  using Eigen::operator<<;
+  q1.numerics().data << 10, 10, 10, 10;
+  q2.numerics().data << 6, 6, 6, 6;
+  res.numerics().data.setZero();
+
+  add(q1, q2, res);
+  ASSERT_TRUE(q1.semantics().equals(res.semantics()));
+  Eigen::Matrix<double, 4, 1> data;
+  data << 16, 16, 16, 16;
+  EXPECT_TRUE(data.isApprox(res.numerics().data));
+}
