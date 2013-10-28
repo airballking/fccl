@@ -51,6 +51,7 @@ include_directories(
 ## Declare a cpp library
 add_library(${PROJECT_NAME}
   src/fccl/base/Constraints.cpp
+  src/fccl/control/ConstraintController.cpp
   src/fccl/kdl/InteractionMatrix.cpp
   src/fccl/kdl/KinematicChain.cpp
   src/fccl/solvers/WDLSSolver.cpp

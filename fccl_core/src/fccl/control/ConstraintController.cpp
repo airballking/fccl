@@ -16,48 +16,56 @@ namespace fccl
 
       // init sub-modules
       interpolator_.init(constraints_.outputValues().semantics(), cycle_time);
-      limit_estimator_.init(constraints_.semantics().joints());
-      state_estimator_.init(constraints_.semantics().joints());
-      pids_.init(constraints_.semantics().joints());
+      limit_estimator_.init(constraints_.outputValues().semantics());
+      state_estimator_.init(constraints_.outputValues().semantics());
+      pid_.init(constraints_.outputValues().semantics());
+      solver_.init(constraints_.outputValues().semantics(), 
+          kinematics_.semantics().joints());
 
       // init return values or intermediate results
       desired_joint_velocities_.init(kinematics_.semantics().joints());
-      desired_target_velocities_.init(kinematics_.semantic().joints());
+      desired_target_velocities_.init(kinematics_.semantics().joints());
+      output_error_.init(kinematics_.semantics().joints());
       null_space_projector_.init(kinematics_.semantics().joints(), 
           kinematics_.semantics().joints());
-      A_.init(constraints_.semantics().joints(), kinematics_.semantics().joints());
+      A_.init(constraints_.outputValues().semantics(), kinematics_.semantics().joints());
       H_.init(constraints_.firstDerivative().semantics());
       JR_.init(kinematics_.semantics().joints(), 
           constraints_.firstDerivative().semantics().twist()); 
-      joint_weights_.init(kinematics_.semantics().joints());
-      joint_weights_.numerics().data.setConstant(1.0);
+      joint_weights_.init(kinematics_.semantics().joints(), 
+          kinematics_.semantics().joints());
+      joint_weights_.numerics().setIdentity();
+      task_weights_.init(constraints_.outputValues().semantics(), 
+          constraints_.outputValues().semantics());
+      task_weights_.numerics().setIdentity();
+      tmp_constraint_space_.init(constraints_.outputValues().semantics());
     }
 
     void ConstraintController::setGains(const fccl::kdl::JntArray& p, 
         const fccl::kdl::JntArray& i, const fccl::kdl::JntArray& d, 
         const fccl::kdl::JntArray& i_max, const fccl::kdl::JntArray& i_min)
     {
-      pids_.setGains(p, i, d, i_max, i_min);
+      pid_.setGains(p, i, d, i_max, i_min);
     }
  
     void ConstraintController::start(const JntArray& joint_state,
-        const fccl::utils::TransformMap& transform_map, double derivative_delta,
+        fccl::utils::TransformMap& transform_map, double derivative_delta,
         double cycle_time)
     {
-       constraints_.update(transfrom_map, delta);
+       constraints_.update(transform_map, derivative_delta);
 
-       state_estimator_.start(constraints_.outputValues(), Zero, Zero);
+       state_estimator_.start(constraints_.outputValues());
 
-       pids_.reset();
+       pid_.reset();
     }
 
     void ConstraintController::update(const JntArray& joint_state,
-        const fccl::utils::TransformMap& transform_map, double derivative_delta,
+        fccl::utils::TransformMap& transform_map, double derivative_delta,
         double cycle_time)
     {
-      constraints_.update(transfrom_map, delta);
+      constraints_.update(transform_map, derivative_delta);
 
-      assembleEquation();
+      assembleEquation(joint_state, transform_map);
 
       state_estimator_.sensor_update(constraints_.outputValues());
 
@@ -69,12 +77,11 @@ namespace fccl
       state_estimator_.control_update(interpolator_.nextPosition(), 
           interpolator_.nextVelocity(), interpolator_.nextAcceleration());
 
-      desired_output_velocities_ = pids_.computeCommand(
-          constraints_.outputValues() - interpolator_.nextPosition(), cycle_time);
+      fccl::kdl::substract(constraints_.outputValues(),
+          interpolator_.nextPosition(), output_error_);
+      desired_output_velocities_ = pid_.computeCommand(output_error_, cycle_time);
  
-      // TODO(Georg):
-      //  - wrap solver with semantics
-      solver_.solve(A_, desired_output_velocities_, constraints_.taskWeights(), joint_weights_, desired_joint_velocites_, null_space_projector_);
+      solver_.solve(A_, desired_output_velocities_, task_weights_, joint_weights_, desired_joint_velocities_, null_space_projector_);
     }
 
     void ConstraintController::stop()
@@ -86,12 +93,12 @@ namespace fccl
       return desired_joint_velocities_;
     }
 
-    const fccl::kdl::MatrixNxN& ConstraintController::nullSpaceProjector() const
+    const fccl::kdl::JointMappingMatrix& ConstraintController::nullSpaceProjector() const
     {
-      return nullSpaceProjector_;
+      return null_space_projector_;
     }
 
-    const std::vector<fccl::base::Constraint>& ConstraintController::constraints() const
+    const fccl::base::ConstraintArray& ConstraintController::constraints() const
     {
       return constraints_;
     }
@@ -101,27 +108,28 @@ namespace fccl
       return kinematics_;
     }
 
-    void ConstraintController::assembleEquation()
+    void ConstraintController::assembleEquation(const fccl::kdl::JntArray& 
+        joint_state, fccl::utils::TransformMap& transform_map)
     {
       H_ = constraints_.firstDerivative();
       // get robot jacobian in reference frame w.r.t. which constraints are defined
       JR_ = kinematics_.calculateJacobian(joint_state);
       JR_.changeReferenceFrame(transform_map.getTransform(
           H_.semantics().twist().reference(), JR_.semantics().twist().reference()));
-      A_ = H_ * JR_;
+      multiply(H_, JR_, A_);
     }
 
     void ConstraintController::interpolate()
     {
       changeInterpolatorActivity(constraints_.taskWeights());
 
-      interpolator_.setMaximumVelocity(limit_estimator_.maximumVelocity());
-      interpolator_.setMaximumAcceleration(limit_estimator_.maximumAcceleration());
-      interpolator_.setMaximumJerk(limit_estimator_.maximumJerk());
+      interpolator_.setMaxVelocity(limit_estimator_.maximumVelocity());
+      interpolator_.setMaxAcceleration(limit_estimator_.maximumAcceleration());
+      interpolator_.setMaxJerk(limit_estimator_.maximumJerk());
 
-      interpolator_.setCurrentPosition(constraint_estimator_.currentPosition());
-      interpolator_.setCurrentVelocity(constraint_estimator_.currentVelocity());
-      interpolator_.setCurrentAcceleration(constraint_estimator_.currentAcceleration());
+      interpolator_.setCurrentPosition(state_estimator_.currentPosition());
+      interpolator_.setCurrentVelocity(state_estimator_.currentVelocity());
+      interpolator_.setCurrentAcceleration(state_estimator_.currentAcceleration());
 
       interpolator_.setTargetPosition(constraints_.desiredOutputValues());
       interpolator_.setTargetVelocity(desired_target_velocities_);
@@ -133,13 +141,19 @@ namespace fccl
         fccl::kdl::JntArray& task_weights)
     {
       assert(task_weights.semantics().equals(interpolator_.semantics()));
+      assert(task_weights_.semantics().row_joints().equals(
+          task_weights.semantics()));
+      assert(task_weights_.semantics().column_joints().equals(
+          task_weights.semantics()));
+
+      task_weights_.numerics().diagonal() = task_weights.numerics().data;
 
       for(std::size_t i=0; i<task_weights.size(); i++)
       {
         assert(task_weights.numerics()(i) >= 0.0);
         assert(task_weights.numerics()(i) <= 1.0);
 
-        interpolator.setDimensionActivity(i, task_weights.numerics()(i) == 1.0);
+        interpolator_.setDimensionActivity(i, task_weights.numerics()(i) == 1.0);
       }
     }
   } // namespace control
