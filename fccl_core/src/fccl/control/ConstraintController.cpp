@@ -24,10 +24,10 @@ namespace fccl
 
       // init return values or intermediate results
       desired_joint_velocities_.init(kinematics_.semantics().joints());
-      desired_target_velocities_.init(kinematics_.semantics().joints());
-      output_error_.init(kinematics_.semantics().joints());
+      desired_target_velocities_.init(constraints_.outputValues().semantics());
+      output_error_.init(constraints_.outputValues().semantics());
       null_space_projector_.init(kinematics_.semantics().joints(), 
-          kinematics_.semantics().joints());
+          constraints_.outputValues().semantics());
       A_.init(constraints_.outputValues().semantics(), kinematics_.semantics().joints());
       H_.init(constraints_.firstDerivative().semantics());
       JR_.init(kinematics_.semantics().joints(), 
@@ -77,11 +77,14 @@ namespace fccl
       state_estimator_.control_update(interpolator_.nextPosition(), 
           interpolator_.nextVelocity(), interpolator_.nextAcceleration());
 
+
       fccl::kdl::substract(constraints_.outputValues(),
           interpolator_.nextPosition(), output_error_);
       desired_output_velocities_ = pid_.computeCommand(output_error_, cycle_time);
- 
-      solver_.solve(A_, desired_output_velocities_, task_weights_, joint_weights_, desired_joint_velocities_, null_space_projector_);
+
+      solver_.solve(A_, desired_output_velocities_, joint_weights_, task_weights_,
+          desired_joint_velocities_, null_space_projector_);
+
     }
 
     void ConstraintController::stop()
@@ -112,10 +115,15 @@ namespace fccl
         joint_state, fccl::utils::TransformMap& transform_map)
     {
       H_ = constraints_.firstDerivative();
+
       // get robot jacobian in reference frame w.r.t. which constraints are defined
       JR_ = kinematics_.calculateJacobian(joint_state);
-      JR_.changeReferenceFrame(transform_map.getTransform(
-          H_.semantics().twist().reference(), JR_.semantics().twist().reference()));
+
+      Transform T = transform_map.getTransform(H_.semantics().twist().reference(),
+          JR_.semantics().twist().reference());
+
+      JR_.changeReferenceFrame(T);
+
       multiply(H_, JR_, A_);
     }
 

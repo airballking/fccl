@@ -46,7 +46,7 @@ namespace fccl
       private:
         // actual state variables of the controller
         fccl::base::ConstraintArray constraints_;
-        fccl::kdl::KinematicChain& kinematics_;
+        fccl::kdl::KinematicChain kinematics_;
         fccl::control::Interpolator interpolator_;
         fccl::estimation::LimitEstimator limit_estimator_;
         fccl::estimation::StateEstimator state_estimator_;
