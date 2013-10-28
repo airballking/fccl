@@ -49,9 +49,9 @@ class ConstraintControllerTest : public ::testing::Test
       tool_calibration.numerics() = KDL::Frame(KDL::Rotation::Identity(),
           KDL::Vector(0.0, 0.0, 0.0));
 
-      base_localization.semantics().reference().setName("base_link");
-      base_localization.semantics().target().setName("oven");
-      base_localization.numerics() = KDL::Frame(KDL::Rotation::Identity(),
+      object_localization.semantics().reference().setName("base_link");
+      object_localization.semantics().target().setName("oven");
+      object_localization.numerics() = KDL::Frame(KDL::Rotation::Identity(),
           KDL::Vector(0.534, 0.0, 0.746));
       
       torso_transform.semantics().reference().setName("base_link");
@@ -65,7 +65,7 @@ class ConstraintControllerTest : public ::testing::Test
       transform_map.setTransform(
           multiply(kinematics.calculateForwardKinematics(joint_state),
               tool_calibration).inverse());
-      transform_map.setTransform(base_localization);
+      transform_map.setTransform(object_localization);
 
       // features
       bottle_top.position() = KDL::Vector(0.0, 0.0, 0.0825);
@@ -112,7 +112,7 @@ class ConstraintControllerTest : public ::testing::Test
     {
     }
 
-    Transform tool_calibration, base_localization, torso_transform;
+    Transform tool_calibration, object_localization, torso_transform;
     std::vector<std::string> joint_names;
     urdf::Model urdf;
     JntArray joint_state, joint_vel;
