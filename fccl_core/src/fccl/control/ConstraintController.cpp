@@ -30,8 +30,10 @@ namespace fccl
           constraints_.outputValues().semantics());
       A_.init(constraints_.outputValues().semantics(), kinematics_.semantics().joints());
       H_.init(constraints_.firstDerivative().semantics());
-      JR_.init(kinematics_.semantics().joints(), 
-          constraints_.firstDerivative().semantics().twist()); 
+      // TODO(Georg): extend KinematicChain to get JacobianSemantics
+      JR_.init(kinematics_.semantics().joints().jointNames(), 
+          kinematics_.semantics().transform().reference().getName(),
+          kinematics_.semantics().transform().target().getName());
       joint_weights_.init(kinematics_.semantics().joints(), 
           kinematics_.semantics().joints());
       joint_weights_.numerics().setIdentity();
@@ -39,6 +41,8 @@ namespace fccl
           constraints_.outputValues().semantics());
       task_weights_.numerics().setIdentity();
       tmp_constraint_space_.init(constraints_.outputValues().semantics());
+
+      assembleNecessaryTransforms();
     }
 
     void ConstraintController::setGains(const fccl::kdl::JntArray& p, 
@@ -162,6 +166,31 @@ namespace fccl
         assert(task_weights.numerics()(i) <= 1.0);
 
         interpolator_.setDimensionActivity(i, task_weights.numerics()(i) == 1.0);
+      }
+    }
+
+    void ConstraintController::assembleNecessaryTransforms()
+    {
+      assert(constraints_.isValid());
+      assert(kinematics_.isValid());
+
+      necessary_transforms_.clear();
+      fccl::semantics::TransformSemantics transform;
+
+      transform.reference() = 
+          constraints_.firstDerivative().semantics().twist().reference();
+      // TODO(Georg): extend KinematicChain to get JacobianSemantics
+      transform.target() = kinematics_.semantics().transform().reference();
+      necessary_transforms_.insert(transform);
+
+      // TODO(Georg): refactor this into ConstraintArray and Constraint
+      for(std::size_t i=0; i<constraints_.size(); i++)
+      {
+        transform.reference() = constraints_(i).semantics().reference();
+        transform.target() = constraints_(i).toolFeature().semantics().reference();
+        necessary_transforms_.insert(transform);
+        transform.target() = constraints_(i).objectFeature().semantics().reference();
+        necessary_transforms_.insert(transform);
       }
     }
   } // namespace control

@@ -12,6 +12,7 @@
 #include <fccl/solvers/WeightedSolver.h>
 #include <fccl/utils/TransformMap.h>
 #include <vector>
+#include <set>
 
 namespace fccl
 {
@@ -42,6 +43,11 @@ namespace fccl
 
         const fccl::base::ConstraintArray& constraints() const;
         const fccl::kdl::KinematicChain& kinematics() const;
+
+        const std::set<fccl::semantics::TransformSemantics>& necessaryTransforms() const
+        {
+          return necessary_transforms_;
+        }
  
       private:
         // actual state variables of the controller
@@ -67,11 +73,13 @@ namespace fccl
         fccl::kdl::JntArray tmp_constraint_space_;
         fccl::kdl::JointMappingMatrix joint_weights_;
         fccl::kdl::JointMappingMatrix task_weights_;
+        std::set<fccl::semantics::TransformSemantics> necessary_transforms_;
 
         void changeInterpolatorActivity(const fccl::kdl::JntArray& task_weights);
         void interpolate();
         void assembleEquation(const fccl::kdl::JntArray& joint_state,
             fccl::utils::TransformMap& transform_map);
+        void assembleNecessaryTransforms();
     }; 
   } // namespace control
 } // namespace fccl
