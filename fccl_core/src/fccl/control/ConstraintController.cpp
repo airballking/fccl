@@ -1,5 +1,7 @@
 #include <fccl/control/ConstraintController.h>
 
+using namespace fccl::semantics;
+
 namespace fccl
 {
   namespace control
@@ -169,29 +171,25 @@ namespace fccl
       }
     }
 
+    // NOT REAL-TIME-SAFE
     void ConstraintController::assembleNecessaryTransforms()
     {
       assert(constraints_.isValid());
       assert(kinematics_.isValid());
 
       necessary_transforms_.clear();
-      fccl::semantics::TransformSemantics transform;
 
+      // TODO(Georg): refactor this into a private method which we can also use
+      //              in assembleEquation()
+      TransformSemantics transform;
       transform.reference() = 
           constraints_.firstDerivative().semantics().twist().reference();
       // TODO(Georg): extend KinematicChain to get JacobianSemantics
       transform.target() = kinematics_.semantics().transform().reference();
       necessary_transforms_.insert(transform);
 
-      // TODO(Georg): refactor this into ConstraintArray and Constraint
-      for(std::size_t i=0; i<constraints_.size(); i++)
-      {
-        transform.reference() = constraints_(i).semantics().reference();
-        transform.target() = constraints_(i).toolFeature().semantics().reference();
-        necessary_transforms_.insert(transform);
-        transform.target() = constraints_(i).objectFeature().semantics().reference();
-        necessary_transforms_.insert(transform);
-      }
+      std::set<TransformSemantics> constraint_transforms = constraints().necessaryTransforms();
+      necessary_transforms_.insert(constraint_transforms.begin(), constraint_transforms.end()); 
     }
   } // namespace control
 } // namespace fccl
