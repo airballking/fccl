@@ -135,6 +135,7 @@ catkin_add_gtest(${PROJECT_NAME}-test
                  test/semantics/ConstraintSemantics.cpp
                  test/semantics/TwistSemantics.cpp
                  test/solvers/WeightedSolver.cpp
+                 test/utils/DoubleBuffer.cpp
                  test/utils/Hashing.cpp
                  test/utils/TransformMap.cpp
                  WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/test_data)
