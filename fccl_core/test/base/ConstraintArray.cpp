@@ -5,6 +5,7 @@
 #include <vector>
 
 using namespace fccl::base;
+using namespace fccl::semantics;
 
 class ConstraintArrayTest : public ::testing::Test
 {
@@ -193,4 +194,26 @@ TEST_F(ConstraintArrayTest, FirstDerivative)
   data(0, 2) = 1.0;
   data(1, 2) = 1.0;
   EXPECT_TRUE(data.isApprox(cs.firstDerivative().numerics()));
+}
+
+TEST_F(ConstraintArrayTest, NecessaryTransforms)
+{
+  ConstraintArray cs;
+  cs.init(constraints);
+
+  std::set<TransformSemantics> transforms = cs.necessaryTransforms();
+  EXPECT_EQ(transforms.size(), 2);
+
+  std::set<TransformSemantics>::iterator it;
+
+  TransformSemantics container;
+  container.reference().setName(view);
+  container.target().setName(tool);
+
+  it = transforms.find(container);
+  EXPECT_NE(it, transforms.end());
+
+  container.target().setName(object);
+  it = transforms.find(container);
+  EXPECT_NE(it, transforms.end());
 }

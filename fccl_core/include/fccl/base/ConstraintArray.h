@@ -110,6 +110,22 @@ namespace fccl
           return result;
         }
 
+        // NOT REAL-TIME-SAFE
+        std::set<fccl::semantics::TransformSemantics> necessaryTransforms() const
+        {
+          assert(isValid());
+
+          std::set<fccl::semantics::TransformSemantics> result;
+          for(std::size_t i=0; i<size(); i++)
+          {
+            std::set<fccl::semantics::TransformSemantics> subset = 
+                operator()(i).necessaryTransforms();
+            result.insert(subset.begin(), subset.end());
+          }
+
+          return result;
+        }
+
         void prepare()
         {
           initFirstDerivative();
