@@ -26,6 +26,11 @@ namespace fccl
         bool hasTransform(const fccl::semantics::SemanticsBase& reference,
             const fccl::semantics::SemanticsBase& target);
  
+        std::size_t size() const
+        {
+          return map_.size();
+        }
+
         boost::mutex& getMutex(); 
 
       private:
