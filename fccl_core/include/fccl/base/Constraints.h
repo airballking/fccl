@@ -7,6 +7,8 @@
 #include <fccl/semantics/ConstraintSemantics.h>
 #include <string>
 #include <iostream>
+#include <vector>
+#include <set>
 
 namespace fccl
 {
@@ -146,6 +148,9 @@ namespace fccl
         const fccl::kdl::InteractionMatrix& calculateFirstDerivative(
             const fccl::kdl::Transform& tool_transform, 
             const fccl::kdl::Transform& object_transform, double delta=0.001); 
+
+        // NOT REAL-TIME-SAFE
+        std::set<fccl::semantics::TransformSemantics> necessaryTransforms() const;
   
       private:
         // semantics

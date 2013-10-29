@@ -24,6 +24,23 @@ namespace fccl
       return result;
     }
 
+    // NOT REAL-TIME-SAFE
+    std::set<TransformSemantics> Constraint::necessaryTransforms() const
+    {
+      std::set<TransformSemantics> result;
+      
+      TransformSemantics container;
+      container.reference() = semantics().reference();
+
+      container.target() = toolFeature().semantics().reference();
+      result.insert(container);
+      
+      container.target() = objectFeature().semantics().reference();
+      result.insert(container);
+
+      return result;
+    }
+ 
     const InteractionMatrix& Constraint::calculateFirstDerivative(const Transform&
         tool_transform, const Transform& object_transform, double delta)
     {

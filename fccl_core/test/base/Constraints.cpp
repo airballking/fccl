@@ -4,6 +4,7 @@
 
 using namespace fccl::base;
 using namespace fccl::kdl;
+using namespace fccl::semantics;
 
 class ConstraintsTest : public ::testing::Test
 {
@@ -167,4 +168,32 @@ TEST_F(ConstraintsTest, FirstDerivative)
   EXPECT_DOUBLE_EQ(m.numerics()(0,3), 0);
   EXPECT_DOUBLE_EQ(m.numerics()(0,4), 0);
   EXPECT_DOUBLE_EQ(m.numerics()(0,5), 0);
+}
+
+TEST_F(ConstraintsTest, NecessaryTransforms)
+{
+  Constraint ac;
+  ac.semantics().reference().setName(view_frame_name);
+  ac.semantics().name().setName(constraint_name);
+  ac.semantics().type().setName("above");
+  ac.toolFeature() = tool_feature;
+  ac.objectFeature() = object_feature;
+  ac.lowerBoundary() = lower_boundary;
+  ac.upperBoundary() = upper_boundary;
+ 
+  std::set<TransformSemantics> transforms = ac.necessaryTransforms();
+  EXPECT_EQ(transforms.size(), 2);
+
+  std::set<TransformSemantics>::iterator it;
+
+  TransformSemantics container;
+  container.reference() = ac.semantics().reference();
+  container.target() = ac.toolFeature().semantics().reference();
+
+  it = transforms.find(container);
+  EXPECT_NE(it, transforms.end());
+
+  container.target() = ac.objectFeature().semantics().reference();
+  it = transforms.find(container);
+  EXPECT_NE(it, transforms.end());
 }
