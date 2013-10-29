@@ -6,6 +6,7 @@ using namespace fccl::control;
 using namespace fccl::kdl;
 using namespace fccl::utils;
 using namespace fccl::base;
+using namespace fccl::semantics;
 
 using Eigen::operator<<;
 
@@ -151,4 +152,30 @@ TEST_F(ConstraintControllerTest, Basics)
   }
 
   EXPECT_TRUE(controller.constraints().areFulfilled());
+}
+
+TEST_F(ConstraintControllerTest, NecessaryTransforms)
+{
+  ConstraintController controller;
+  controller.init(constraints, kinematics, cycle_time);
+ 
+  std::set<TransformSemantics> transforms = controller.necessaryTransforms();
+  EXPECT_EQ(transforms.size(), 3);
+
+  std::set<TransformSemantics>::iterator it;
+  TransformSemantics lookup;
+
+  lookup.reference() = controller.constraints()(0).semantics().reference();
+  lookup.target() = controller.constraints()(0).toolFeature().semantics().reference();
+  it = transforms.find(lookup);
+  EXPECT_NE(it, transforms.end());
+
+  lookup.target() = controller.constraints()(0).objectFeature().semantics().reference();
+  it = transforms.find(lookup);
+  EXPECT_NE(it, transforms.end());
+
+  lookup.reference() = constraints.firstDerivative().semantics().twist().reference();
+  lookup.target() = kinematics.semantics().transform().reference();
+  it = transforms.find(lookup);
+  EXPECT_NE(it, transforms.end());
 }
