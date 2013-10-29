@@ -27,6 +27,8 @@ namespace fccl
     // NOT REAL-TIME-SAFE
     std::set<TransformSemantics> Constraint::necessaryTransforms() const
     {
+      assert(isValid());
+
       std::set<TransformSemantics> result;
       
       TransformSemantics container;
