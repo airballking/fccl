@@ -9,8 +9,6 @@ int main(int argc, char **argv)
   controller.init();
   while(ros::ok())
     ros::spinOnce();
-
   controller.stop();
-
   return 0;
 }

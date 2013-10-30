@@ -12,48 +12,48 @@ class SingleArmController
   public:
     SingleArmController() : tf_thread_(NULL)
     {
+      tf_thread_ = new thread( bind( &SingleArmController::loopTF, this) );
     }
 
     ~SingleArmController()
-    {
-      destroyTFThread();
-    }
-
-    bool init()
-    {
-      createTFThread();
-    }
-
-    void start() {}
-
-    void stop() {}
-
-    void update() {}
-
-  private:
-    thread* tf_thread_;    
-
-    void createTFThread()
-    {
-      assert(!tf_thread_);
-
-      tf_thread_ = new thread( bind( &SingleArmController::workTF, this) );
-    }    
-
-    void destroyTFThread()
     {
       if(tf_thread_)
       {
         tf_thread_->join();
         delete tf_thread_;
+        tf_thread_ = NULL;
       }
-    } 
+    }
 
-    void workTF()
+    bool init()
     {
-      int a;
+      return false;
+    }
+
+    void start()
+    {
+    }
+
+    void stop()
+    {
+    }
+
+    void update()
+    {
+    }
+
+  private:
+    thread* tf_thread_;    
+
+    bool lookupTF()
+    {
+
+    }
+
+    void loopTF()
+    {
       while(ros::ok())
-        a = 1;
+        lookupTF();
     }
 };
 #endif // FCCL_NODES_SINGLE_ARM_CONTROLLER_H
