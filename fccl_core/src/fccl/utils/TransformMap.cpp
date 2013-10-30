@@ -21,7 +21,7 @@ namespace fccl
     }
 
     const fccl::kdl::Transform& TransformMap::getTransform(
-        const fccl::semantics::TransformSemantics& semantics)
+        const fccl::semantics::TransformSemantics& semantics) const
     {
       boost::mutex::scoped_lock scoped_lock(getMutex());
 
@@ -30,7 +30,7 @@ namespace fccl
 
     const fccl::kdl::Transform& TransformMap::getTransform(
         const fccl::semantics::SemanticsBase& reference,
-        const fccl::semantics::SemanticsBase& target)
+        const fccl::semantics::SemanticsBase& target) const
     {
       fccl::semantics::TransformSemantics semantics;
       semantics.reference() = reference;
@@ -53,7 +53,7 @@ namespace fccl
       map_.clear();
     }
 
-    bool TransformMap::hasTransform(const fccl::semantics::TransformSemantics& semantics)
+    bool TransformMap::hasTransform(const fccl::semantics::TransformSemantics& semantics) const
     {
       boost::mutex::scoped_lock scoped_lock(getMutex());
      
@@ -61,7 +61,7 @@ namespace fccl
     }
 
     bool TransformMap::hasTransform(const fccl::semantics::SemanticsBase& reference,
-        const fccl::semantics::SemanticsBase& target)
+        const fccl::semantics::SemanticsBase& target) const
     {
       fccl::semantics::TransformSemantics semantics;
       semantics.reference() = reference;
@@ -71,7 +71,7 @@ namespace fccl
     }
  
     INLINE 
-    boost::mutex& TransformMap::getMutex()
+    boost::mutex& TransformMap::getMutex() const
     {
       return mutex_;
     }

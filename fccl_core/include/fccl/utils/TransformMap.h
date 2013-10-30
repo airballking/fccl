@@ -15,26 +15,26 @@ namespace fccl
       public:
         void setTransform(const fccl::kdl::Transform& transform);
         const fccl::kdl::Transform& getTransform(
-            const fccl::semantics::TransformSemantics& semantics);
+            const fccl::semantics::TransformSemantics& semantics) const;
         const fccl::kdl::Transform& getTransform(
             const fccl::semantics::SemanticsBase& reference,
-            const fccl::semantics::SemanticsBase& target);
+            const fccl::semantics::SemanticsBase& target) const;
         void removeTransform(const fccl::semantics::TransformSemantics& semantics);
 
         void clear();
-        bool hasTransform(const fccl::semantics::TransformSemantics& semantics);
+        bool hasTransform(const fccl::semantics::TransformSemantics& semantics) const;
         bool hasTransform(const fccl::semantics::SemanticsBase& reference,
-            const fccl::semantics::SemanticsBase& target);
+            const fccl::semantics::SemanticsBase& target) const;
  
         std::size_t size() const
         {
           return map_.size();
         }
 
-        boost::mutex& getMutex(); 
+        boost::mutex& getMutex() const; 
 
       private:
-        boost::mutex mutex_;
+        mutable boost::mutex mutex_;
         std::map<fccl::semantics::TransformSemantics, fccl::kdl::Transform> map_;
     };
   } // namespace utils
