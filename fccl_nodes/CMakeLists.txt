@@ -3,10 +3,14 @@ project(fccl_nodes)
 
 find_package(catkin REQUIRED COMPONENTS
   roscpp
+  fccl_core
+  urdf
   )
 
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS thread)
+find_package(Eigen REQUIRED)
+find_package(orocos_kdl REQUIRED)
 
 ###################################
 ## catkin specific configuration ##
@@ -32,7 +36,14 @@ catkin_package(
 ## Your package locations should be listed before other locations
 include_directories(
   include
-  ${catkin_INCLUDE_DIRS})
+  ${catkin_INCLUDE_DIRS}
+  ${orocos_kdl_INCLUDE_DIRS}
+  ${Boost_INCLUDE_DIRS}
+)
+include_directories(
+  SYSTEM
+  ${EIGEN_INCLUDE_DIRS}
+)
 
 ## Declare a cpp library
 # add_library(fccl_nodes
@@ -45,10 +56,12 @@ add_executable(single_arm_controller src/fccl_nodes/SingleArmController.cpp)
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
 # add_dependencies(fccl_nodes_node fccl_nodes_generate_messages_cpp)
-
 target_link_libraries(single_arm_controller
   ${catkin_LIBRARIES}
+  ${orocos_kdl_LIBRARIES}
 )
+set_target_properties(single_arm_controller PROPERTIES LINK_FLAGS
+  -L${orocos_kdl_LIBRARY_DIRS})
 
 #############
 ## Install ##
