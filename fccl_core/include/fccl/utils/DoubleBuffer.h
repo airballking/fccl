@@ -49,9 +49,16 @@ namespace fccl
           assert(out_buffer_);
           return *out_buffer_;
         }
+
+        void clear()
+        {
+          in_buffer_->clear();
+          out_buffer_->clear();
+        }
      
         void swap()
         {
+// TODO(Georg): change this into our own mutex
           boost::mutex::scoped_lock scoped_lock1(outBuffer().getMutex());
           boost::mutex::scoped_lock scoped_lock2(inBuffer().getMutex());
 
