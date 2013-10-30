@@ -82,4 +82,8 @@ TEST_F(DoubleBufferTest, Basics)
   EXPECT_TRUE(double_buffer.outBuffer().getTransform(tf1.semantics()).equals(tf1));
   EXPECT_TRUE(double_buffer.outBuffer().getTransform(tf2.semantics()).equals(tf2));
   EXPECT_TRUE(double_buffer.inBuffer().getTransform(tf3.semantics()).equals(tf3));
+
+  double_buffer.clear();
+  EXPECT_EQ(double_buffer.inBuffer().size(), 0);
+  EXPECT_EQ(double_buffer.outBuffer().size(), 0);
 }
