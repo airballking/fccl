@@ -5,6 +5,8 @@ find_package(catkin REQUIRED COMPONENTS
   roscpp
   fccl_core
   urdf
+  tf
+  tf_conversions
   )
 
 ## System dependencies are found with CMake's conventions
