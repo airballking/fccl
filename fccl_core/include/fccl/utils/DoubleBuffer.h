@@ -28,39 +28,47 @@ namespace fccl
 
         T& inBuffer()
         {
+          boost::mutex::scoped_lock scoped_lock(mutex_);
+
           assert(in_buffer_);
           return *in_buffer_;
         }
 
         const T& inBuffer() const
         {
+          boost::mutex::scoped_lock scoped_lock(mutex_);
+
           assert(in_buffer_);
           return *in_buffer_;
         }
 
         T& outBuffer()
         {
+          boost::mutex::scoped_lock scoped_lock(mutex_);
+
           assert(out_buffer_);
           return *out_buffer_;
         }
 
         const T& outBuffer() const
         {
+          boost::mutex::scoped_lock scoped_lock(mutex_);
+
           assert(out_buffer_);
           return *out_buffer_;
         }
 
         void clear()
         {
+          boost::mutex::scoped_lock scoped_lock(mutex_);
+
           in_buffer_->clear();
           out_buffer_->clear();
         }
      
         void swap()
         {
-// TODO(Georg): change this into our own mutex
-          boost::mutex::scoped_lock scoped_lock1(outBuffer().getMutex());
-          boost::mutex::scoped_lock scoped_lock2(inBuffer().getMutex());
+          boost::mutex::scoped_lock scoped_lock(mutex_);
 
           T* tmp = in_buffer_;
           in_buffer_ = out_buffer_;
@@ -68,6 +76,7 @@ namespace fccl
         }
 
       private:
+        mutable boost::mutex mutex_;
         T* in_buffer_;
         T* out_buffer_;
 
