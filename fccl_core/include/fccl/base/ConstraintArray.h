@@ -147,7 +147,7 @@ namespace fccl
           task_weights_.resize(new_size);
         }
 
-        void update(fccl::utils::TransformMap& transform_map, double delta)
+        void update(const fccl::utils::TransformMap& transform_map, double delta)
         {
           // TODO(Georg): refactor this into Constraint
           calculateOutputValues(transform_map, delta);
@@ -165,7 +165,7 @@ namespace fccl
         fccl::kdl::JntArray desired_output_values_;
         fccl::kdl::JntArray task_weights_;
 
-        void calculateOutputValues(fccl::utils::TransformMap& transform_map,
+        void calculateOutputValues(const fccl::utils::TransformMap& transform_map,
             double delta)
         {
           assert(size() == output_values_.size());
@@ -187,7 +187,7 @@ namespace fccl
           }
         }
 
-        void calculateDerivative(fccl::utils::TransformMap& transform_map, 
+        void calculateDerivative(const fccl::utils::TransformMap& transform_map, 
             double delta)
         {
           assert(size() == firstDerivative().size());

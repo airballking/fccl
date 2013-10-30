@@ -55,7 +55,7 @@ namespace fccl
     }
  
     void ConstraintController::start(const JntArray& joint_state,
-        fccl::utils::TransformMap& transform_map, double derivative_delta,
+        const fccl::utils::TransformMap& transform_map, double derivative_delta,
         double cycle_time)
     {
        constraints_.update(transform_map, derivative_delta);
@@ -66,7 +66,7 @@ namespace fccl
     }
 
     void ConstraintController::update(const JntArray& joint_state,
-        fccl::utils::TransformMap& transform_map, double derivative_delta,
+        const fccl::utils::TransformMap& transform_map, double derivative_delta,
         double cycle_time)
     {
       constraints_.update(transform_map, derivative_delta);
@@ -118,7 +118,7 @@ namespace fccl
     }
 
     void ConstraintController::assembleEquation(const fccl::kdl::JntArray& 
-        joint_state, fccl::utils::TransformMap& transform_map)
+        joint_state, const fccl::utils::TransformMap& transform_map)
     {
       H_ = constraints_.firstDerivative();
 

@@ -25,11 +25,11 @@ namespace fccl
             const fccl::kdl::KinematicChain& kinematics, double cycle_time);
 
         void start(const fccl::kdl::JntArray& joint_state,
-            fccl::utils::TransformMap& transform_map, double delta=0.001,
+            const fccl::utils::TransformMap& transform_map, double delta=0.001,
             double cycle_time=0.01);
 
         void update(const fccl::kdl::JntArray& joint_state,
-            fccl::utils::TransformMap& transform_map, double delta=0.001,
+            const fccl::utils::TransformMap& transform_map, double delta=0.001,
             double cycle_time=0.01);
  
         void stop();
@@ -78,7 +78,7 @@ namespace fccl
         void changeInterpolatorActivity(const fccl::kdl::JntArray& task_weights);
         void interpolate();
         void assembleEquation(const fccl::kdl::JntArray& joint_state,
-            fccl::utils::TransformMap& transform_map);
+            const fccl::utils::TransformMap& transform_map);
         void assembleNecessaryTransforms();
     }; 
   } // namespace control
