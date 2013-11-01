@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<package>
+  <name>fccl_conversions</name>
+  <version>0.0.0</version>
+  <description>
+    Message conversions from fccl_msgs to data structures native
+    in the feature constraints controller library (fccl_core).
+  </description>
+
+  <author email="georg.bartels@cs.uni-bremen.de">Georg Bartels</author>
+  <maintainer email="georg.bartels@cs.uni-bremen.de">Georg Bartels</maintainer>
+
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+  <build_depend>eigen</build_depend>
+  <build_depend>fccl_core</build_depend>
+  <build_depend>fccl_msgs</build_depend>
+  <build_depend>orocos_kdl</build_depend>
+  <build_depend>roscpp</build_depend>
+
+  <run_depend>eigen</run_depend>
+  <run_depend>fccl_core</run_depend>
+  <run_depend>fccl_msgs</run_depend>
+  <run_depend>orocos_kdl</run_depend>
+  <run_depend>roscpp</run_depend>
+
+  <test_depend>gtest</test_depend>
+
+</package>
