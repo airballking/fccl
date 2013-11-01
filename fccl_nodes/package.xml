@@ -4,29 +4,30 @@
   <version>0.0.0</version>
   <description>ROS nodes using the feature constraints controller library.</description>
 
+  <author email="georg.bartels@cs.uni-bremen.de">Georg Bartels</author>
   <maintainer email="georg.bartels@cs.uni-bremen.de">Georg Bartels</maintainer>
 
   <license>BSD</license>
 
-  <author email="georg.bartels@cs.uni-bremen.de">Georg Bartels</author>
- 
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>roscpp</build_depend>
   <build_depend>boost</build_depend>
   <build_depend>fccl_core</build_depend>
-  <build_depend>urdf</build_depend>
   <build_depend>eigen</build_depend>
   <build_depend>orocos_kdl</build_depend>
   <build_depend>tf</build_depend>
   <build_depend>tf_conversions</build_depend>
+  <build_depend>fccl_msgs</build_depend>
+  <build_depend>fccl_conversions</build_depend>
 
   <run_depend>roscpp</run_depend>
   <run_depend>boost</run_depend>
   <run_depend>fccl_core</run_depend>
-  <run_depend>urdf</run_depend>
   <run_depend>eigen</run_depend>
   <run_depend>orocos_kdl</run_depend>
   <run_depend>tf</run_depend>
   <run_depend>tf_conversions</run_depend>
+  <run_depend>fccl_msgs</run_depend>
+  <run_depend>fccl_conversions</run_depend>
 
 </package>
