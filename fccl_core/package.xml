@@ -2,19 +2,19 @@
 <package>
   <name>fccl_core</name>
   <version>0.0.0</version>
-  <description>C++ library to build controllers with specifications using feature constraints.</description>
+  <description>
+     C++ library to build controllers with specifications using feature
+     constraints.
+  </description>
+
+  <author email="georg.bartels@cs.uni-bremen.de">Georg Bartels</author>
+  <author email="kresse@in.tum.de">Ingo Kresse</author>
 
   <maintainer email="georg.bartels@cs.uni-bremen.de">Georg Bartels</maintainer>
 
   <license>BSD</license>
 
-  <!-- Url tags are optional, but mutiple are allowed, one per tag -->
-  <!-- Optional attribute type can be: website, bugtracker, or repository -->
-  <!-- Example: -->
   <!-- <url type="website">http://ros.org/wiki/fccl_control</url> -->
-
-  <author email="georg.bartels@cs.uni-bremen.de">Georg Bartels</author>
-  <author email="kresse@in.tum.de">Ingo Kresse</author>
 
   <buildtool_depend>catkin</buildtool_depend>
   <build_depend>roscpp</build_depend>
@@ -37,12 +37,4 @@
 
   <test_depend>gtest</test_depend>
 
-  <!-- The export tag contains other, unspecified, tags -->
-  <export>
-    <!-- You can specify that this package is a metapackage here: -->
-    <!-- <metapackage/> -->
-
-    <!-- Other tools can request additional information be placed here -->
-
-  </export>
 </package>
