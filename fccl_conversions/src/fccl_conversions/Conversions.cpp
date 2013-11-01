@@ -4,13 +4,13 @@ namespace fccl
 {
   namespace conversions
   {
-    void toMsg(const fccl::base::Feature& feature, fccl_msgs::Feature& msg)
+    void toMsg(const fccl::base::ConstraintArray& constraints, 
+        std::vector<fccl_msgs::Constraint>& msg)
     {
-      toMsg(feature.semantics().name(), msg.name);
-      toMsg(feature.semantics().reference(), msg.reference);
-      toMsg(feature.semantics().type(), msg.type);
-      toMsg(feature.position(), msg.position);
-      toMsg(feature.orientation(), msg.direction); 
+      assert(constraints.size() == msg.size());
+
+      for(std::size_t i=0; i<msg.size(); i++)
+        toMsg(constraints(i), msg[i]);
     }
 
     void toMsg(const fccl::base::Constraint& constraint, fccl_msgs::Constraint& msg)
@@ -22,6 +22,15 @@ namespace fccl
       toMsg(constraint.objectFeature(), msg.object_feature);
       toMsg(constraint.lowerBoundary(), msg.lower_boundary);
       toMsg(constraint.upperBoundary(), msg.upper_boundary);
+    }
+
+    void toMsg(const fccl::base::Feature& feature, fccl_msgs::Feature& msg)
+    {
+      toMsg(feature.semantics().name(), msg.name);
+      toMsg(feature.semantics().reference(), msg.reference);
+      toMsg(feature.semantics().type(), msg.type);
+      toMsg(feature.position(), msg.position);
+      toMsg(feature.orientation(), msg.direction); 
     }
 
     void toMsg(const KDL::Vector& vector, geometry_msgs::Vector3& msg)
@@ -46,15 +55,17 @@ namespace fccl
       msg.data = value;
     }
 
-    void fromMsg(const fccl_msgs::Feature& msg, fccl::base::Feature& feature)
+    void fromMsg(const std::vector<fccl_msgs::Constraint>& msg,
+        fccl::base::ConstraintArray& constraints)
     {
-      fromMsg(msg.name, feature.semantics().name());
-      fromMsg(msg.reference, feature.semantics().reference());
-      fromMsg(msg.type, feature.semantics().type());
-      fromMsg(msg.position, feature.position());
-      fromMsg(msg.direction, feature.orientation());
-    }
+      assert(msg.size() == constraints.size());
 
+      for(std::size_t i=0; i<msg.size(); i++)
+        fromMsg(msg[i], constraints(i));
+
+      constraints.prepare();
+    }
+ 
     void fromMsg(const fccl_msgs::Constraint& msg, fccl::base::Constraint& constraint)
     {
       fromMsg(msg.name, constraint.semantics().name());
@@ -64,6 +75,15 @@ namespace fccl
       fromMsg(msg.object_feature, constraint.objectFeature());
       fromMsg(msg.lower_boundary, constraint.lowerBoundary());
       fromMsg(msg.upper_boundary, constraint.upperBoundary()); 
+    }
+ 
+    void fromMsg(const fccl_msgs::Feature& msg, fccl::base::Feature& feature)
+    {
+      fromMsg(msg.name, feature.semantics().name());
+      fromMsg(msg.reference, feature.semantics().reference());
+      fromMsg(msg.type, feature.semantics().type());
+      fromMsg(msg.position, feature.position());
+      fromMsg(msg.direction, feature.orientation());
     }
 
     void fromMsg(const geometry_msgs::Vector3& msg, KDL::Vector& vector)
@@ -88,13 +108,15 @@ namespace fccl
       value = msg.data;
     }
 
-    fccl_msgs::Feature toMsg(const fccl::base::Feature& feature)
+    std::vector<fccl_msgs::Constraint> toMsg(const fccl::base::ConstraintArray&
+        constraints)
     {
-      fccl_msgs::Feature msg;
-      toMsg(feature, msg);
+      std::vector<fccl_msgs::Constraint> msg;
+      msg.resize(constraints.size());
+      toMsg(constraints, msg);
       return msg;
     }
-
+ 
     fccl_msgs::Constraint toMsg(const fccl::base::Constraint& constraint)
     {
       fccl_msgs::Constraint msg;
@@ -102,18 +124,34 @@ namespace fccl
       return msg;
     }
 
-    fccl::base::Feature fromMsg(const fccl_msgs::Feature& msg)
+    fccl_msgs::Feature toMsg(const fccl::base::Feature& feature)
     {
-      fccl::base::Feature feature;
-      fromMsg(msg, feature);
-      return feature;
+      fccl_msgs::Feature msg;
+      toMsg(feature, msg);
+      return msg;
     }
 
+    fccl::base::ConstraintArray fromMsg(const std::vector<fccl_msgs::Constraint>&
+        msg)
+    {
+      fccl::base::ConstraintArray constraints;
+      constraints.resize(msg.size());
+      fromMsg(msg, constraints);
+      return constraints;
+    }
+ 
     fccl::base::Constraint fromMsg(const fccl_msgs::Constraint& msg)
     {
       fccl::base::Constraint constraint;
       fromMsg(msg, constraint);
       return constraint;
+    }
+ 
+    fccl::base::Feature fromMsg(const fccl_msgs::Feature& msg)
+    {
+      fccl::base::Feature feature;
+      fromMsg(msg, feature);
+      return feature;
     }
   } // namespace conversions
 } // namespace fccl

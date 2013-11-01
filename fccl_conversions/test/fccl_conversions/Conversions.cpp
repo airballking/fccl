@@ -23,14 +23,34 @@ class ConversionsTest : public ::testing::Test
       some_feature.position() = KDL::Vector(4,5,6);
       some_feature.orientation() = KDL::Vector(-2,-3,-4);
 
+      Feature some_feature2;
+      some_feature2.semantics().reference().setName("reference");
+      some_feature2.semantics().name().setName("some other edge2");
+      some_feature2.semantics().type() = fccl::semantics::PLANE_FEATURE;
+      some_feature2.position() = KDL::Vector(40,50,60);
+      some_feature2.orientation() = KDL::Vector(-20,-30,-40);
 
       constraint.semantics().name().setName("some constraint");
       constraint.semantics().reference().setName("view");
       constraint.semantics().type().setName("above");
-      constraint.toolFeature() = feature;
-      constraint.objectFeature() = some_feature;
+      constraint.toolFeature() = some_feature;
+      constraint.objectFeature() = feature;
       constraint.lowerBoundary() = -0.1;
       constraint.upperBoundary() = 0.2;
+
+      Constraint some_constraint;
+      some_constraint.semantics().name().setName("some other constraint");
+      some_constraint.semantics().reference().setName("view");
+      some_constraint.semantics().type().setName("above");
+      some_constraint.toolFeature() = some_feature;
+      some_constraint.objectFeature() = some_feature2;
+      some_constraint.lowerBoundary() = -0.1234;
+      some_constraint.upperBoundary() = 0.2345;
+
+      constraints.resize(2);
+      constraints(0) = constraint;
+      constraints(1) = some_constraint;
+      constraints.prepare();
     }
 
     virtual void TearDown()
@@ -39,6 +59,7 @@ class ConversionsTest : public ::testing::Test
 
     Feature feature;
     Constraint constraint;
+    ConstraintArray constraints;
 };
 
 TEST_F(ConversionsTest, Feature)
@@ -63,4 +84,19 @@ TEST_F(ConversionsTest, Constraint)
 
   Constraint constraint3 = fromMsg(toMsg(constraint));
   EXPECT_TRUE(constraint.equals(constraint3));
+}
+
+TEST_F(ConversionsTest, Constraints)
+{
+  ASSERT_TRUE(constraints.isValid());
+  std::vector<fccl_msgs::Constraint> msg;
+  msg.resize(constraints.size());
+  toMsg(constraints, msg); 
+  ConstraintArray constraints2;
+  constraints2.resize(constraints.size());
+  fromMsg(msg, constraints2);
+  EXPECT_TRUE(constraints.equals(constraints2));
+
+  ConstraintArray constraints3 = fromMsg(toMsg(constraints));
+  EXPECT_TRUE(constraints.equals(constraints3));
 }
