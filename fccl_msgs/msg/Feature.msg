@@ -1,16 +1,16 @@
 # name of the feature used for identification in knowledge base
-string name
+std_msgs/String name
 
 # name of tf-frame w.r.t. which the feature is defined
-string frame_id
+std_msgs/String reference
 
 # type of the feature with predefined constants
 uint8 UNKNOWN_FEATURE=0
-uint8 LINE=1
-uint8 PLANE=2
-uint8 POINT=3
+uint8 POINT=1
+uint8 LINE=2
+uint8 PLANE=3
 
-uint8 type
+std_msgs/UInt8 type
 
 # position of the feature
 geometry_msgs/Vector3 position
