@@ -1,5 +1,5 @@
-#ifndef FCCL_CONVERSIONS_CONVERSIONS_H
-#define FCCL_CONVERSIONS_CONVERSIONS_H
+#ifndef FCCL_CONVERSIONS_JOINT_STATE_INTERPRETER_H
+#define FCCL_CONVERSIONS_JOINT_STATE_INTERPRETER_H
 
 #include <fccl/semantics/JntArraySemantics.h>
 #include <fccl/semantics/SemanticsBase.h>
@@ -70,4 +70,4 @@ namespace fccl
     };
   } // namespace conversions
 } // namespace fccl
-#endif // FCCL_CONVERSIONS_CONVERSIONS_H
+#endif // FCCL_CONVERSIONS_JOINT_STATE_INTERPRETER_H
