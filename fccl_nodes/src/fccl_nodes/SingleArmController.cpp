@@ -5,10 +5,8 @@ int main(int argc, char **argv)
 {
   ros::init(argc, argv, "single_arm_controller");
   ros::NodeHandle n("~");
-  SingleArmController controller;
-  controller.init();
-  while(ros::ok())
-    ros::spinOnce();
+  SingleArmController controller(n);
+  ros::spin();
   controller.stop();
   return 0;
 }

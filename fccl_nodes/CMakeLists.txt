@@ -6,7 +6,9 @@ find_package(catkin REQUIRED COMPONENTS
   fccl_core
   tf
   tf_conversions
-  fccl_msgs)
+  fccl_msgs
+  fccl_conversions
+  urdf)
 
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS thread)
