@@ -8,7 +8,9 @@ find_package(catkin REQUIRED COMPONENTS
   tf_conversions
   fccl_msgs
   fccl_conversions
-  urdf)
+  urdf
+  sensor_msgs
+  message_runtime)
 
 ## System dependencies are found with CMake's conventions
 find_package(Boost REQUIRED COMPONENTS thread)
