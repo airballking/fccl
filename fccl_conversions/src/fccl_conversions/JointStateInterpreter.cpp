@@ -4,15 +4,30 @@ namespace fccl
 {
   namespace conversions
   {
-    JointStateInterpreter::JointStateInterpreter(const JntArraySemantics& semantics)
-      : joint_semantics_to_index_map_(), joint_semantics_(semantics)
+    JointStateInterpreter::JointStateInterpreter() : 
+        joint_semantics_to_index_map_(), joint_semantics_()
     {
+    }
+ 
+    JointStateInterpreter::~JointStateInterpreter()
+    {
+    }
+
+    JointStateInterpreter::JointStateInterpreter(const JntArraySemantics& semantics) :
+        joint_semantics_to_index_map_(), joint_semantics_(semantics)
+    {
+      init(semantics);
+    }
+
+    void JointStateInterpreter::init(const JntArraySemantics& semantics)
+    {
+      joint_semantics_ = semantics;
       // building map to get from joint names to their index position in q-vector
       joint_semantics_to_index_map_.clear();
       for(size_t i=0; i<joint_semantics_.size(); i++)
         joint_semantics_to_index_map_.insert(JointNameIndexPair(joint_semantics_(i), i));
     }
-    
+
     bool JointStateInterpreter::parseJointState(const sensor_msgs::JointState& msg,
         JntArray& q) const
     {
@@ -41,7 +56,12 @@ namespace fccl
       }
       return (joint_counter == joint_semantics_.size());
     }
-    
+
+    const JntArraySemantics& JointStateInterpreter::semantics() const
+    {
+      return joint_semantics_;
+    }
+   
     size_t JointStateInterpreter::getJointIndex(const SemanticsBase& joint) const
     {
       JointNameIndexMap::const_iterator aux_iterator =

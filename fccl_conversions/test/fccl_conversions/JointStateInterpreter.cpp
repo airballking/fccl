@@ -68,17 +68,23 @@ TEST_F(JointStateInterpreterTest, Basics)
 
   fccl::kdl::JntArray joints1;
   joints1.init(semantics);
+  ASSERT_TRUE(semantics.equals(parser.semantics()));
+
   ASSERT_TRUE(parser.parseJointState(msg_valid, joints1));  
   EXPECT_TRUE(joints.equals(joints1));
 
+  JointStateInterpreter parser2;
+  parser2.init(semantics); 
+  ASSERT_TRUE(semantics.equals(parser2.semantics()));
+
   fccl::kdl::JntArray joints2;
   joints2.init(semantics);
-  ASSERT_TRUE(parser.parseJointState(msg_valid2, joints2));  
+  ASSERT_TRUE(parser2.parseJointState(msg_valid2, joints2));  
   EXPECT_TRUE(joints.equals(joints2));
 
   fccl::kdl::JntArray joints3;
   joints3.init(semantics);
-  ASSERT_TRUE(parser.parseJointState(msg_valid3, joints3));  
+  ASSERT_TRUE(parser2.parseJointState(msg_valid3, joints3));  
   EXPECT_TRUE(joints.equals(joints3));
 
   fccl::kdl::JntArray joints4;

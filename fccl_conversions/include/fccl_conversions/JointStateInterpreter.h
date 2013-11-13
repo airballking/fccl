@@ -28,14 +28,25 @@ namespace fccl
     class JointStateInterpreter
     {
     public:
-      // Joint_names has to contain all the relevant joint names that
+      JointStateInterpreter();
+      ~JointStateInterpreter();
+
+      // Semantics has to contain all the relevant joint names that
       // shall be extracted when calling parseJointState.
       JointStateInterpreter(const JntArraySemantics& semantics);
+
+      // Semantics has to contain all the relevant joint names that
+      // shall be extracted when calling parseJointState.
+      void init(const JntArraySemantics& semantics);
+
 
       // Parse over 'msg' and updates the corresponding values in 'joint_state'.
       // Returns false if not all joints given to constructor were present.
       bool parseJointState(const sensor_msgs::JointState& msg,
           JntArray& joint_state) const;
+
+      // Returns the semantics the interpreter is expecting.
+      const JntArraySemantics& semantics() const;
     private:
       // Typedefs and internal variables to have a map that translates
       // joint names into their respective joint index in the q-vector.
