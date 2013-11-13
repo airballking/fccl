@@ -7,6 +7,7 @@ project(fccl_conversions)
 find_package(catkin REQUIRED COMPONENTS
   fccl_core
   fccl_msgs
+  urdf
   roscpp)
 
 ## System dependencies are found with CMake's conventions

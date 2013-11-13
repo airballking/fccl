@@ -86,6 +86,17 @@ namespace fccl
       fromMsg(msg.direction, feature.orientation());
     }
 
+    void fromMsg(const fccl_msgs::KinematicChain& msg, const urdf::Model& urdf,
+        fccl::kdl::KinematicChain& kinematics) throw (ConversionException)
+    {
+      // TODO(Georg): add method to KinematicChain to test whether
+      //              init will work
+      fccl::semantics::TransformSemantics semantics;
+      fromMsg(msg.base_frame, semantics.reference());
+      fromMsg(msg.tip_frame, semantics.target());
+      kinematics.init(semantics, urdf);
+    }
+
     void fromMsg(const geometry_msgs::Vector3& msg, KDL::Vector& vector)
     {
       vector.x(msg.x);
@@ -152,6 +163,14 @@ namespace fccl
       fccl::base::Feature feature;
       fromMsg(msg, feature);
       return feature;
+    }
+
+    fccl::kdl::KinematicChain fromMsg(const fccl_msgs::KinematicChain& msg,
+        const urdf::Model& urdf) throw (ConversionException)
+    {
+      fccl::kdl::KinematicChain kinematics;
+      fromMsg(msg, urdf, kinematics);
+      return kinematics;
     }
   } // namespace conversions
 } // namespace fccl

@@ -4,18 +4,31 @@
 #include <fccl/base/Features.h>
 #include <fccl/base/Constraints.h>
 #include <fccl/base/ConstraintArray.h>
+#include <fccl/kdl/KinematicChain.h>
 #include <kdl/frames.hpp>
 #include <vector>
+#include <urdf/model.h>
 
 #include <fccl_msgs/Feature.h>
 #include <fccl_msgs/Constraint.h>
+#include <fccl_msgs/KinematicChain.h>
 #include <geometry_msgs/Vector3.h>
 #include <std_msgs/String.h>
+
+#include <stdexcept>
 
 namespace fccl
 {
   namespace conversions
   {
+    // Custom exception thrown whenever message conversions encounters an error.
+    class ConversionException : public std::runtime_error
+    {
+      public:
+        ConversionException(const std::string& message) : 
+            std::runtime_error(message) { }
+    };
+
     // in-place message conversions
     void toMsg(const fccl::base::ConstraintArray& constraints, 
         std::vector<fccl_msgs::Constraint>& msg);  
@@ -32,6 +45,9 @@ namespace fccl
     void fromMsg(const fccl_msgs::Constraint& msg, fccl::base::Constraint& constraint);
     void fromMsg(const fccl_msgs::Feature& msg, fccl::base::Feature& feature);
 
+    void fromMsg(const fccl_msgs::KinematicChain& msg, const urdf::Model& urdf,
+        fccl::kdl::KinematicChain& kinematics) throw (ConversionException);
+
     void fromMsg(const geometry_msgs::Vector3& msg, KDL::Vector& vector);
     void fromMsg(const std_msgs::String& msg, fccl::semantics::SemanticsBase& base);
     void fromMsg(const std_msgs::UInt8& msg, fccl::semantics::FeatureTypes& type);
@@ -47,6 +63,8 @@ namespace fccl
         msg);
     fccl::base::Constraint fromMsg(const fccl_msgs::Constraint& msg);
     fccl::base::Feature fromMsg(const fccl_msgs::Feature& msg);
+    fccl::kdl::KinematicChain fromMsg(const fccl_msgs::KinematicChain& msg,
+        const urdf::Model& urdf) throw (ConversionException);
   } // namespace conversions
 } // namespace fccl
 #endif // FCCL_CONVERSIONS_CONVERSIONS_H
