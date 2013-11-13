@@ -45,6 +45,7 @@ include_directories(
 # Declare a cpp library
 add_library(${PROJECT_NAME}
   src/${PROJECT_NAME}/Conversions.cpp
+  src/${PROJECT_NAME}/JointStateInterpreter.cpp
 )
 
 # Specify libraries to link a library or executable target against
@@ -79,6 +80,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS
 
 catkin_add_gtest(${PROJECT_NAME}-test 
                  test/fccl_conversions/Conversions.cpp
+                 test/fccl_conversions/JointStateInterpreter.cpp
                  test/main.cpp)
 
 if(TARGET ${PROJECT_NAME}-test)
