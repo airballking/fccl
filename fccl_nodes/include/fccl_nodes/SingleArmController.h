@@ -32,7 +32,7 @@ namespace fccl
     {
       public:
         SingleArmInitException(const std::string& message) : 
-            std::runtime_error(message) { }
+            std::runtime_error(message) {}
     };
     
     class SingleArmController
@@ -41,8 +41,7 @@ namespace fccl
         SingleArmController(const NodeHandle& node_handle) :
             node_handle_(node_handle), action_server_(node_handle, "command", false),
             tf_thread_(NULL), js_listener_(), 
-            cycle_time(0.01), delta_deriv(0.001), p_(JntArray()),
-            i_(JntArray()), d_(JntArray()), i_max_(JntArray()), i_min_(JntArray())
+            cycle_time(0.01), delta_deriv(0.001)
         {
           tf_thread_ = new thread( bind( &SingleArmController::loopTF, this ) );
     
@@ -86,8 +85,7 @@ namespace fccl
     
           controller_.init(constraints, kinematics, cycle_time);
     
-          // TODO(Georg): get gains
-          controller_.setGains(p_, i_, d_, i_max_, i_min_);
+          initControllerGains(constraints);
         }
     
         void start(const JntArray& joint_state, const TransformMap& transform_map)
@@ -124,7 +122,6 @@ namespace fccl
         // control infrastructure
         ConstraintController controller_;
         const double cycle_time, delta_deriv;
-        JntArray p_, i_, d_, i_max_, i_min_;
     
         void commandGoalCallback()
         {
@@ -204,6 +201,23 @@ namespace fccl
     
           if(!js_listener_.currentJointStateValid())
             throw SingleArmInitException("Joint State could not be parsed for too long. Aborting.");
+        }
+
+        void initControllerGains(const ConstraintArray& constraints)
+        {
+         if(!constraints.isValid())
+           throw SingleArmInitException("Given constraints not valid. Aborting.");
+          
+          PIDGains gains;
+          gains.init(constraints.outputValues().semantics());
+          // TODO(Georg): move these magic numbers somewhere clever
+          gains.p().numerics().data.setConstant(100.0);
+          gains.i().numerics().data.setConstant(20.0);
+          gains.d().numerics().data.setConstant(0.0);
+          gains.i_max().numerics().data.setConstant(0.0);
+          gains.i_min().numerics().data.setConstant(0.0);
+
+          controller_.setGains(gains);
         }
     };
   } // namespace nodes
