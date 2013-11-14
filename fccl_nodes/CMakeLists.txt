@@ -56,7 +56,9 @@ include_directories(
 # )
 
 ## Declare a cpp executable
-add_executable(single_arm_controller src/fccl_nodes/SingleArmController.cpp)
+add_executable(single_arm_controller
+   src/fccl_nodes/SingleArmControllerNode.cpp
+   src/fccl_nodes/SingleArmController.cpp)
 
 ## Add cmake target dependencies of the executable/library
 ## as an example, message headers may need to be generated before nodes
