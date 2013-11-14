@@ -107,7 +107,6 @@ namespace fccl
         // ROS communication infrastructure
         NodeHandle node_handle_;
         actionlib::SimpleActionServer<fccl_msgs::SingleArmMotionAction> action_server_;
-        Subscriber js_subscriber_;
     
         // TF infrastructure
         thread* tf_thread_;
