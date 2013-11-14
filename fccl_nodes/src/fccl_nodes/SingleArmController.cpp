@@ -32,6 +32,7 @@ namespace fccl
     void SingleArmController::init(const fccl_msgs::SingleArmMotionGoalConstPtr& goal) 
         throw (SingleArmInitException, ConversionException)
     {
+      // TODO(Georg): add some FSM
       ConstraintArray constraints = fromMsg(goal->constraints);
 
       if(!constraints.isValid())
@@ -55,23 +56,29 @@ namespace fccl
       initControllerGains(constraints);
     }
 
-    void SingleArmController::start(const JntArray& joint_state, const TransformMap& transform_map)
+    void SingleArmController::start()
     {
-      controller_.start(joint_state, transform_map, delta_deriv, cycle_time); 
+      // TODO(Georg): add some FSM
+      controller_.start(js_listener_.currentJointState(), 
+          tf_worker_.currentTransforms(), delta_deriv, cycle_time); 
     }
 
     void SingleArmController::stop()
     {
+      // TODO(Georg): add some FSM
       controller_.stop();
-      tf_worker_.clear();
     }
 
-    void SingleArmController::update(const JntArray& joint_state, const TransformMap& transform_map)
+    void SingleArmController::update()
     {
+      // TODO(Georg): implement me
+      // TODO(Georg): have me periodically called
+      // TODO(Georg): add some FSM
     }
 
     void SingleArmController::commandGoalCallback()
     {
+      // TODO(Georg): add some FSM
       fccl_msgs::SingleArmMotionGoalConstPtr goal = action_server_.acceptNewGoal();
 
       if(action_server_.isPreemptRequested())
@@ -91,11 +98,12 @@ namespace fccl
         return;
       }
 
-      start(js_listener_.currentJointState(), tf_worker_.currentTransforms());
+      start();
     }
 
     void SingleArmController::commandPreemptCallback()
     {
+      // TODO(Georg): add some FSM
       stop();
       action_server_.setPreempted();
     }

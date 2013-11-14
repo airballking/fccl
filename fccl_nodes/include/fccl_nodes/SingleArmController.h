@@ -42,9 +42,9 @@ namespace fccl
     
         void init(const fccl_msgs::SingleArmMotionGoalConstPtr& goal) 
             throw (SingleArmInitException, ConversionException);
-        void start(const JntArray& joint_state, const TransformMap& transform_map);
+        void start();
         void stop();
-        void update(const JntArray& joint_state, const TransformMap& transform_map);
+        void update();
     
       private:
         // ROS communication infrastructure
@@ -62,6 +62,7 @@ namespace fccl
         ConstraintController controller_;
         const double cycle_time, delta_deriv;
     
+        // action interface
         void commandGoalCallback();
         void commandPreemptCallback();
     
