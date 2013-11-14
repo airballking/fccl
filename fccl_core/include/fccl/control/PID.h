@@ -1,6 +1,7 @@
 #ifndef FCCL_CONTROL_PID_H
 #define FCCL_CONTROL_PID_H
 
+#include <fccl/control/Gains.h>
 #include <fccl/kdl/JntArray.h>
 // TODO(Georg): consider replacing control_toolbox/pid with sth ros-agnostic
 #include <control_toolbox/pid.h>
@@ -40,6 +41,11 @@ namespace fccl
           for(std::size_t j=0; j<p.size(); j++)
             pids_[j].setGains(p.numerics()(j), i.numerics()(j), d.numerics()(j),
                 i_max.numerics()(j), i_min.numerics()(j));
+        }
+
+        void setGains(const fccl::control::PIDGains& gains)
+        {
+          setGains(gains.p(), gains.i(), gains.d(), gains.i_max(), gains.i_min());
         }
 
         const fccl::kdl::JntArray& computeCommand(const fccl::kdl::JntArray& error,
