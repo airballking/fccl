@@ -53,7 +53,12 @@ namespace fccl
     {
       pid_.setGains(p, i, d, i_max, i_min);
     }
- 
+
+    void ConstraintController::setGains(const fccl::control::PIDGains& gains)
+    {
+      pid_.setGains(gains);
+    }
+
     void ConstraintController::start(const JntArray& joint_state,
         const fccl::utils::TransformMap& transform_map, double derivative_delta,
         double cycle_time)

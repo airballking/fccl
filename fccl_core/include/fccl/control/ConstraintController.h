@@ -37,6 +37,8 @@ namespace fccl
         void setGains(const fccl::kdl::JntArray& p, const fccl::kdl::JntArray& i,
             const fccl::kdl::JntArray& d, const fccl::kdl::JntArray& i_max,
             const fccl::kdl::JntArray& i_min);
+
+        void setGains(const fccl::control::PIDGains& gains); 
  
         const fccl::kdl::JntArray& desiredJointVelocities() const;
         const fccl::kdl::JointMappingMatrix& nullSpaceProjector() const;
