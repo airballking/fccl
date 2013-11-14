@@ -71,10 +71,11 @@ namespace fccl
           if(!constraints.isValid())
             throw SingleArmInitException("Given constraints not valid. Aborting.");
     
-          if(!urdf_.initParam("robot_description"))
+          urdf::Model urdf;
+          if(!urdf.initParam("robot_description"))
             throw SingleArmInitException("No urdf 'robot_description' on param-server.");
     
-          KinematicChain kinematics = fromMsg(goal->kinematics, urdf_);
+          KinematicChain kinematics = fromMsg(goal->kinematics, urdf);
     
           if(!kinematics.isValid())
             throw SingleArmInitException("Given kinematics not valid. Aborting.");
@@ -114,9 +115,6 @@ namespace fccl
     
         // joint state infrastructure
         JointStateListener js_listener_;
-    
-        // urdf-stuff
-        urdf::Model urdf_;
     
         // control infrastructure
         ConstraintController controller_;
