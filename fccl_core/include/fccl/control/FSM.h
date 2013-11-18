@@ -186,7 +186,7 @@ namespace fccl
     }; // controller_fsm_
 
     // Choosing a back-end for the FSM
-    typedef msm::back::state_machine<controller_fsm_> controller_fsm;
+    typedef msm::back::state_machine<controller_fsm_> ControllerFSM;
   } // namespace control
 } // namespace fccl
 #endif // FCCL_CONTROL_CONSTRAINT_CONTROLLER_H

@@ -16,9 +16,9 @@ class FSMTest : public ::testing::Test
     {
     }
 
-    const std::string& getStateName(const fccl::control::controller_fsm& fsm) const
+    const std::string& getStateName(const fccl::control::ControllerFSM& fsm) const
     {
-      assert(fccl::control::controller_fsm::nr_regions::value == 1);
+      assert(fccl::control::ControllerFSM::nr_regions::value == 1);
       assert(0 <= fsm.current_state()[0]);
       assert(fsm.current_state()[0] < state_names.size());
 
@@ -45,7 +45,7 @@ class FSMTest : public ::testing::Test
 
 TEST_F(FSMTest, Basics)
 {
-  fccl::control::controller_fsm fsm;
+  fccl::control::ControllerFSM fsm;
   fsm.start();
 
   EXPECT_STREQ(getStateName(fsm).c_str(), "Uninitialized");
@@ -63,7 +63,7 @@ TEST_F(FSMTest, Basics)
 
 TEST_F(FSMTest, DeathTestsWrongSignals)
 {
-  fccl::control::controller_fsm fsm;
+  fccl::control::ControllerFSM fsm;
   fsm.start();
 
   ASSERT_STREQ(getStateName(fsm).c_str(), "Uninitialized");
