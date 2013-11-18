@@ -16,7 +16,7 @@ namespace fccl
   namespace control
   {
     // Function declarations for callback-hooks passed around in events
-    typedef boost::function< void () >InitFunction;
+    typedef boost::function< bool () >InitFunction;
     typedef boost::function< void () >StartFunction;
     typedef boost::function< void () >StopFunction;
 
@@ -31,10 +31,10 @@ namespace fccl
           init_function_ = init_function;
       }
 
-      void operator()() const
+      bool operator()() const
       {
         assert(init_function_);
-        init_function_();
+        return init_function_();
       }
 
       InitFunction init_function_;
@@ -75,6 +75,10 @@ namespace fccl
 
       StopFunction stop_function_;
     };
+    // ...event 'init_failed'
+    struct InitFailedEvent {};
+    // ...event 'init_succeeded'
+    struct InitSucceededEvent {};
  
     // Front-end definition of the fsm
     struct controller_fsm_ : public msm::front::state_machine_def<controller_fsm_>
@@ -125,9 +129,18 @@ namespace fccl
       struct init_action 
       {
         template <class EVT,class FSM,class SourceState,class TargetState>
-        void operator()(EVT const& event,FSM& ,SourceState& ,TargetState& )
+        void operator()(EVT const& event,FSM& fsm,SourceState& ,TargetState& )
         {
-          event();
+          // run hook for init-function inside InitEvent, and
+          // signal to ourselves whether initializing was successful
+          if (event())
+          {
+            fsm.process_event(InitSucceededEvent());
+          }
+          else
+          {
+            fsm.process_event(InitFailedEvent());
+          }
         }
       };
       // ... transition 'Init'
@@ -136,6 +149,7 @@ namespace fccl
         template <class EVT,class FSM,class SourceState,class TargetState>
         void operator()(EVT const& event,FSM& fsm,SourceState& ,TargetState& )
         {
+          // run hook for start-function inside StartEvent
           event();
         }
       };
@@ -145,44 +159,29 @@ namespace fccl
         template <class EVT,class FSM,class SourceState,class TargetState>
         void operator()(EVT const& event,FSM& ,SourceState& ,TargetState& )
         {
+          // run hook for stop-function inside StopEvent
           event();
         }
       };
 
-      // Definition guard conditions...
-      // ... guard checking whether "InitAction" succeeded
-      struct init_succeeded 
-      {
-        template <class EVT,class FSM,class SourceState,class TargetState>
-        bool operator()(EVT const& evt,FSM& fsm,SourceState& src,TargetState& tgt)
-        {
-            return true;
-        }
-      };
-      struct init_failed 
-      {
-          template <class EVT,class FSM,class SourceState,class TargetState>
-          bool operator()(EVT const& evt,FSM& fsm,SourceState& src,TargetState& tgt)
-          {
-              std::cout << "ERROR: Init of ControllerFSM failed!" << std::endl;
-              return false;
-          }
-      };
-
       // Definition of transition table of FSM
       struct transition_table : mpl::vector<
-      //    Start     Event         Next      Action               Guard
-      //  +---------+-------------+---------+---------------------+----------------------+
-      Row < Uninitialized , InitEvent , Initializing, init_action >,
-      //  +---------+-------------+---------+---------------------+----------------------+
-      Row < Initializing , none , Uninitialized , none, init_failed >,
-      Row < Initializing , none , Stopped , none, init_succeeded >,
-      //  +---------+-------------+---------+---------------------+----------------------+
-      Row < Stopped , StartEvent, Running , start_action >,
-      Row < Stopped , InitEvent, Initializing , init_action >,
-      //  +---------+-------------+---------+---------------------+----------------------+
-      Row < Running, StopEvent, Stopped, stop_action > 
-      //  +---------+-------------+---------+---------------------+----------------------+
+      //    Start          Event               Next          Action        Guard
+      //  +--------------+-------------------+-------------+-------------+-------+
+      Row < Uninitialized, InitEvent         , Initializing, init_action >,
+      //  +--------------+-------------------+-------------+-------------+-------+
+
+      Row < Initializing , InitFailedEvent   , Uninitialized >,
+      Row < Initializing , InitSucceededEvent, Stopped >,
+      //  +--------------+-------------------+-------------+-------------+-------+
+
+      Row < Stopped      , StartEvent        , Running     , start_action >,
+      Row < Stopped      , InitEvent         , Initializing, init_action >,
+      //  +--------------+-------------------+-------------+-------------+-------+
+
+      Row < Running      , StopEvent         , Stopped     , stop_action > 
+      //  +--------------+-------------------+-------------+-------------+-------+
+
       > {};
     }; // controller_fsm_
 

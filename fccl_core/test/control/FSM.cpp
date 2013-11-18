@@ -36,9 +36,10 @@ class FSMTest : public ::testing::Test
     {
       std::cout << "FSMTest::stop\n";
     }
-    void init()
+    bool init()
     {
       std::cout << "FSMTest::init\n";
+      return true;
     }
 };
 
