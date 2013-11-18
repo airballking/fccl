@@ -16,16 +16,18 @@ namespace fccl
   namespace control
   {
     // Function declarations for callback-hooks passed around in events
-    typedef boost::function< bool () >InitFunction;
     typedef boost::function< void () >StartFunction;
     typedef boost::function< void () >StopFunction;
 
     // Event declarations and definitions...
     // ... event 'init'
+    template<class T>
     struct InitEvent
     {
-      InitEvent(const InitFunction& init_function) :
-          init_function_(NULL)
+      typedef boost::function< bool (const T&) >InitFunction;
+
+      InitEvent(const InitFunction& init_function, const T& init_data) :
+          init_function_(NULL), init_data_(init_data)
       {
         if(init_function)
           init_function_ = init_function;
@@ -34,10 +36,11 @@ namespace fccl
       bool operator()() const
       {
         assert(init_function_);
-        return init_function_();
+        return init_function_(init_data_);
       }
 
       InitFunction init_function_;
+      T init_data_;
     };
     // ...event 'start'
     struct StartEvent
@@ -81,7 +84,9 @@ namespace fccl
     struct InitSucceededEvent {};
  
     // Front-end definition of the fsm
-    struct controller_fsm_ : public msm::front::state_machine_def<controller_fsm_>
+    template< class T >
+    struct controller_fsm_ : 
+        public msm::front::state_machine_def< controller_fsm_< T > >
     {
       // State definitions...
       // ... state 'Uninitialized'
@@ -168,7 +173,7 @@ namespace fccl
       struct transition_table : mpl::vector<
       //    Start          Event               Next          Action        Guard
       //  +--------------+-------------------+-------------+-------------+-------+
-      Row < Uninitialized, InitEvent         , Initializing, init_action >,
+      Row < Uninitialized, InitEvent<T>      , Initializing, init_action >,
       //  +--------------+-------------------+-------------+-------------+-------+
 
       Row < Initializing , InitFailedEvent   , Uninitialized >,
@@ -176,7 +181,7 @@ namespace fccl
       //  +--------------+-------------------+-------------+-------------+-------+
 
       Row < Stopped      , StartEvent        , Running     , start_action >,
-      Row < Stopped      , InitEvent         , Initializing, init_action >,
+      Row < Stopped      , InitEvent<T>      , Initializing, init_action >,
       //  +--------------+-------------------+-------------+-------------+-------+
 
       Row < Running      , StopEvent         , Stopped     , stop_action > 
@@ -186,7 +191,9 @@ namespace fccl
     }; // controller_fsm_
 
     // Choosing a back-end for the FSM
-    typedef msm::back::state_machine<controller_fsm_> ControllerFSM;
+//    typedef msm::back::state_machine<controller_fsm_> ControllerFSM;
+    template< class T >
+    struct ControllerFSM : msm::back::state_machine< controller_fsm_< T > > {};
   } // namespace control
 } // namespace fccl
 #endif // FCCL_CONTROL_CONSTRAINT_CONTROLLER_H
