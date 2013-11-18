@@ -88,3 +88,24 @@ TEST_F(FSMTest, DeathTestsWrongSignals)
   ASSERT_STREQ(getStateName(fsm).c_str(), "Running");
   EXPECT_DEATH(fsm.process_event(InitEvent<std::string>(boost::bind(&FSMTest::init, this, _1), "true")), ""); 
 }
+
+TEST_F(FSMTest, DeathTestsMissingHooks)
+{
+  ControllerFSM<std::string> fsm;
+  fsm.start();
+
+  ASSERT_STREQ(getStateName(fsm).c_str(), "Uninitialized");
+  EXPECT_DEATH(fsm.process_event(InitEvent<std::string>(NULL, "true")), "");
+
+  ASSERT_STREQ(getStateName(fsm).c_str(), "Uninitialized");
+  fsm.process_event(InitEvent<std::string>(boost::bind(&FSMTest::init, this, _1), "true"));
+  ASSERT_STREQ(getStateName(fsm).c_str(), "Stopped");
+  EXPECT_DEATH(fsm.process_event(StartEvent(NULL)), "");
+
+  ASSERT_STREQ(getStateName(fsm).c_str(), "Stopped");
+  fsm.process_event(StartEvent(boost::bind(&FSMTest::start, this)));
+  ASSERT_STREQ(getStateName(fsm).c_str(), "Running");
+  EXPECT_DEATH(fsm.process_event(StopEvent(NULL)), "");
+  fsm.process_event(StopEvent(boost::bind(&FSMTest::stop, this)));
+  EXPECT_STREQ(getStateName(fsm).c_str(), "Stopped");
+}
