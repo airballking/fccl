@@ -10,6 +10,7 @@
 #include <fccl_nodes/JointStateListener.h>
 #include <fccl_conversions/Conversions.h>
 #include <fccl/control/ConstraintController.h>
+#include <fccl/control/FSM.h>
 
 #include <boost/thread.hpp>
 #include <iostream>
@@ -39,13 +40,9 @@ namespace fccl
       public:
         SingleArmController(const NodeHandle& node_handle);
         ~SingleArmController();
-    
-        void init(const fccl_msgs::SingleArmMotionGoalConstPtr& goal) 
-            throw (SingleArmInitException, ConversionException);
-        void start();
-        void stop();
-        void update();
-    
+
+        void run();
+   
       private:
         // ROS communication infrastructure
         NodeHandle node_handle_;
@@ -57,23 +54,36 @@ namespace fccl
     
         // joint state infrastructure
         JointStateListener js_listener_;
-    
+
+        // finite state machine
+        fccl::control::ControllerFSM<fccl_msgs::SingleArmMotionGoalConstPtr> fsm_;
+   
         // control infrastructure
         ConstraintController controller_;
         const double cycle_time, delta_deriv;
     
         // action interface
-        void commandGoalCallback();
-        void commandPreemptCallback();
+        void commandGoalCallback() throw ();
+        void commandPreemptCallback() throw ();
     
+        // TF infrastructure 2 
+        // TODO(Georg): move this into TFWorker
         void initTFRequests(const std::set<TransformSemantics> requests)
             throw (SingleArmInitException);
         void loopTF();
-    
+
+        // init helpers 
         void initJointState(const JntArraySemantics& joints)
             throw (SingleArmInitException);
         void initControllerGains(const ConstraintArray& constraints)
             throw (SingleArmInitException);
+
+        // hooks provided to ControllerFSM
+        bool init(const fccl_msgs::SingleArmMotionGoalConstPtr& goal) 
+            throw ();
+        void start() throw ();
+        void stop() throw ();
+        void update() throw ();
     };
   } // namespace nodes
 } // namespace fccl

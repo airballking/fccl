@@ -7,6 +7,5 @@ int main(int argc, char **argv)
   ros::NodeHandle n("~");
   fccl::nodes::SingleArmController controller(n);
   ros::spin();
-  controller.stop();
   return 0;
 }

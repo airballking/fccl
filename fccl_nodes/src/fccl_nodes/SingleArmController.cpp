@@ -9,6 +9,8 @@ namespace fccl
         tf_thread_(NULL), js_listener_(), 
         cycle_time(0.01), delta_deriv(0.001)
     {
+      fsm_.start();
+
       tf_thread_ = new thread( bind( &SingleArmController::loopTF, this ) );
 
       action_server_.registerGoalCallback( bind( 
@@ -29,56 +31,68 @@ namespace fccl
       }
     }
 
-    void SingleArmController::init(const fccl_msgs::SingleArmMotionGoalConstPtr& goal) 
-        throw (SingleArmInitException, ConversionException)
+    void SingleArmController::run()
     {
-      // TODO(Georg): add some FSM
-      ConstraintArray constraints = fromMsg(goal->constraints);
-
-      if(!constraints.isValid())
-        throw SingleArmInitException("Given constraints not valid. Aborting.");
-
-      urdf::Model urdf;
-      if(!urdf.initParam("robot_description"))
-        throw SingleArmInitException("No urdf 'robot_description' on param-server.");
-
-      KinematicChain kinematics = fromMsg(goal->kinematics, urdf);
-
-      if(!kinematics.isValid())
-        throw SingleArmInitException("Given kinematics not valid. Aborting.");
-
-      initTFRequests(constraints.necessaryTransforms());
-
-      initJointState(kinematics.semantics().joints());
-
-      controller_.init(constraints, kinematics, cycle_time);
-
-      initControllerGains(constraints);
+    // TODO(Georg): implement me
     }
 
-    void SingleArmController::start()
+    bool SingleArmController::init(const fccl_msgs::SingleArmMotionGoalConstPtr& goal) 
+        throw ()
     {
-      // TODO(Georg): add some FSM
+      try
+      {
+        ConstraintArray constraints = fromMsg(goal->constraints);
+
+        if(!constraints.isValid())
+          throw SingleArmInitException("Given constraints not valid. Aborting.");
+
+        urdf::Model urdf;
+        if(!urdf.initParam("robot_description"))
+          throw SingleArmInitException("No urdf 'robot_description' on param-server.");
+
+        KinematicChain kinematics = fromMsg(goal->kinematics, urdf);
+
+        if(!kinematics.isValid())
+          throw SingleArmInitException("Given kinematics not valid. Aborting.");
+
+        initTFRequests(constraints.necessaryTransforms());
+
+        initJointState(kinematics.semantics().joints());
+
+        controller_.init(constraints, kinematics, cycle_time);
+
+        initControllerGains(constraints);
+      }
+      catch (std::exception& e)
+      {
+        ROS_INFO("Error during init of SingleArmController: '%s'", e.what());
+        commandPreemptCallback();
+        return false;
+      }
+
+      return true;
+    }
+
+    void SingleArmController::start() throw ()
+    {
       controller_.start(js_listener_.currentJointState(), 
           tf_worker_.currentTransforms(), delta_deriv, cycle_time); 
     }
 
-    void SingleArmController::stop()
+    void SingleArmController::stop() throw ()
     {
-      // TODO(Georg): add some FSM
       controller_.stop();
     }
 
-    void SingleArmController::update()
+    void SingleArmController::update() throw()
     {
       // TODO(Georg): implement me
       // TODO(Georg): have me periodically called
       // TODO(Georg): add some FSM
     }
 
-    void SingleArmController::commandGoalCallback()
+    void SingleArmController::commandGoalCallback() throw ()
     {
-      // TODO(Georg): add some FSM
       fccl_msgs::SingleArmMotionGoalConstPtr goal = action_server_.acceptNewGoal();
 
       if(action_server_.isPreemptRequested())
@@ -87,24 +101,23 @@ namespace fccl
         return;
       }
 
-      try
-      {
-        init(goal);
-      }
-      catch (std::exception& e)
-      {
-        ROS_INFO("Error during init of SingleArmController: '%s'", e.what());
-        commandPreemptCallback();
-        return;
-      }
+      // send event 'Init' to FSM, and use our local init-function together with
+      // ActionGoal as hook
+      fsm_.process_event(InitEvent<fccl_msgs::SingleArmMotionGoalConstPtr>(
+          boost::bind(&SingleArmController::init, this, _1), goal));
 
-      start();
+      // TODO(Georg): verify that init worked
+
+      // send event 'Start' to FSM and use our local start-function as hook
+      fsm_.process_event(StartEvent(boost::bind(&SingleArmController::start, this)));
     }
 
-    void SingleArmController::commandPreemptCallback()
+    void SingleArmController::commandPreemptCallback() throw ()
     {
-      // TODO(Georg): add some FSM
-      stop();
+      // TODO(Georg): verify that we are running
+
+      // send event 'Stop' to FSM and use our local stop-function as hook
+      fsm_.process_event(StopEvent(boost::bind(&SingleArmController::start, this)));
       action_server_.setPreempted();
     }
 
