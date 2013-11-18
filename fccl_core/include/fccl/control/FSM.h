@@ -84,45 +84,37 @@ namespace fccl
       struct Uninitialized : public msm::front::state<> 
       {
         template <class Event,class FSM>
-        void on_entry(Event const&,FSM& )
-          {std::cout << "entering: Uninitialized" << std::endl;}
+        void on_entry(Event const&,FSM& ) {}
 
         template <class Event,class FSM>
-        void on_exit(Event const&,FSM& )
-          {std::cout << "leaving: Uninitialized" << std::endl;}
+        void on_exit(Event const&,FSM& ) {}
       };
       // ... state 'Initializing'
       struct Initializing : public msm::front::state<> 
       {
         template <class Event,class FSM>
-        void on_entry(Event const&,FSM& )
-          {std::cout << "entering: Initializing" << std::endl;}
+        void on_entry(Event const&,FSM& ) {}
 
         template <class Event,class FSM>
-        void on_exit(Event const&,FSM& )
-          {std::cout << "leaving: Initializing" << std::endl;}
+        void on_exit(Event const&,FSM& ) {}
       };
       // ... state 'Running'
       struct Running : public msm::front::state<> 
       {
         template <class Event,class FSM>
-        void on_entry(Event const&,FSM& )
-          {std::cout << "entering: Running" << std::endl;}
+        void on_entry(Event const&,FSM& ) {}
 
         template <class Event,class FSM>
-        void on_exit(Event const&,FSM& )
-          {std::cout << "leaving: Running" << std::endl;}
+        void on_exit(Event const&,FSM& ) {}
       };
       // ... state 'Stopped'
       struct Stopped : public msm::front::state<> 
       {
         template <class Event,class FSM>
-        void on_entry(Event const&,FSM& )
-          {std::cout << "entering: Stopped" << std::endl;}
+        void on_entry(Event const&,FSM& ) {}
 
         template <class Event,class FSM>
-        void on_exit(Event const&,FSM& )
-          {std::cout << "leaving: Stopped" << std::endl;}
+        void on_exit(Event const&,FSM& ) {}
       };
 
       // Definition state 'Uninitialized' as initial state of FSM
@@ -164,7 +156,6 @@ namespace fccl
         template <class EVT,class FSM,class SourceState,class TargetState>
         bool operator()(EVT const& evt,FSM& fsm,SourceState& src,TargetState& tgt)
         {
-            std::cout << "init succeeded" << std::endl;
             return true;
         }
       };
@@ -173,7 +164,7 @@ namespace fccl
           template <class EVT,class FSM,class SourceState,class TargetState>
           bool operator()(EVT const& evt,FSM& fsm,SourceState& src,TargetState& tgt)
           {
-              std::cout << "init did not fail" << std::endl;
+              std::cout << "ERROR: Init of ControllerFSM failed!" << std::endl;
               return false;
           }
       };
