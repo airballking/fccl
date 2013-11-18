@@ -1,5 +1,5 @@
-#ifndef FCCL_CONTROL_CONSTRAINT_CONTROLLER_H
-#define FCCL_CONTROL_CONSTRAINT_CONTROLLER_H
+#ifndef FCCL_CONTROL_FSM_H
+#define FCCL_CONTROL_FSM_H
 
 #include <boost/msm/back/state_machine.hpp>
 #include <boost/msm/front/state_machine_def.hpp>
@@ -191,9 +191,8 @@ namespace fccl
     }; // controller_fsm_
 
     // Choosing a back-end for the FSM
-//    typedef msm::back::state_machine<controller_fsm_> ControllerFSM;
     template< class T >
     struct ControllerFSM : msm::back::state_machine< controller_fsm_< T > > {};
   } // namespace control
 } // namespace fccl
-#endif // FCCL_CONTROL_CONSTRAINT_CONTROLLER_H
+#endif // FCCL_CONTROL_FSM_H
