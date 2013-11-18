@@ -15,13 +15,67 @@ namespace fccl
 {
   namespace control
   {
-    // Event declarations and definitions
-    struct InitEvent {};
-    // ...event 'start'
-    struct StartEvent {};
-    // ...event 'start'
-    struct StopEvent {};
+    // Function declarations for callback-hooks passed around in events
+    typedef boost::function< void () >InitFunction;
+    typedef boost::function< void () >StartFunction;
+    typedef boost::function< void () >StopFunction;
 
+    // Event declarations and definitions...
+    // ... event 'init'
+    struct InitEvent
+    {
+      InitEvent(const InitFunction& init_function) :
+          init_function_(NULL)
+      {
+        if(init_function)
+          init_function_ = init_function;
+      }
+
+      void operator()() const
+      {
+        assert(init_function_);
+        init_function_();
+      }
+
+      InitFunction init_function_;
+    };
+    // ...event 'start'
+    struct StartEvent
+    {
+      StartEvent(const StartFunction& start_function) :
+          start_function_(NULL)
+      {
+        if(start_function)
+          start_function_ = start_function;
+      }
+
+      void operator()() const
+      {
+        assert(start_function_);
+        start_function_();
+      }
+
+      StartFunction start_function_;
+    };
+    // ...event 'stop'
+    struct StopEvent
+    {
+      StopEvent(const StopFunction& stop_function) :
+          stop_function_(NULL)
+      {
+        if(stop_function)
+          stop_function_ = stop_function;
+      }
+
+      void operator()() const
+      {
+        assert(stop_function_);
+        stop_function_();
+      }
+
+      StopFunction stop_function_;
+    };
+ 
     // Front-end definition of the fsm
     struct controller_fsm_ : public msm::front::state_machine_def<controller_fsm_>
     {
@@ -79,27 +133,27 @@ namespace fccl
       struct init_action 
       {
         template <class EVT,class FSM,class SourceState,class TargetState>
-        void operator()(EVT const& ,FSM& ,SourceState& ,TargetState& )
+        void operator()(EVT const& event,FSM& ,SourceState& ,TargetState& )
         {
-            std::cout << "controller_fsm::init_action" << std::endl;
+          event();
         }
       };
       // ... transition 'Init'
       struct start_action 
       {
         template <class EVT,class FSM,class SourceState,class TargetState>
-        void operator()(EVT const& ,FSM& ,SourceState& ,TargetState& )
+        void operator()(EVT const& event,FSM& fsm,SourceState& ,TargetState& )
         {
-            std::cout << "controller_fsm::start_action" << std::endl;
+          event();
         }
       };
       // ... transition 'Init'
       struct stop_action 
       {
         template <class EVT,class FSM,class SourceState,class TargetState>
-        void operator()(EVT const& ,FSM& ,SourceState& ,TargetState& )
+        void operator()(EVT const& event,FSM& ,SourceState& ,TargetState& )
         {
-            std::cout << "controller_fsm::stop_action" << std::endl;
+          event();
         }
       };
 
