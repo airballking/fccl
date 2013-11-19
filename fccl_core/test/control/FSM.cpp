@@ -109,3 +109,49 @@ TEST_F(FSMTest, DeathTestsMissingHooks)
   fsm.process_event(StopEvent(boost::bind(&FSMTest::stop, this)));
   EXPECT_STREQ(getStateName(fsm).c_str(), "Stopped");
 }
+
+TEST_F(FSMTest, StateQueries)
+{
+  ControllerFSM<std::string> fsm;
+  fsm.start();
+
+  EXPECT_TRUE(fsm.isUninitialized());
+  EXPECT_FALSE(fsm.isRunning());
+  EXPECT_FALSE(fsm.isStopped());
+
+  fsm.process_event(InitEvent<std::string>(boost::bind(&FSMTest::init, this, _1), "true"));
+  EXPECT_FALSE(fsm.isUninitialized());
+  EXPECT_FALSE(fsm.isRunning());
+  EXPECT_TRUE(fsm.isStopped());
+
+  fsm.process_event(InitEvent<std::string>(boost::bind(&FSMTest::init, this, _1), "true"));
+  EXPECT_FALSE(fsm.isUninitialized());
+  EXPECT_FALSE(fsm.isRunning());
+  EXPECT_TRUE(fsm.isStopped());
+
+  fsm.process_event(StartEvent(boost::bind(&FSMTest::start, this)));
+  EXPECT_FALSE(fsm.isUninitialized());
+  EXPECT_TRUE(fsm.isRunning());
+  EXPECT_FALSE(fsm.isStopped());
+
+
+  fsm.process_event(StopEvent(boost::bind(&FSMTest::stop, this)));
+  EXPECT_FALSE(fsm.isUninitialized());
+  EXPECT_FALSE(fsm.isRunning());
+  EXPECT_TRUE(fsm.isStopped());
+
+  fsm.process_event(InitEvent<std::string>(boost::bind(&FSMTest::init, this, _1), "true"));
+  EXPECT_FALSE(fsm.isUninitialized());
+  EXPECT_FALSE(fsm.isRunning());
+  EXPECT_TRUE(fsm.isStopped());
+
+  fsm.process_event(InitEvent<std::string>(boost::bind(&FSMTest::init, this, _1), "false"));
+  EXPECT_TRUE(fsm.isUninitialized());
+  EXPECT_FALSE(fsm.isRunning());
+  EXPECT_FALSE(fsm.isStopped());
+
+  fsm.process_event(InitEvent<std::string>(boost::bind(&FSMTest::init, this, _1), "true"));
+  EXPECT_FALSE(fsm.isUninitialized());
+  EXPECT_FALSE(fsm.isRunning());
+  EXPECT_TRUE(fsm.isStopped());
+} 

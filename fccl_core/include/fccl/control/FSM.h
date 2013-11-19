@@ -192,7 +192,45 @@ namespace fccl
 
     // Choosing a back-end for the FSM
     template< class T >
-    struct ControllerFSM : msm::back::state_machine< controller_fsm_< T > > {};
+    struct ControllerFSM : msm::back::state_machine< controller_fsm_< T > > 
+    {
+      enum StateTypes
+      {
+        UNINITIALIZED = 0,
+        
+        INITIALIZING = 1,
+        
+        STOPPED = 2,
+        
+        RUNNING = 3,
+        
+        STATE_COUNT
+      };
+
+      bool isRunning() const
+      {
+        return RUNNING == currentState();
+      }
+
+      bool isStopped() const
+      {
+        return STOPPED == currentState();
+      }
+
+      bool isUninitialized() const
+      {
+        return UNINITIALIZED == currentState();
+      }
+
+      StateTypes currentState() const
+      {
+        assert(ControllerFSM<T>::nr_regions::value == 1);
+        assert(0 <= this->current_state()[0]);
+        assert(this->current_state()[0] < STATE_COUNT);
+
+        return (StateTypes) this->current_state()[0];
+      }
+    };
   } // namespace control
 } // namespace fccl
 #endif // FCCL_CONTROL_FSM_H
