@@ -12,7 +12,6 @@
 #include <fccl/control/ConstraintController.h>
 #include <fccl/control/FSM.h>
 
-#include <boost/thread.hpp>
 #include <iostream>
 #include <stdexcept>
 
@@ -49,7 +48,6 @@ namespace fccl
         actionlib::SimpleActionServer<fccl_msgs::SingleArmMotionAction> action_server_;
     
         // TF infrastructure
-        thread* tf_thread_;
         TFWorker tf_worker_;
     
         // joint state infrastructure
@@ -66,13 +64,9 @@ namespace fccl
         void commandGoalCallback() throw ();
         void commandPreemptCallback() throw ();
     
-        // TF infrastructure 2 
-        // TODO(Georg): move this into TFWorker
+        // init helpers 
         void initTFRequests(const std::set<TransformSemantics> requests)
             throw (SingleArmInitException);
-        void loopTF();
-
-        // init helpers 
         void initJointState(const JntArraySemantics& joints)
             throw (SingleArmInitException);
         void initControllerGains(const ConstraintArray& constraints)

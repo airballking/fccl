@@ -6,12 +6,9 @@ namespace fccl
   {
     SingleArmController::SingleArmController(const NodeHandle& node_handle) :
         node_handle_(node_handle), action_server_(node_handle, "command", false),
-        tf_thread_(NULL), js_listener_(), 
-        cycle_time(0.01), delta_deriv(0.001)
+        tf_worker_(), js_listener_(), cycle_time(0.01), delta_deriv(0.001)
     {
       fsm_.start();
-
-      tf_thread_ = new thread( bind( &SingleArmController::loopTF, this ) );
 
       action_server_.registerGoalCallback( bind( 
           &SingleArmController::commandGoalCallback, this ) );
@@ -22,13 +19,6 @@ namespace fccl
 
     SingleArmController::~SingleArmController()
     {
-      if(tf_thread_)
-      {
-        tf_thread_->interrupt();
-        tf_thread_->join();
-        delete tf_thread_;
-        tf_thread_ = NULL;
-      }
     }
 
     void SingleArmController::run()
@@ -139,18 +129,6 @@ namespace fccl
 
       if(!tf_worker_.allRequestsFound())
         throw SingleArmInitException("TF was not aware of all necessary transforms. Aborting.");
-    }
-
-    void SingleArmController::loopTF()
-    {
-      // TODO(Georg): consider moving this into TFWorker which then spawns its own thread
-      Rate sleep_rate(20.0);
-
-      while(ros::ok())
-      {
-        sleep_rate.sleep();
-        tf_worker_.lookupTransforms();
-      }
     }
 
     void SingleArmController::initJointState(const JntArraySemantics& joints)
