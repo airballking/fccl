@@ -108,7 +108,9 @@ namespace fccl
       fsm_.process_event(InitEvent<fccl_msgs::SingleArmMotionGoalConstPtr>(
           boost::bind(&SingleArmController::init, this, _1), goal));
 
-      // TODO(Georg): verify that init worked
+      // verifying that init worked properly
+      if(!fsm_.isStopped())
+        return;
 
       // send event 'Start' to FSM and use our local start-function as hook
       fsm_.process_event(StartEvent(boost::bind(&SingleArmController::start, this)));
@@ -116,10 +118,11 @@ namespace fccl
 
     void SingleArmController::commandPreemptCallback() throw ()
     {
-      // TODO(Georg): verify that we are running
+      // verify that we are running before signalling FSM to stop
+      if(fsm_.isRunning())
+        // send event 'Stop' to FSM and use our local stop-function as hook
+        fsm_.process_event(StopEvent(boost::bind(&SingleArmController::stop, this)));
 
-      // send event 'Stop' to FSM and use our local stop-function as hook
-      fsm_.process_event(StopEvent(boost::bind(&SingleArmController::start, this)));
       action_server_.setPreempted();
     }
 
