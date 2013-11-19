@@ -4,6 +4,7 @@
 #include <ros/ros.h>
 #include <actionlib/server/simple_action_server.h>
 #include <fccl_msgs/SingleArmMotionAction.h>
+#include <sensor_msgs/JointState.h>
 #include <urdf/model.h>
 
 #include <fccl_nodes/TFWorker.h>
@@ -41,6 +42,7 @@ namespace fccl
         ~SingleArmController();
 
         void run();
+        void shutdown();
    
       private:
         // ROS communication infrastructure
@@ -51,6 +53,7 @@ namespace fccl
         TFWorker tf_worker_;
     
         // joint state infrastructure
+        // member to obtain joint state with correct semantics
         JointStateListener js_listener_;
 
         // finite state machine
@@ -58,8 +61,14 @@ namespace fccl
    
         // control infrastructure
         ConstraintController controller_;
-        const double cycle_time, delta_deriv;
-    
+        const double cycle_time_, delta_deriv_;
+
+        // pacing infrastructure
+        // ... listener pacing controller by calling update on every new joint-state
+        Subscriber js_subscriber_;
+        // ... callback to trigger the FSM with every new joint-state
+        void js_callback(const sensor_msgs::JointState::ConstPtr& msg);
+   
         // action interface
         void commandGoalCallback() throw ();
         void commandPreemptCallback() throw ();

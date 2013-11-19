@@ -6,7 +6,8 @@ namespace fccl
   {
     SingleArmController::SingleArmController(const NodeHandle& node_handle) :
         node_handle_(node_handle), action_server_(node_handle, "command", false),
-        tf_worker_(), js_listener_(), cycle_time(0.01), delta_deriv(0.001)
+        tf_worker_(), js_listener_(), js_subscriber_(), 
+        cycle_time_(0.01), delta_deriv_(0.001)
     {
       fsm_.start();
 
@@ -23,7 +24,13 @@ namespace fccl
 
     void SingleArmController::run()
     {
-    // TODO(Georg): implement me
+      js_subscriber_ = node_handle_.subscribe<sensor_msgs::JointState>("joint_state",
+          1, &SingleArmController::js_callback, this);
+    }
+
+    void SingleArmController::shutdown()
+    {
+      js_subscriber_.shutdown();
     }
 
     bool SingleArmController::init(const fccl_msgs::SingleArmMotionGoalConstPtr& goal) 
@@ -49,7 +56,7 @@ namespace fccl
 
         initJointState(kinematics.semantics().joints());
 
-        controller_.init(constraints, kinematics, cycle_time);
+        controller_.init(constraints, kinematics, cycle_time_);
 
         initControllerGains(constraints);
       }
@@ -66,7 +73,7 @@ namespace fccl
     void SingleArmController::start() throw ()
     {
       controller_.start(js_listener_.currentJointState(), 
-          tf_worker_.currentTransforms(), delta_deriv, cycle_time); 
+          tf_worker_.currentTransforms(), delta_deriv_, cycle_time_); 
     }
 
     void SingleArmController::stop() throw ()
@@ -78,9 +85,14 @@ namespace fccl
     {
       // TODO(Georg): implement me
       // TODO(Georg): have me periodically called
-      // TODO(Georg): add some FSM
     }
 
+    void SingleArmController::js_callback(const
+       sensor_msgs::JointState::ConstPtr& msg)
+    {
+      // TODO(Georg): signal FSM
+    }
+ 
     void SingleArmController::commandGoalCallback() throw ()
     {
       fccl_msgs::SingleArmMotionGoalConstPtr goal = action_server_.acceptNewGoal();
