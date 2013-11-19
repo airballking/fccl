@@ -78,6 +78,26 @@ namespace fccl
 
       StopFunction stop_function_;
     };
+    // ...event 'update'
+    struct UpdateEvent
+    {
+      typedef boost::function< void () >UpdateFunction;
+
+      UpdateEvent(const UpdateFunction& update_function) :
+          update_function_(NULL)
+      {
+        if(update_function)
+          update_function_ = update_function;
+      }
+
+      void operator()() const
+      {
+        assert(update_function_);
+        update_function_();
+      }
+
+      UpdateFunction update_function_;
+    };
     // ...event 'init_failed'
     struct InitFailedEvent {};
     // ...event 'init_succeeded'
@@ -158,13 +178,23 @@ namespace fccl
           event();
         }
       };
-      // ... transition 'Init'
+      // ... transition 'Stop'
       struct stop_action 
       {
         template <class EVT,class FSM,class SourceState,class TargetState>
         void operator()(EVT const& event,FSM& ,SourceState& ,TargetState& )
         {
           // run hook for stop-function inside StopEvent
+          event();
+        }
+      };
+      // ... transition 'Update'
+      struct update_action 
+      {
+        template <class EVT,class FSM,class SourceState,class TargetState>
+        void operator()(EVT const& event,FSM& ,SourceState& ,TargetState& )
+        {
+          // run hook for update-function inside StopEvent
           event();
         }
       };
@@ -175,16 +205,14 @@ namespace fccl
       //  +--------------+-------------------+-------------+-------------+-------+
       Row < Uninitialized, InitEvent<T>      , Initializing, init_action >,
       //  +--------------+-------------------+-------------+-------------+-------+
-
       Row < Initializing , InitFailedEvent   , Uninitialized >,
       Row < Initializing , InitSucceededEvent, Stopped >,
       //  +--------------+-------------------+-------------+-------------+-------+
-
       Row < Stopped      , StartEvent        , Running     , start_action >,
       Row < Stopped      , InitEvent<T>      , Initializing, init_action >,
       //  +--------------+-------------------+-------------+-------------+-------+
-
-      Row < Running      , StopEvent         , Stopped     , stop_action > 
+      Row < Running      , StopEvent         , Stopped     , stop_action >, 
+      Row < Running      , UpdateEvent       , Running     , update_action > 
       //  +--------------+-------------------+-------------+-------------+-------+
 
       > {};
