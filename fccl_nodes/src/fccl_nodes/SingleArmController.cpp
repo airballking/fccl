@@ -83,14 +83,18 @@ namespace fccl
 
     void SingleArmController::update() throw()
     {
-      // TODO(Georg): implement me
-      // TODO(Georg): have me periodically called
+      controller_.update(js_listener_.currentJointState(), 
+          tf_worker_.currentTransforms(), delta_deriv_, cycle_time_); 
     }
 
     void SingleArmController::js_callback(const
        sensor_msgs::JointState::ConstPtr& msg)
     {
-      // TODO(Georg): signal FSM
+      // ensure FSM is running before...
+      if(fsm_.isRunning())
+        // ... sending the signal to update using the function-hook
+        fsm_.process_event(UpdateEvent(
+            boost::bind(&SingleArmController::update, this)));
     }
  
     void SingleArmController::commandGoalCallback() throw ()
@@ -108,7 +112,7 @@ namespace fccl
       fsm_.process_event(InitEvent<fccl_msgs::SingleArmMotionGoalConstPtr>(
           boost::bind(&SingleArmController::init, this, _1), goal));
 
-      // verifying that init worked properly
+      // verifying that init worked properly and we're now in state 'Stopped'
       if(!fsm_.isStopped())
         return;
 
