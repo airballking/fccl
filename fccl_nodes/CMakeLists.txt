@@ -10,6 +10,7 @@ find_package(catkin REQUIRED COMPONENTS
   fccl_conversions
   urdf
   sensor_msgs
+  std_msgs
   message_runtime)
 
 ## System dependencies are found with CMake's conventions

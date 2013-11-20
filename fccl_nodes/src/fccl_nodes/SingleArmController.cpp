@@ -6,8 +6,8 @@ namespace fccl
   {
     SingleArmController::SingleArmController(const NodeHandle& node_handle) :
         node_handle_(node_handle), action_server_(node_handle, "command", false),
-        tf_worker_(), js_listener_(), js_subscriber_(), 
-        cycle_time_(0.01), delta_deriv_(0.001)
+        tf_worker_(), js_listener_(), qdot_publisher_(node_handle, "qdot"),
+        js_subscriber_(), cycle_time_(0.01), delta_deriv_(0.001)
     {
       fsm_.start();
 
@@ -16,6 +16,7 @@ namespace fccl
       action_server_.registerPreemptCallback( bind( 
           &SingleArmController::commandPreemptCallback, this ) );
       action_server_.start();
+      // TODO(Georg): publish feedback for visualization periodically
     }
 
     SingleArmController::~SingleArmController()
@@ -59,6 +60,8 @@ namespace fccl
         controller_.init(constraints, kinematics, cycle_time_);
 
         initControllerGains(constraints);
+
+        qdot_publisher_.resize(kinematics.semantics().joints());
       }
       catch (std::exception& e)
       {
@@ -85,6 +88,8 @@ namespace fccl
     {
       controller_.update(js_listener_.currentJointState(), 
           tf_worker_.currentTransforms(), delta_deriv_, cycle_time_); 
+
+      qdot_publisher_.publish(controller_.desiredJointVelocities());
     }
 
     void SingleArmController::js_callback(const

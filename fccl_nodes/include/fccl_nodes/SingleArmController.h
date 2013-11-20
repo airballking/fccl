@@ -9,6 +9,7 @@
 
 #include <fccl_nodes/TFWorker.h>
 #include <fccl_nodes/JointStateListener.h>
+#include <fccl_nodes/CommandPublisher.h>
 #include <fccl_conversions/Conversions.h>
 #include <fccl/control/ConstraintController.h>
 #include <fccl/control/FSM.h>
@@ -55,6 +56,9 @@ namespace fccl
         // joint state infrastructure
         // member to obtain joint state with correct semantics
         JointStateListener js_listener_;
+
+        // joint command publishing infrastructure
+        CommandPublisher qdot_publisher_;
 
         // finite state machine
         fccl::control::ControllerFSM<fccl_msgs::SingleArmMotionGoalConstPtr> fsm_;
