@@ -1,0 +1,11 @@
+<launch>
+
+  <!-- Start fccl controller for left arm -->
+ <node pkg="fccl_nodes" type="single_arm_controller" name="l_arm_fccl_controller">
+   <remap from="~qdot" to="/l_arm_vel/command"/>
+   <remap from="joint_state" to="/joint_states"/>
+   <remap from="~joint_state" to="/joint_states"/>
+
+ </node>
+
+</launch>

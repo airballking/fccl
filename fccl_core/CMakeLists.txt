@@ -64,8 +64,7 @@ add_library(${PROJECT_NAME}
 ## Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
-  ${orocos_kdl_LIBRARIES}
-)
+  ${orocos_kdl_LIBRARIES})
 set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS
   -L${orocos_kdl_LIBRARY_DIRS})
 
