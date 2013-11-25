@@ -136,23 +136,11 @@ namespace fccl
     }
 
     void SingleArmController::initTFRequests(const std::set<TransformSemantics> requests)
-        throw (SingleArmInitException)
+        throw (TFWorkerException)
     {
-      tf_worker_.clear();
- 
-      tf_worker_.addRequests(requests);
- 
-      Time timeout = Time::now() + Duration(0.1);
-      Duration short_time(0.01);
- 
-      do
-      {
-        short_time.sleep();
-      } 
-      while((Time::now() < timeout) && !tf_worker_.allRequestsFound());
-
-      if(!tf_worker_.allRequestsFound())
-        throw SingleArmInitException("TF was not aware of all necessary transforms. Aborting.");
+      // TODO(Georg): magic number
+      // TODO(Georg): no longer needs its own method
+      tf_worker_.init(requests, 0.1);
     }
 
     void SingleArmController::initJointState(const JntArraySemantics& joints)

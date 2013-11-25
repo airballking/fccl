@@ -79,7 +79,7 @@ namespace fccl
     
         // init helpers 
         void initTFRequests(const std::set<TransformSemantics> requests)
-            throw (SingleArmInitException);
+            throw (TFWorkerException);
         void initJointState(const JntArraySemantics& joints)
             throw (SingleArmInitException);
         void initControllerGains(const ConstraintArray& constraints)
