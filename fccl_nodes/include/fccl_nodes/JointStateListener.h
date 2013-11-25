@@ -49,7 +49,8 @@ class JointStateListener
     void setDesiredSemantics(const JntArraySemantics& semantics) 
     {
        boost::mutex::scoped_lock scoped_lock(mutex_);
-       return parser_.init(semantics); 
+       current_.init(semantics);
+       parser_.init(semantics); 
     }
 
     const JntArray& currentJointState() const 
