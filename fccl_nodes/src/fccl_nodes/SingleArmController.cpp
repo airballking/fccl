@@ -53,11 +53,11 @@ namespace fccl
         if(!kinematics.isValid())
           throw SingleArmInitException("Given kinematics not valid. Aborting.");
 
-        initTFRequests(constraints.necessaryTransforms());
+        controller_.init(constraints, kinematics, cycle_time_);
+
+        initTFRequests(controller_.necessaryTransforms());
 
         initJointState(kinematics.semantics().joints());
-
-        controller_.init(constraints, kinematics, cycle_time_);
 
         initControllerGains(constraints);
 
