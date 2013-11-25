@@ -69,6 +69,16 @@ namespace fccl
 
       return hasTransform(semantics);
     }
+
+    // NOT REAL-TIME-SAFE
+    std::vector<fccl::kdl::Transform> TransformMap::allTransforms() const
+    {
+      std::vector<fccl::kdl::Transform> result;
+// TODO(Georg): typedefs
+      for (std::map<fccl::semantics::TransformSemantics, fccl::kdl::Transform>::const_iterator it=map_.begin(); it!=map_.end(); ++it)
+        result.push_back(it->second);
+      return result;
+    }
  
     INLINE 
     boost::mutex& TransformMap::getMutex() const

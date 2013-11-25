@@ -5,6 +5,7 @@
 #include <fccl/semantics/TransformSemantics.h>
 #include <boost/thread/mutex.hpp>
 #include <map>
+#include <vector>
 
 namespace fccl
 {
@@ -31,6 +32,9 @@ namespace fccl
           return map_.size();
         }
 
+        // NOT REAL-TIME-SAFE
+        std::vector<fccl::kdl::Transform> allTransforms() const;
+        // TODO(Georg): Is this still necessary?
         boost::mutex& getMutex() const; 
 
       private:
