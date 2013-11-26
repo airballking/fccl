@@ -119,7 +119,7 @@ namespace fccl
           return desired_output_value_;
         }
 
-        double desiredoutputVelocity() const
+        double desiredOutputVelocity() const
         {
           return desired_output_velocity_;
         }
@@ -303,7 +303,13 @@ namespace fccl
       os << "tool feature: " << constraint.toolFeature() << "\n";
       os << "object feature: " << constraint.objectFeature() << "\n";
       os << "lower boundary: " << constraint.lowerBoundary() << "\n";
-      os << "upper boundary: " << constraint.upperBoundary();
+      os << "upper boundary: " << constraint.upperBoundary() << "\n";
+
+      os << "output value: " << constraint.outputValue() << "\n";
+      os << "desired output value: " << constraint.desiredOutputValue() << "\n",
+      os << "desired output velocity: " << constraint.desiredOutputVelocity() << "\n";
+      os << "task weight: " << constraint.taskWeight() << "\n";
+      os << "first derivative:\n" << constraint.firstDerivative();
 
       return os;
     }
