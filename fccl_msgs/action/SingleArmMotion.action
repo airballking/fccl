@@ -5,3 +5,4 @@ fccl_msgs/KinematicChain kinematics
 #result definition
 ---
 #feedback
+fccl_msgs/ConstraintFeedback[] constraints
