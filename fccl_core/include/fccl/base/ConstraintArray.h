@@ -146,7 +146,7 @@ namespace fccl
           task_weights_.resize(new_size);
         }
 
-        void update(const fccl::utils::TransformMap& transform_map, double delta)
+        void update(const fccl::utils::TransformMap& transform_map, double delta=0.001)
         {
           assert(size() == output_values_.size());
           assert(size() == desired_output_values_.size());
