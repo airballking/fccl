@@ -33,6 +33,30 @@ namespace fccl
       toMsg(feature.orientation(), msg.direction); 
     }
 
+    void toMsg(const fccl::base::ConstraintArray& constraints,
+        std::vector<fccl_msgs::ConstraintFeedback>& msg)
+    {
+      assert(constraints.size() == msg.size());
+
+       for(std::size_t i=0; i<msg.size(); i++)
+         toMsg(constraints(i), msg[i]);
+    }
+
+    void toMsg(const fccl::base::Constraint& constraint,
+        fccl_msgs::ConstraintFeedback& msg)
+    {
+      toMsg(constraint, msg.command);
+      toMsg(constraint, msg.output);
+    }
+
+    void toMsg(const fccl::base::Constraint& constraint,
+        fccl_msgs::ConstraintState& msg)
+    {
+      msg.output_value = constraint.outputValue();
+      msg.desired_output = constraint.desiredOutputValue();
+      msg.weight = constraint.taskWeight();
+    }
+
     void toMsg(const KDL::Vector& vector, geometry_msgs::Vector3& msg)
     {
       msg.x = vector.x();

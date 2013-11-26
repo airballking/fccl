@@ -12,6 +12,8 @@
 #include <fccl_msgs/Feature.h>
 #include <fccl_msgs/Constraint.h>
 #include <fccl_msgs/KinematicChain.h>
+#include <fccl_msgs/ConstraintState.h>
+#include <fccl_msgs/ConstraintFeedback.h>
 #include <geometry_msgs/Vector3.h>
 #include <std_msgs/String.h>
 
@@ -35,6 +37,13 @@ namespace fccl
     void toMsg(const fccl::base::Constraint& constraint, fccl_msgs::Constraint& msg);
     void toMsg(const fccl::base::Feature& feature, fccl_msgs::Feature& msg);
 
+    void toMsg(const fccl::base::ConstraintArray& constraints,
+        std::vector<fccl_msgs::ConstraintFeedback>& msg);
+    void toMsg(const fccl::base::Constraint& constraint,
+        fccl_msgs::ConstraintFeedback& msg);
+    void toMsg(const fccl::base::Constraint& constraint,
+        fccl_msgs::ConstraintState& msg);
+
     void toMsg(const KDL::Vector& vector, geometry_msgs::Vector3& msg);
     void toMsg(const fccl::semantics::SemanticsBase& base, std_msgs::String& msg);
     void toMsg(const fccl::semantics::FeatureTypes& type, std_msgs::UInt8& msg);
@@ -54,6 +63,8 @@ namespace fccl
     void fromMsg(const std_msgs::Float64& msg, double& value);
 
     // message conversions with memory allocation
+    // TODO(Georg): decide whether these are evil. If no, continue below...
+    // TODO(Georg): have these generated with template code
     std::vector<fccl_msgs::Constraint> toMsg(const fccl::base::ConstraintArray&
         constraints);
     fccl_msgs::Constraint toMsg(const fccl::base::Constraint& constraint);

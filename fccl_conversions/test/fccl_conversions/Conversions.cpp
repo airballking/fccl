@@ -4,6 +4,8 @@
 
 using namespace fccl::base;
 using namespace fccl::conversions;
+using namespace fccl::kdl;
+using namespace fccl::utils;
 
 class ConversionsTest : public ::testing::Test
 {
@@ -17,14 +19,14 @@ class ConversionsTest : public ::testing::Test
       feature.orientation() = KDL::Vector(-1,-1,-1);
 
       Feature some_feature;
-      some_feature.semantics().reference().setName("reference");
+      some_feature.semantics().reference().setName("tool");
       some_feature.semantics().name().setName("some other edge");
       some_feature.semantics().type() = fccl::semantics::LINE_FEATURE;
       some_feature.position() = KDL::Vector(4,5,6);
       some_feature.orientation() = KDL::Vector(-2,-3,-4);
 
       Feature some_feature2;
-      some_feature2.semantics().reference().setName("reference");
+      some_feature2.semantics().reference().setName("tool");
       some_feature2.semantics().name().setName("some other edge2");
       some_feature2.semantics().type() = fccl::semantics::PLANE_FEATURE;
       some_feature2.position() = KDL::Vector(40,50,60);
@@ -35,7 +37,7 @@ class ConversionsTest : public ::testing::Test
       constraint.semantics().type().setName("above");
       constraint.toolFeature() = some_feature;
       constraint.objectFeature() = feature;
-      constraint.lowerBoundary() = -0.1;
+      constraint.lowerBoundary() = 0.1;
       constraint.upperBoundary() = 0.2;
 
       Constraint some_constraint;
@@ -51,6 +53,17 @@ class ConversionsTest : public ::testing::Test
       constraints(0) = constraint;
       constraints(1) = some_constraint;
       constraints.prepare();
+
+      T_world_in_view.semantics().reference().setName("view");
+      T_world_in_view.semantics().target().setName("world");
+      T_world_in_view.numerics() = KDL::Frame::Identity();
+
+      T_tool_in_view.semantics().reference().setName("view");
+      T_tool_in_view.semantics().target().setName("tool");
+      T_tool_in_view.numerics() = KDL::Frame::Identity();
+
+      transform_map.setTransform(T_world_in_view);
+      transform_map.setTransform(T_tool_in_view);
     }
 
     virtual void TearDown()
@@ -60,6 +73,9 @@ class ConversionsTest : public ::testing::Test
     Feature feature;
     Constraint constraint;
     ConstraintArray constraints;
+
+    Transform T_world_in_view, T_tool_in_view;
+    TransformMap transform_map;
 };
 
 TEST_F(ConversionsTest, Feature)
@@ -99,4 +115,25 @@ TEST_F(ConversionsTest, Constraints)
 
   ConstraintArray constraints3 = fromMsg(toMsg(constraints));
   EXPECT_TRUE(constraints.equals(constraints3));
+}
+
+TEST_F(ConversionsTest, ConstraintFeedback)
+{
+  ASSERT_TRUE(constraints.isValid());
+  constraints.update(transform_map);
+
+  std::vector<fccl_msgs::ConstraintFeedback> msgs;
+  msgs.resize(constraints.size());
+  toMsg(constraints, msgs);
+  
+  ASSERT_EQ(msgs.size(), constraints.size());
+  for(std::size_t i=0; i<msgs.size(); i++)
+  {
+    EXPECT_TRUE(constraints(i).equals(fromMsg(msgs[i].command)));
+    EXPECT_DOUBLE_EQ(constraints(i).outputValue(), msgs[i].output.output_value);
+    EXPECT_DOUBLE_EQ(constraints(i).desiredOutputValue(),
+        msgs[i].output.desired_output);
+    EXPECT_DOUBLE_EQ(constraints(i).taskWeight(), 
+       msgs[i].output.weight);
+  }  
 }
