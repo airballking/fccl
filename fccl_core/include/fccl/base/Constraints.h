@@ -5,6 +5,7 @@
 #include <fccl/kdl/Transform.h>
 #include <fccl/kdl/InteractionMatrix.h>
 #include <fccl/semantics/ConstraintSemantics.h>
+#include <fccl/utils/TransformMap.h>
 #include <string>
 #include <iostream>
 #include <vector>
@@ -106,6 +107,31 @@ namespace fccl
           return semantics_;
         }
 
+        double outputValue() const
+        {
+          return output_value_;
+        }
+
+        double desiredOutputValue() const
+        {
+          return desired_output_value_;
+        }
+
+        double desiredoutputVelocity() const
+        {
+          return desired_output_velocity_;
+        }
+
+        double taskWeight() const
+        {
+          return task_weight_;
+        }
+
+        const fccl::kdl::InteractionMatrix& firstDerivative() const
+        {
+          return first_derivative_;
+        }
+
         bool equals(const Constraint& other) const
         {
           return semantics().equals(other.semantics()) &&
@@ -125,30 +151,36 @@ namespace fccl
           return it != function_map_.end();
         }
 
+        bool isFulfilled() const
+        {
+          return taskWeight() < 1.0;
+        }
+
         bool isValid() const
         {
           return functionValid() && toolFeature().isValid() && 
               objectFeature().isValid();
         }
  
-        double calculateValue(const fccl::kdl::Transform& tool_transform,
-            const fccl::kdl::Transform& object_transform) const
+        void update(const fccl::kdl::Transform& tool_transform,
+            const fccl::kdl::Transform& object_transform, double delta=0.001)
         {
-          assert(functionValid());
+          updateOutputValue(tool_transform, object_transform);
+          updateFirstDerivative(tool_transform, object_transform, delta);
+          updateWeightAndDesiredOutput();
+        }
+ 
+        void update(const fccl::utils::TransformMap& transform_map, double delta=0.001) 
+        {
+          fccl::kdl::Transform tool_transform = transform_map.getTransform(
+              semantics().reference(), toolFeature().semantics().reference());
 
-          using namespace fccl::semantics;
-
-          std::map<SemanticsBase, ConstraintFunction>::const_iterator it =
-              function_map_.find(semantics().type());
-
-          return it->second(semantics().reference(), toolFeature(), objectFeature(),
-              tool_transform, object_transform);
+          fccl::kdl::Transform object_transform = transform_map.getTransform(
+              semantics().reference(), objectFeature().semantics().reference());
+ 
+          update(tool_transform, object_transform, delta);
         }
   
-        const fccl::kdl::InteractionMatrix& calculateFirstDerivative(
-            const fccl::kdl::Transform& tool_transform, 
-            const fccl::kdl::Transform& object_transform, double delta=0.001); 
-
         // NOT REAL-TIME-SAFE
         std::set<fccl::semantics::TransformSemantics> necessaryTransforms() const;
   
@@ -175,6 +207,12 @@ namespace fccl
         static const std::map<fccl::semantics::SemanticsBase, ConstraintFunction>
             function_map_;
 
+        // member variables to cache return values
+        double output_value_;
+        double desired_output_value_;
+        double desired_output_velocity_;
+        double task_weight_;
+
         // auxiliary function to fill function map with correct correspondences
         static std::map<fccl::semantics::SemanticsBase, ConstraintFunction> 
             createFunctionMap();
@@ -182,6 +220,79 @@ namespace fccl
         // auxiliary function for numeric derivation
         void calculateInteractionSemantics(
             const fccl::semantics::TransformSemantics& tool_transform);
+
+        double calculateOutputValue(const fccl::kdl::Transform& tool_transform,
+            const fccl::kdl::Transform& object_transform) 
+        {
+          assert(functionValid());
+
+          using namespace fccl::semantics;
+
+          std::map<SemanticsBase, ConstraintFunction>::const_iterator it =
+              function_map_.find(semantics().type());
+
+          return it->second(semantics().reference(), toolFeature(),
+              objectFeature(), tool_transform, object_transform);
+        }
+ 
+        void updateOutputValue(const fccl::kdl::Transform& tool_transform,
+            const fccl::kdl::Transform& object_transform)
+        {
+          output_value_ = calculateOutputValue(tool_transform, object_transform);
+        }
+
+        const fccl::kdl::InteractionMatrix& calculateFirstDerivative(
+            const fccl::kdl::Transform& tool_transform, 
+            const fccl::kdl::Transform& object_transform, double delta=0.001); 
+
+        void updateFirstDerivative(const fccl::kdl::Transform& tool_transform,
+            const fccl::kdl::Transform& object_transform, double delta)
+        {
+          first_derivative_ = calculateFirstDerivative(tool_transform,
+              object_transform, delta);
+        }
+
+        void updateWeightAndDesiredOutput()
+        {
+          // TODO(Georg): refactor this param into every constraint
+          double s = 0.05;
+
+          double lo = lowerBoundary();
+          double hi = upperBoundary();
+        
+          // adjust margin if range is too small
+          double ss = (hi - lo < 2*s) ? (hi - lo) / 2 : s;
+        
+          // desired output values..
+          if(outputValue() > hi - ss)
+          {
+            desired_output_value_ = hi - ss;
+          }
+          else if(outputValue() < lo + ss)
+          {
+            desired_output_value_ = lo + ss;
+          }
+          else
+          {
+            desired_output_value_ = outputValue();
+          }
+        
+          // weights..
+          if(outputValue() > hi || outputValue() < lo)
+          {
+            task_weight_ = 1.0;
+          }
+          else
+          {
+            double w_lo = (1/s)*(-hi + outputValue())+1;
+            double w_hi = (1/s)*( lo - outputValue())+1;
+        
+            w_lo = (w_lo > 0.0) ? w_lo : 0.0;
+            w_hi = (w_hi > 0.0) ? w_hi : 0.0;
+        
+            task_weight_ = (w_lo > w_hi) ? w_lo : w_hi;
+          }
+        }
     };
 
     inline std::ostream& operator<<(std::ostream& os, const Constraint& constraint)

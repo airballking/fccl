@@ -53,7 +53,8 @@ namespace fccl
       calculateInteractionSemantics(tool_transform.semantics());
       
       // get current constraint value around which we differentiate
-      double value = calculateValue(tool_transform, object_transform);
+      double value = calculateOutputValue(tool_transform, object_transform);
+//      double value = calculateValue(tool_transform, object_transform);
       
       // prepare six delta-transforms to simulate delta motions of tool
       Transform T[6];
@@ -76,7 +77,7 @@ namespace fccl
       for(unsigned int i=0; i < 6; i++)
       {
         first_derivative_.numerics()(0,i) =
-          (calculateValue(multiply(tool_transform, T[i]), object_transform) - value) * delta_r;
+          (calculateOutputValue(multiply(tool_transform, T[i]), object_transform) - value) * delta_r;
       }
   
       return first_derivative_;

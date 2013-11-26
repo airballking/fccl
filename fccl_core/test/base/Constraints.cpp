@@ -133,7 +133,8 @@ TEST_F(ConstraintsTest, Evaluation)
  
   ASSERT_TRUE(ac.functionValid());
   ASSERT_TRUE(ac.isValid());
-  EXPECT_DOUBLE_EQ(ac.calculateValue(T_view_tool, T_view_object), 0.3);
+  ac.update(T_view_tool, T_view_object);
+  EXPECT_DOUBLE_EQ(ac.outputValue(), 0.3);
 }
 
 TEST_F(ConstraintsTest, FunctionValid)
@@ -156,7 +157,8 @@ TEST_F(ConstraintsTest, FirstDerivative)
   ac.lowerBoundary() = lower_boundary;
   ac.upperBoundary() = upper_boundary;
  
-  InteractionMatrix m = ac.calculateFirstDerivative(T_view_tool, T_view_object);
+  ac.update(T_view_tool, T_view_object);
+  InteractionMatrix m = ac.firstDerivative();
   EXPECT_EQ(m.semantics().twist().reference().getID(), tool_feature.semantics().reference().getID());
   ASSERT_EQ(m.size(), 1);
   EXPECT_EQ(m.semantics().joints()(0).getID(), ac.semantics().name().getID());

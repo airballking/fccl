@@ -90,11 +90,10 @@ namespace fccl
 
         bool areFulfilled() const
         {
-          // TODO(Georg): refactor this into Constraint
           assert(taskWeights().size() == size());
 
           for(std::size_t i=0; i<size(); i++)
-            if(!(taskWeights().numerics()(i) < 1.0))
+            if(!operator()(i).isFulfilled())
               return false;
 
           return true;
@@ -149,10 +148,39 @@ namespace fccl
 
         void update(const fccl::utils::TransformMap& transform_map, double delta)
         {
-          // TODO(Georg): refactor this into Constraint
-          calculateOutputValues(transform_map, delta);
-          calculateDerivative(transform_map, delta);
-          calculateWeightsAndDesiredOutputs();
+          assert(size() == output_values_.size());
+          assert(size() == desired_output_values_.size());
+          assert(size() == task_weights_.size());
+          assert(size() == first_derivative_.size());
+
+          for(std::size_t i=0; i<size(); i++)
+          {
+            assert(output_values_.semantics()(i).equals(
+                operator()(i).semantics().name()));
+            assert(desired_output_values_.semantics()(i).equals(
+                operator()(i).semantics().name()));
+            assert(task_weights_.semantics()(i).equals(
+                operator()(i).semantics().name()));
+            assert(first_derivative_.semantics().joints()(i).equals(
+                operator()(i).semantics().name()));
+           
+            // TODO(Georg): relax these two assumptions!
+            assert(first_derivative_.semantics().twist().reference().equals(
+                 operator()(i).toolFeature().semantics().reference()));
+            assert(first_derivative_.semantics().twist().target().equals(
+                 operator()(i).toolFeature().semantics().reference()));
+ 
+            operator()(i).update(transform_map, delta);
+
+            // copy all the results from this particular constraint
+            output_values_.numerics()(i) = operator()(i).outputValue();
+            desired_output_values_.numerics()(i) =
+                operator()(i).desiredOutputValue();
+            task_weights_.numerics()(i) = operator()(i).taskWeight();
+
+            first_derivative_.partialAssignment(i, 1,
+                operator()(i).firstDerivative());
+          }
         }
 
       private:
@@ -165,100 +193,6 @@ namespace fccl
         fccl::kdl::JntArray desired_output_values_;
         fccl::kdl::JntArray task_weights_;
 
-        void calculateOutputValues(const fccl::utils::TransformMap& transform_map,
-            double delta)
-        {
-          assert(size() == output_values_.size());
-
-          for(std::size_t i=0; i<size(); i++)
-          {
-            assert(output_values_.semantics()(i).equals(operator()(i).semantics().name()));
-
-            fccl::kdl::Transform tool_transform = transform_map.getTransform(
-                operator()(i).semantics().reference(),
-                operator()(i).toolFeature().semantics().reference());
-
-            fccl::kdl::Transform object_transform = transform_map.getTransform(
-                operator()(i).semantics().reference(),
-                operator()(i).objectFeature().semantics().reference());
-
-            output_values_.numerics()(i) = 
-                operator()(i).calculateValue(tool_transform, object_transform);
-          }
-        }
-
-        void calculateDerivative(const fccl::utils::TransformMap& transform_map, 
-            double delta)
-        {
-          assert(size() == firstDerivative().size());
-
-          for(std::size_t i=0; i<size(); i++)
-          {
-            fccl::kdl::Transform tool_transform = transform_map.getTransform(
-                operator()(i).semantics().reference(),
-                operator()(i).toolFeature().semantics().reference());
-
-            fccl::kdl::Transform object_transform = transform_map.getTransform(
-                operator()(i).semantics().reference(),
-                operator()(i).objectFeature().semantics().reference());
-
-            first_derivative_.partialAssignment(i, 1,
-                operator()(i).calculateFirstDerivative(
-                    tool_transform, object_transform, delta));
-          }
-        }
-
-        void calculateWeightsAndDesiredOutputs()
-        {
-          assert(size() == desiredOutputValues().size());
-          assert(size() == taskWeights().size());
-
-          // TODO(Georg): refactor this param into every constraint
-          double s = 0.05;
-
-          // TODO(Georg): refactor this method into Constraint 
-          for(std::size_t i=0; i<size(); i++)
-          {
-            double value = output_values_.numerics()(i);
-        
-            double lo = operator()(i).lowerBoundary();
-            double hi = operator()(i).upperBoundary();
-        
-            // adjust margin if range is too small
-            double ss = (hi - lo < 2*s) ? (hi - lo) / 2 : s;
-        
-            // desired output values..
-            if(value > hi - ss)
-            {
-              desired_output_values_.numerics()(i) = hi - ss;
-            }
-            else if(value < lo + ss)
-            {
-              desired_output_values_.numerics()(i) = lo + ss;
-            }
-            else
-            {
-              desired_output_values_.numerics()(i) = value;
-            }
-        
-            // weights..
-            if(value > hi || value < lo)
-            {
-              task_weights_.numerics()(i) = 1.0;
-            }
-            else
-            {
-              double w_lo = (1/s)*(-hi + value)+1;
-              double w_hi = (1/s)*( lo - value)+1;
-        
-              w_lo = (w_lo > 0.0) ? w_lo : 0.0;
-              w_hi = (w_hi > 0.0) ? w_hi : 0.0;
-        
-              task_weights_.numerics()(i) = (w_lo > w_hi) ? w_lo : w_hi;
-            }
-          }
-        }
- 
         void copyConstraints(const std::vector<fccl::base::Constraint>& constraints)
         {
           assert(size() == constraints.size());
