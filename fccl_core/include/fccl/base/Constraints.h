@@ -28,8 +28,7 @@ namespace fccl
             semantics_( fccl::semantics::ConstraintSemantics() ),
             tool_feature_( Feature() ), object_feature_( Feature() ),
             lower_boundary_( 0.0 ), upper_boundary_( 0.0 ),
-            output_value_( 0.0 ), desired_output_value_( 0.0 ),
-            desired_output_velocity_( 0.0 ), task_weight_( 0.0 )
+            output_value_( 0.0 ), desired_output_value_( 0.0 ), task_weight_( 0.0 )
         {
           first_derivative_.resize(1);
         }
@@ -117,11 +116,6 @@ namespace fccl
         double desiredOutputValue() const
         {
           return desired_output_value_;
-        }
-
-        double desiredOutputVelocity() const
-        {
-          return desired_output_velocity_;
         }
 
         double taskWeight() const
@@ -212,7 +206,6 @@ namespace fccl
         // member variables to cache return values
         double output_value_;
         double desired_output_value_;
-        double desired_output_velocity_;
         double task_weight_;
 
         // auxiliary function to fill function map with correct correspondences
@@ -307,7 +300,6 @@ namespace fccl
 
       os << "output value: " << constraint.outputValue() << "\n";
       os << "desired output value: " << constraint.desiredOutputValue() << "\n",
-      os << "desired output velocity: " << constraint.desiredOutputVelocity() << "\n";
       os << "task weight: " << constraint.taskWeight() << "\n";
       os << "first derivative:\n" << constraint.firstDerivative();
 
