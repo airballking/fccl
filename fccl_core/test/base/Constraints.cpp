@@ -5,6 +5,7 @@
 using namespace fccl::base;
 using namespace fccl::kdl;
 using namespace fccl::semantics;
+using namespace fccl::utils;
 
 class ConstraintsTest : public ::testing::Test
 {
@@ -37,7 +38,12 @@ class ConstraintsTest : public ::testing::Test
       T_view_object.semantics().reference().setName(view_frame_name);
       T_view_object.semantics().target().setName(object_frame_name);
       T_view_object.numerics() = T_view_object_data;
-      
+
+      // transform map
+      transform_map.clear();
+      transform_map.setTransform(T_view_tool);
+      transform_map.setTransform(T_view_object);
+
       // features
       object_feature.semantics().reference().setName(object_frame_name);
       object_feature.semantics().name().setName(object_feature_name);
@@ -68,6 +74,7 @@ class ConstraintsTest : public ::testing::Test
     KDL::Vector tool_feature_pos, tool_feature_dir;
     KDL::Frame T_view_tool_data, T_view_object_data;
     Transform T_view_tool, T_view_object;
+    TransformMap transform_map;
     Feature object_feature, tool_feature;
     double lower_boundary, upper_boundary;
 };
@@ -226,4 +233,21 @@ TEST_F(ConstraintsTest, isFulfilled)
   ac.upperBoundary() = 0.3 + 0.0001;
   ac.update(T_view_tool, T_view_object);
   EXPECT_TRUE(ac.isFulfilled());
+}
+
+TEST_F(ConstraintsTest, TransformMapUpdate)
+{
+  Constraint ac;
+  ac.semantics().reference().setName(view_frame_name);
+  ac.semantics().name().setName(constraint_name);
+  ac.semantics().type().setName("above");
+  ac.toolFeature() = tool_feature;
+  ac.objectFeature() = object_feature;
+  ac.lowerBoundary() = lower_boundary;
+  ac.upperBoundary() = upper_boundary;
+ 
+  ASSERT_TRUE(ac.functionValid());
+  ASSERT_TRUE(ac.isValid());
+  ac.update(transform_map);
+  EXPECT_DOUBLE_EQ(ac.outputValue(), 0.3);
 }
