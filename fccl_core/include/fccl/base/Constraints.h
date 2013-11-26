@@ -27,7 +27,9 @@ namespace fccl
         Constraint() :
             semantics_( fccl::semantics::ConstraintSemantics() ),
             tool_feature_( Feature() ), object_feature_( Feature() ),
-            lower_boundary_( 0.0 ), upper_boundary_( 0.0 )
+            lower_boundary_( 0.0 ), upper_boundary_( 0.0 ),
+            output_value_( 0.0 ), desired_output_value_( 0.0 ),
+            desired_output_velocity_( 0.0 ), task_weight_( 0.0 )
         {
           first_derivative_.resize(1);
         }
