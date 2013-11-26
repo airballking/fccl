@@ -199,3 +199,31 @@ TEST_F(ConstraintsTest, NecessaryTransforms)
   it = transforms.find(container);
   EXPECT_NE(it, transforms.end());
 }
+
+TEST_F(ConstraintsTest, isFulfilled)
+{
+  Constraint ac;
+  ac.semantics().reference().setName(view_frame_name);
+  ac.semantics().name().setName(constraint_name);
+  ac.semantics().type().setName("above");
+  ac.toolFeature() = tool_feature;
+  ac.objectFeature() = object_feature;
+  ac.lowerBoundary() = lower_boundary;
+  ac.upperBoundary() = upper_boundary;
+ 
+  ac.update(T_view_tool, T_view_object);
+  EXPECT_FALSE(ac.isFulfilled());
+
+  ac.upperBoundary() = 0.3;
+  ac.update(T_view_tool, T_view_object);
+  EXPECT_FALSE(ac.isFulfilled());
+
+  ac.upperBoundary() = 0.31;
+  ac.update(T_view_tool, T_view_object);
+  EXPECT_TRUE(ac.isFulfilled());
+
+  ac.lowerBoundary() = 0.3 - 0.0001;
+  ac.upperBoundary() = 0.3 + 0.0001;
+  ac.update(T_view_tool, T_view_object);
+  EXPECT_TRUE(ac.isFulfilled());
+}
