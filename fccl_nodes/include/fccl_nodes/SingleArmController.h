@@ -49,6 +49,7 @@ namespace fccl
         // ROS communication infrastructure
         NodeHandle node_handle_;
         actionlib::SimpleActionServer<fccl_msgs::SingleArmMotionAction> action_server_;
+        fccl_msgs::SingleArmMotionFeedback feedback_msg_;
     
         // TF infrastructure
         TFWorker tf_worker_;
@@ -76,6 +77,7 @@ namespace fccl
         // action interface
         void commandGoalCallback() throw ();
         void commandPreemptCallback() throw ();
+        void publishFeedback() throw ();
     
         // init helpers 
         void initTFRequests(const std::set<TransformSemantics> requests)

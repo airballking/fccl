@@ -62,6 +62,8 @@ namespace fccl
         initControllerGains(constraints);
 
         qdot_publisher_.resize(kinematics.semantics().joints());
+
+        feedback_msg_.constraints.resize(constraints.size());
       }
       catch (std::exception& e)
       {
@@ -91,6 +93,8 @@ namespace fccl
           tf_worker_.currentTransforms(), delta_deriv_, cycle_time_); 
 
       qdot_publisher_.publish(controller_.desiredJointVelocities());
+
+      publishFeedback();
     }
 
     void SingleArmController::js_callback(const
@@ -136,6 +140,12 @@ namespace fccl
       action_server_.setPreempted();
     }
 
+    void SingleArmController::publishFeedback() throw ()
+    {
+      toMsg(controller_.constraints(), feedback_msg_.constraints);
+      action_server_.publishFeedback(feedback_msg_);
+    }
+ 
     void SingleArmController::initTFRequests(const std::set<TransformSemantics> requests)
         throw (TFWorkerException)
     {
