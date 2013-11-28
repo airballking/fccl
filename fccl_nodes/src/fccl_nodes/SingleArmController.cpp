@@ -82,6 +82,7 @@ namespace fccl
     void SingleArmController::stop() throw ()
     {
       controller_.stop();
+      qdot_publisher_.publish(controller_.desiredJointVelocities());
     }
 
     void SingleArmController::update() throw()

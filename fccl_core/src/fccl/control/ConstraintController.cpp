@@ -98,6 +98,7 @@ namespace fccl
 
     void ConstraintController::stop()
     {
+      desired_joint_velocities_.numerics().data.setZero();
     }
 
     const fccl::kdl::JntArray& ConstraintController::desiredJointVelocities() const
