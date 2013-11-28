@@ -88,8 +88,8 @@ namespace fccl
       state_estimator_.control_update(interpolator_.nextPosition(), 
           interpolator_.nextVelocity(), interpolator_.nextAcceleration());
 
-      fccl::kdl::substract(constraints_.outputValues(),
-          interpolator_.nextPosition(), output_error_);
+      fccl::kdl::substract(interpolator_.nextPosition(), 
+          constraints_.outputValues(), output_error_);
       desired_output_velocities_ = pid_.computeCommand(output_error_, cycle_time);
 
       solver_.solve(A_, desired_output_velocities_, joint_weights_, task_weights_,

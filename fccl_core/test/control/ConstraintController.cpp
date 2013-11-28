@@ -141,7 +141,7 @@ TEST_F(ConstraintControllerTest, Basics)
 
     joint_vel = controller.desiredJointVelocities();
     joint_vel.numerics().data = joint_vel.numerics().data * cycle_time;
-    substract(joint_state, joint_vel, joint_state);
+    add(joint_state, joint_vel, joint_state);
 
     transform_map.setTransform(multiply(torso_transform, 
         multiply(kinematics.calculateForwardKinematics(joint_state),
