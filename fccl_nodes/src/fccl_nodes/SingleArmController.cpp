@@ -7,8 +7,11 @@ namespace fccl
     SingleArmController::SingleArmController(const NodeHandle& node_handle) :
         node_handle_(node_handle), action_server_(node_handle, "command", false),
         tf_worker_(), js_listener_(), qdot_publisher_(node_handle, "qdot"),
-        js_subscriber_(), cycle_time_(0.01), delta_deriv_(0.001)
+        js_subscriber_(), cycle_time_(0.01), delta_deriv_(0.001), urdf_()
     {
+      if(!urdf_.initParam("robot_description"))
+        throw SingleArmInitException("No urdf 'robot_description' on param-server.");
+
       fsm_.start();
 
       action_server_.registerGoalCallback( bind( 
@@ -44,12 +47,7 @@ namespace fccl
         if(!constraints.isValid())
           throw SingleArmInitException("Given constraints not valid. Aborting.");
 
-        urdf::Model urdf;
-        if(!urdf.initParam("robot_description"))
-          throw SingleArmInitException("No urdf 'robot_description' on param-server.");
-
-        KinematicChain kinematics = fromMsg(goal->kinematics, urdf);
-
+        KinematicChain kinematics = fromMsg(goal->kinematics, urdf_);
         if(!kinematics.isValid())
           throw SingleArmInitException("Given kinematics not valid. Aborting.");
 

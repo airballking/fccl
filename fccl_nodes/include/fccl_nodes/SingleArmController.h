@@ -73,6 +73,9 @@ namespace fccl
         Subscriber js_subscriber_;
         // ... callback to trigger the FSM with every new joint-state
         void js_callback(const sensor_msgs::JointState::ConstPtr& msg);
+
+        // internal robot model
+        urdf::Model urdf_;
    
         // action interface
         void commandGoalCallback() throw ();
