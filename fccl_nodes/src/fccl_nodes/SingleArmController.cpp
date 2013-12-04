@@ -62,6 +62,8 @@ namespace fccl
         qdot_publisher_.resize(kinematics.semantics().joints());
 
         feedback_msg_.constraints.resize(constraints.size());
+
+        loop_counter_ = 0;
       }
       catch (std::exception& e)
       {
@@ -92,7 +94,18 @@ namespace fccl
 
       qdot_publisher_.publish(controller_.desiredJointVelocities());
 
-      publishFeedback();
+      // publish feedback on every tenth update
+      if(loop_counter_ == 0)
+      {
+        publishFeedback();
+      }
+      else
+      {
+        loop_counter_++;
+        // TODO(Georg): magic number
+        if(loop_counter_ == 10)
+          loop_counter_ = 0;
+      }
     }
 
     void SingleArmController::js_callback(const

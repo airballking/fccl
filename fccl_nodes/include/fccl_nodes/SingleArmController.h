@@ -50,6 +50,7 @@ namespace fccl
         NodeHandle node_handle_;
         actionlib::SimpleActionServer<fccl_msgs::SingleArmMotionAction> action_server_;
         fccl_msgs::SingleArmMotionFeedback feedback_msg_;
+        std::size_t loop_counter_;
     
         // TF infrastructure
         TFWorker tf_worker_;
