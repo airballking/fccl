@@ -17,6 +17,7 @@ namespace fccl
       std::map<SemanticsBase, ConstraintFunction> result;
 
       registerConstraintFunction("above", above, result);
+      registerConstraintFunction("below", below, result);
 
       return result;
     }
@@ -113,6 +114,13 @@ namespace fccl
       object.changeReferenceFrame(object_transform);
   
       return tool.position().z() - object.position().z();
+    }
+
+    double below(const SemanticsBase& view_frame,
+        const Feature& tool_feature, const Feature& object_feature,
+        const Transform& tool_transform, const Transform& object_transform)
+    {
+      return -above(view_frame, tool_feature, object_feature, tool_transform, object_transform); 
     }
   } // namespace base
 } // namespace fccl

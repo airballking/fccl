@@ -272,3 +272,20 @@ TEST_F(ConstraintsTest, Control)
   EXPECT_DOUBLE_EQ(ac.desiredOutputValue(), 0.15);
   EXPECT_DOUBLE_EQ(ac.taskWeight(), 1.0);
 }
+
+TEST_F(ConstraintsTest, BelowFunction)
+{
+  Constraint ac;
+  ac.semantics().reference().setName(view_frame_name);
+  ac.semantics().name().setName(constraint_name);
+  ac.semantics().type().setName("below");
+  ac.toolFeature() = tool_feature;
+  ac.objectFeature() = object_feature;
+  ac.lowerBoundary() = lower_boundary;
+  ac.upperBoundary() = upper_boundary;
+ 
+  ASSERT_TRUE(ac.functionValid());
+  ASSERT_TRUE(ac.isValid());
+  ac.update(T_view_tool, T_view_object);
+  EXPECT_DOUBLE_EQ(ac.outputValue(), -0.3);
+}
