@@ -212,6 +212,12 @@ namespace fccl
         static std::map<fccl::semantics::SemanticsBase, ConstraintFunction> 
             createFunctionMap();
 
+
+        // auxiliary function to put a new function into the function-map
+        static void registerConstraintFunction(const std::string& function_name,
+            const ConstraintFunction& function,
+            std::map<fccl::semantics::SemanticsBase, ConstraintFunction>& map);
+
         // auxiliary function for numeric derivation
         void calculateInteractionSemantics(
             const fccl::semantics::TransformSemantics& tool_transform);

@@ -16,12 +16,18 @@ namespace fccl
     {
       std::map<SemanticsBase, ConstraintFunction> result;
 
-      // TODO(Georg): refactor this because we'll need it more often
-      SemanticsBase function_identifier;
-      function_identifier.setName("above");
-      result[function_identifier] = above;
+      registerConstraintFunction("above", above, result);
 
       return result;
+    }
+
+    void Constraint::registerConstraintFunction(const std::string& function_name,
+        const ConstraintFunction& function,
+        std::map<SemanticsBase, ConstraintFunction>& map)
+    {
+      SemanticsBase function_identifier;
+      function_identifier.setName(function_name);
+      map[function_identifier] = function;  
     }
 
     // NOT REAL-TIME-SAFE
