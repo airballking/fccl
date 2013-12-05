@@ -1,6 +1,7 @@
 #ifndef FCCL_BASE_CONSTRAINTS_H
 #define FCCL_BASE_CONSTRAINTS_H
 
+#include <fccl/base/ConstraintFunctions.h>
 #include <fccl/base/Features.h>
 #include <fccl/kdl/Transform.h>
 #include <fccl/kdl/InteractionMatrix.h>
@@ -15,12 +16,6 @@ namespace fccl
 {
   namespace base
   {
-    typedef double (*ConstraintFunction) 
-        (const fccl::semantics::SemanticsBase& view_frame,
-         const Feature& tool_feature, const Feature& object_feature,
-         const fccl::kdl::Transform& tool_transform,
-         const fccl::kdl::Transform& object_transform);
-
     class Constraint
     {
       public:
@@ -200,6 +195,7 @@ namespace fccl
         fccl::kdl::InteractionMatrix first_derivative_;
 
         // map used to lookup constraint functions dynamically
+        // TODO(Georg): make a typedef for the map
         static const std::map<fccl::semantics::SemanticsBase, ConstraintFunction>
             function_map_;
 
@@ -222,6 +218,7 @@ namespace fccl
         void calculateInteractionSemantics(
             const fccl::semantics::TransformSemantics& tool_transform);
 
+        // TODO(Georg): move this into a cpp-file
         double calculateOutputValue(const fccl::kdl::Transform& tool_transform,
             const fccl::kdl::Transform& object_transform) 
         {
@@ -253,6 +250,7 @@ namespace fccl
               object_transform, delta);
         }
 
+        // TODO(Georg): move this into a cpp-file
         void updateWeightAndDesiredOutput()
         {
           // TODO(Georg): refactor this param into every constraint
@@ -296,6 +294,7 @@ namespace fccl
         }
     };
 
+    // TODO(Georg): move this into a cpp-file
     inline std::ostream& operator<<(std::ostream& os, const Constraint& constraint)
     {
       os << "semantics: " << constraint.semantics() << "\n";
@@ -311,27 +310,6 @@ namespace fccl
 
       return os;
     }
-
-    // TODO(Georg): consider moving these into their own file
-    double above(const fccl::semantics::SemanticsBase& view_frame,
-        const Feature& tool_feature, const Feature& object_feature,
-        const fccl::kdl::Transform& tool_transform,
-        const fccl::kdl::Transform& object_transform);
-
-    double below(const fccl::semantics::SemanticsBase& view_frame,
-        const Feature& tool_feature, const Feature& object_feature,
-        const fccl::kdl::Transform& tool_transform,
-        const fccl::kdl::Transform& object_transform);
-
-    double left(const fccl::semantics::SemanticsBase& view_frame,
-        const Feature& tool_feature, const Feature& object_feature,
-        const fccl::kdl::Transform& tool_transform,
-        const fccl::kdl::Transform& object_transform);
-
-    double right(const fccl::semantics::SemanticsBase& view_frame,
-        const Feature& tool_feature, const Feature& object_feature,
-        const fccl::kdl::Transform& tool_transform,
-        const fccl::kdl::Transform& object_transform);
   } // namespace base
 } // namespace fccl
 #endif // FCCL_BASE_CONSTRAINTS_H
