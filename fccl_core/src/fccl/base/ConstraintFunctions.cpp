@@ -7,20 +7,27 @@ namespace fccl
 {
   namespace base
   {
+
+    Feature transformFeature(const fccl::semantics::SemanticsBase& target_frame,
+         const fccl::kdl::Transform& transform, const Feature& feature)
+    {
+      assert(target_frame.equals(transform.semantics().reference()));
+  
+      Feature result = feature;
+      result.changeReferenceFrame(transform);
+
+      return result;
+    }
+
     double above(const SemanticsBase& view_frame,
         const Feature& tool_feature, const Feature& object_feature,
         const Transform& tool_transform, const Transform& object_transform)
     {
-      assert(view_frame.equals(tool_transform.semantics().reference()));
-      assert(view_frame.equals(object_transform.semantics().reference()));
-  
-      Feature tool = tool_feature;
-      Feature object = object_feature;
-      
-      tool.changeReferenceFrame(tool_transform);
-      object.changeReferenceFrame(object_transform);
-  
-      return tool.position().z() - object.position().z();
+        Feature tool = transformFeature(view_frame, tool_transform, tool_feature);
+        Feature object = transformFeature(view_frame, object_transform,
+            object_feature);
+
+        return tool.position().z() - object.position().z();
     }
 
     double below(const SemanticsBase& view_frame,
@@ -35,16 +42,9 @@ namespace fccl
         const fccl::kdl::Transform& tool_transform,
         const fccl::kdl::Transform& object_transform)
     {
-      // TODO(Georg): refactor the beginnning into an external method
-      //              because we will re-use it several times
-      assert(view_frame.equals(tool_transform.semantics().reference()));
-      assert(view_frame.equals(object_transform.semantics().reference()));
-  
-      Feature tool = tool_feature;
-      Feature object = object_feature;
-      
-      tool.changeReferenceFrame(tool_transform);
-      object.changeReferenceFrame(object_transform);
+      Feature tool = transformFeature(view_frame, tool_transform, tool_feature);
+      Feature object = transformFeature(view_frame, object_transform,
+          object_feature);
 
       return tool.position().y() - object.position().y();
     }
