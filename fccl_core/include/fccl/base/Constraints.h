@@ -312,12 +312,23 @@ namespace fccl
       return os;
     }
 
+    // TODO(Georg): consider moving these into their own file
     double above(const fccl::semantics::SemanticsBase& view_frame,
         const Feature& tool_feature, const Feature& object_feature,
         const fccl::kdl::Transform& tool_transform,
         const fccl::kdl::Transform& object_transform);
 
     double below(const fccl::semantics::SemanticsBase& view_frame,
+        const Feature& tool_feature, const Feature& object_feature,
+        const fccl::kdl::Transform& tool_transform,
+        const fccl::kdl::Transform& object_transform);
+
+    double left(const fccl::semantics::SemanticsBase& view_frame,
+        const Feature& tool_feature, const Feature& object_feature,
+        const fccl::kdl::Transform& tool_transform,
+        const fccl::kdl::Transform& object_transform);
+
+    double right(const fccl::semantics::SemanticsBase& view_frame,
         const Feature& tool_feature, const Feature& object_feature,
         const fccl::kdl::Transform& tool_transform,
         const fccl::kdl::Transform& object_transform);
