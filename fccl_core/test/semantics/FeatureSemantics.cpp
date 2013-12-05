@@ -88,18 +88,23 @@ TEST_F(FeatureSemanticsTest, ValidityChecking)
   fs.name().setName(name);
   fs.type() = POINT_FEATURE;
 
+  EXPECT_FALSE(fs.isOrientationFeature());
   EXPECT_TRUE(fs.isValid());
 
   fs.type() = LINE_FEATURE;
+  EXPECT_TRUE(fs.isOrientationFeature());
   EXPECT_TRUE(fs.isValid());
 
   fs.type() = PLANE_FEATURE;
+  EXPECT_TRUE(fs.isOrientationFeature());
   EXPECT_TRUE(fs.isValid());
 
   fs.type() = UNKNOWN_FEATURE;
+  EXPECT_FALSE(fs.isOrientationFeature());
   EXPECT_FALSE(fs.isValid());
 
   fs.type() = FEATURE_COUNT;
+  EXPECT_FALSE(fs.isOrientationFeature());
   EXPECT_FALSE(fs.isValid());
 }
 

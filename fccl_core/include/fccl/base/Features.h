@@ -52,9 +52,14 @@ namespace fccl
             KDL::Equal(orientation(), other.orientation());
         }
 
+        bool isOrientationValid() const
+        {
+          return !semantics().isOrientationFeature() || isOrientationNonZero();
+        }
+
         bool isValid() const
         {
-          return semantics().isValid();
+          return semantics().isValid() && isOrientationValid();
         }
 
         void changeReferenceFrame(const fccl::kdl::Transform& transform)
@@ -79,6 +84,11 @@ namespace fccl
   
         // semantics of this feature
         fccl::semantics::FeatureSemantics semantics_;
+
+        bool isOrientationNonZero() const
+        {
+          return orientation().Norm() > KDL::epsilon;
+        }
     };
 
     inline std::ostream& operator<<(std::ostream& os, const Feature& feature)

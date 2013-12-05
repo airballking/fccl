@@ -19,7 +19,7 @@ class FeaturesTest : public ::testing::Test
 
       // kdl data
       pos = KDL::Vector(0, 0, 0);
-      dir = KDL::Vector(0, 0, 1);
+      dir = KDL::Vector(0, 0, 0);
       transform_data = KDL::Frame(KDL::Rotation::RotZ(M_PI/2.0), KDL::Vector(0, 0, 1));
       // semantic kdl
       transform.numerics() = transform_data;
@@ -107,13 +107,32 @@ TEST_F(FeaturesTest, ValidityCheck)
   f.position() = pos; 
   f.orientation() = dir;
 
+  EXPECT_TRUE(f.isOrientationValid());
   EXPECT_TRUE(f.isValid());
 
   f.semantics().type() = fccl::semantics::UNKNOWN_FEATURE;
+  EXPECT_TRUE(f.isOrientationValid());
   EXPECT_FALSE(f.isValid());
 
   f.semantics().type() = fccl::semantics::FEATURE_COUNT;
+  EXPECT_TRUE(f.isOrientationValid());
   EXPECT_FALSE(f.isValid());
+
+  f.semantics().type() = fccl::semantics::LINE_FEATURE;
+  EXPECT_FALSE(f.isOrientationValid());
+  EXPECT_FALSE(f.isValid());
+
+  f.semantics().type() = fccl::semantics::LINE_FEATURE;
+  EXPECT_FALSE(f.isOrientationValid());
+  EXPECT_FALSE(f.isValid());
+
+  f.orientation() = KDL::Vector(1, 0, 0);
+  EXPECT_TRUE(f.isOrientationValid());
+  EXPECT_TRUE(f.isValid());
+
+  f.semantics().type() = fccl::semantics::PLANE_FEATURE;
+  EXPECT_TRUE(f.isOrientationValid());
+  EXPECT_TRUE(f.isValid());
 }
 
 TEST_F(FeaturesTest, ChangeReferenceFrame)
@@ -132,7 +151,7 @@ TEST_F(FeaturesTest, ChangeReferenceFrame)
   EXPECT_TRUE(KDL::Equal(f2.position(), transform.numerics() * pos));
   EXPECT_TRUE(KDL::Equal(f2.orientation(), transform.numerics() * dir));
   EXPECT_TRUE(KDL::Equal(f2.position(), KDL::Vector(0, 0, 1)));  
-  EXPECT_TRUE(KDL::Equal(f2.orientation(), KDL::Vector(0, 0, 2)));
+  EXPECT_TRUE(KDL::Equal(f2.orientation(), KDL::Vector(0, 0, 1)));
 
   EXPECT_FALSE(f.equals(f2));
   Feature f3;

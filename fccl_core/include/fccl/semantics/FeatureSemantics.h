@@ -67,6 +67,11 @@ namespace fccl
               name().equals(other.name());
         }
 
+        bool isOrientationFeature() const
+        {
+          return (type() == LINE_FEATURE) || (type() == PLANE_FEATURE);
+        }
+
         bool isValid() const
         {
           return featureTypeValid(type());
