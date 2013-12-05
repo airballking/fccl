@@ -67,7 +67,7 @@ namespace fccl
           semantics().changeReferenceFrame(transform.semantics());
 
           position() = transform.numerics() * position();
-          orientation() = transform.numerics() * orientation();
+          orientation() = transform.numerics().M * orientation();
         }
           
         bool changeReferencePossible(const fccl::kdl::Transform& transform)

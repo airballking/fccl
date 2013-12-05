@@ -19,7 +19,7 @@ class FeaturesTest : public ::testing::Test
 
       // kdl data
       pos = KDL::Vector(0, 0, 0);
-      dir = KDL::Vector(0, 0, 0);
+      dir = KDL::Vector(0, 1, 0);
       transform_data = KDL::Frame(KDL::Rotation::RotZ(M_PI/2.0), KDL::Vector(0, 0, 1));
       // semantic kdl
       transform.numerics() = transform_data;
@@ -119,18 +119,18 @@ TEST_F(FeaturesTest, ValidityCheck)
   EXPECT_FALSE(f.isValid());
 
   f.semantics().type() = fccl::semantics::LINE_FEATURE;
-  EXPECT_FALSE(f.isOrientationValid());
-  EXPECT_FALSE(f.isValid());
-
-  f.semantics().type() = fccl::semantics::LINE_FEATURE;
-  EXPECT_FALSE(f.isOrientationValid());
-  EXPECT_FALSE(f.isValid());
-
-  f.orientation() = KDL::Vector(1, 0, 0);
   EXPECT_TRUE(f.isOrientationValid());
   EXPECT_TRUE(f.isValid());
 
   f.semantics().type() = fccl::semantics::PLANE_FEATURE;
+  EXPECT_TRUE(f.isOrientationValid());
+  EXPECT_TRUE(f.isValid());
+
+  f.orientation() = KDL::Vector(0, 0, 0);
+  EXPECT_FALSE(f.isOrientationValid());
+  EXPECT_FALSE(f.isValid());
+
+  f.semantics().type() = fccl::semantics::POINT_FEATURE;
   EXPECT_TRUE(f.isOrientationValid());
   EXPECT_TRUE(f.isValid());
 }
@@ -149,9 +149,9 @@ TEST_F(FeaturesTest, ChangeReferenceFrame)
   EXPECT_STREQ(f2.semantics().name().getName().c_str(), name.c_str());
   EXPECT_EQ(f2.semantics().type(), fccl::semantics::POINT_FEATURE);
   EXPECT_TRUE(KDL::Equal(f2.position(), transform.numerics() * pos));
-  EXPECT_TRUE(KDL::Equal(f2.orientation(), transform.numerics() * dir));
+  EXPECT_TRUE(KDL::Equal(f2.orientation(), transform.numerics().M * dir));
   EXPECT_TRUE(KDL::Equal(f2.position(), KDL::Vector(0, 0, 1)));  
-  EXPECT_TRUE(KDL::Equal(f2.orientation(), KDL::Vector(0, 0, 1)));
+  EXPECT_TRUE(KDL::Equal(f2.orientation(), KDL::Vector(-1, 0, 0)));
 
   EXPECT_FALSE(f.equals(f2));
   Feature f3;
@@ -159,6 +159,6 @@ TEST_F(FeaturesTest, ChangeReferenceFrame)
   f3.semantics().name() = f.semantics().name();
   f3.semantics().type() = f.semantics().type();
   f3.position() =  transform.numerics() * pos;
-  f3.orientation() = transform.numerics() * dir;
+  f3.orientation() = transform.numerics().M * dir;
   EXPECT_TRUE(f2.equals(f3));
 }
