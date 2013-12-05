@@ -250,7 +250,6 @@ TEST_F(ConstraintsTest, TransformMapUpdate)
   ASSERT_TRUE(ac.isValid());
   ac.update(transform_map);
   EXPECT_DOUBLE_EQ(ac.outputValue(), 0.3);
-  std::cout << ac << "\n";
 }
 
 TEST_F(ConstraintsTest, Control)
@@ -338,4 +337,30 @@ TEST_F(ConstraintsTest, BehindInfrontFunctions)
   ASSERT_TRUE(infrontc.isValid());
   infrontc.update(T_view_tool, T_view_object);
   EXPECT_DOUBLE_EQ(behind.outputValue(), -infrontc.outputValue());
+}
+
+TEST_F(ConstraintsTest, PerpendicularFunction)
+{
+  Constraint perpc;
+  perpc.semantics().reference().setName(view_frame_name);
+  perpc.semantics().name().setName(constraint_name);
+  perpc.semantics().type().setName("perpendicular");
+  perpc.toolFeature() = tool_feature;
+  perpc.objectFeature() = object_feature;
+  perpc.lowerBoundary() = lower_boundary;
+  perpc.upperBoundary() = upper_boundary;
+
+  ASSERT_TRUE(perpc.isValid());
+  perpc.update(T_view_tool, T_view_object);
+  EXPECT_DOUBLE_EQ(perpc.outputValue(), 0.0);
+
+  perpc.toolFeature().orientation() = KDL::Vector(0, -1, 0);
+  ASSERT_TRUE(perpc.isValid());
+  perpc.update(T_view_tool, T_view_object);
+  EXPECT_DOUBLE_EQ(perpc.outputValue(), 0.0);
+
+  perpc.toolFeature().orientation() = KDL::Vector(0, 0, -1);
+  ASSERT_TRUE(perpc.isValid());
+  perpc.update(T_view_tool, T_view_object);
+  EXPECT_DOUBLE_EQ(perpc.outputValue(), -1.0);
 }

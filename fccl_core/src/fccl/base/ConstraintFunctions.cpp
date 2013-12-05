@@ -74,5 +74,21 @@ namespace fccl
     {
       return -behind(view_frame, tool_feature, object_feature, tool_transform, object_transform);
     }
+
+    double perpendicular(const fccl::semantics::SemanticsBase& view_frame,
+        const Feature& tool_feature, const Feature& object_feature,
+        const fccl::kdl::Transform& tool_transform,
+        const fccl::kdl::Transform& object_transform)
+    {
+      assert(tool_feature.isOrientationValid());
+      assert(object_feature.isOrientationValid());
+
+      Feature tool = transformFeature(view_frame, tool_transform, tool_feature);
+      Feature object = transformFeature(view_frame, object_transform,
+          object_feature);
+
+      return KDL::dot(tool.orientation(), object.orientation()) /
+          (tool.orientation().Norm() * object.orientation().Norm());
+    }
   } // namespace base
 } // namespace fccl
