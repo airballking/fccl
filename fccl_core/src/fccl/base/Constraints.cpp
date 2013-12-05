@@ -20,6 +20,8 @@ namespace fccl
       registerConstraintFunction("below", below, result);
       registerConstraintFunction("left", left, result);
       registerConstraintFunction("right", right, result);
+      registerConstraintFunction("behind", behind, result);
+      registerConstraintFunction("infront", infront, result);
 
       return result;
     }

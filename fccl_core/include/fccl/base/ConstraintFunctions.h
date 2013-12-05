@@ -37,6 +37,16 @@ namespace fccl
         const Feature& tool_feature, const Feature& object_feature,
         const fccl::kdl::Transform& tool_transform,
         const fccl::kdl::Transform& object_transform);
+
+    double behind(const fccl::semantics::SemanticsBase& view_frame,
+        const Feature& tool_feature, const Feature& object_feature,
+        const fccl::kdl::Transform& tool_transform,
+        const fccl::kdl::Transform& object_transform);
+
+    double infront(const fccl::semantics::SemanticsBase& view_frame,
+        const Feature& tool_feature, const Feature& object_feature,
+        const fccl::kdl::Transform& tool_transform,
+        const fccl::kdl::Transform& object_transform);
   } // namespace base
 } // namespace fccl
 #endif // FCCL_BASE_CONSTRAINT_FUNCTIONS_H

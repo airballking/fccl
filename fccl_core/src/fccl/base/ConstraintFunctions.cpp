@@ -56,5 +56,23 @@ namespace fccl
     {
       return -left(view_frame, tool_feature, object_feature, tool_transform, object_transform);
     }
+
+    double behind(const SemanticsBase& view_frame,
+        const Feature& tool_feature, const Feature& object_feature,
+        const Transform& tool_transform, const Transform& object_transform)
+    {
+        Feature tool = transformFeature(view_frame, tool_transform, tool_feature);
+        Feature object = transformFeature(view_frame, object_transform,
+            object_feature);
+
+        return tool.position().x() - object.position().x();
+    }
+
+    double infront(const SemanticsBase& view_frame,
+        const Feature& tool_feature, const Feature& object_feature,
+        const Transform& tool_transform, const Transform& object_transform)
+    {
+      return -behind(view_frame, tool_feature, object_feature, tool_transform, object_transform);
+    }
   } // namespace base
 } // namespace fccl

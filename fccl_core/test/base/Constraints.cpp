@@ -314,3 +314,28 @@ TEST_F(ConstraintsTest, LeftRightFunctions)
   rightc.update(T_view_tool, T_view_object);
   EXPECT_DOUBLE_EQ(leftc.outputValue(), -rightc.outputValue());
 }
+
+TEST_F(ConstraintsTest, BehindInfrontFunctions)
+{
+  Constraint behind, infrontc;
+  behind.semantics().reference().setName(view_frame_name);
+  behind.semantics().name().setName(constraint_name);
+  behind.semantics().type().setName("behind");
+  behind.toolFeature() = tool_feature;
+  behind.objectFeature() = object_feature;
+  behind.lowerBoundary() = lower_boundary;
+  behind.upperBoundary() = upper_boundary;
+
+  infrontc = behind;
+  infrontc.semantics().type().setName("infront");
+ 
+  ASSERT_TRUE(behind.functionValid());
+  ASSERT_TRUE(behind.isValid());
+  behind.update(T_view_tool, T_view_object);
+  EXPECT_DOUBLE_EQ(behind.outputValue(), -0.1);
+
+  ASSERT_TRUE(infrontc.functionValid());
+  ASSERT_TRUE(infrontc.isValid());
+  infrontc.update(T_view_tool, T_view_object);
+  EXPECT_DOUBLE_EQ(behind.outputValue(), -infrontc.outputValue());
+}
