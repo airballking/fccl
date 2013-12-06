@@ -272,6 +272,7 @@ TEST_F(ConstraintsTest, Control)
   EXPECT_DOUBLE_EQ(ac.taskWeight(), 1.0);
 }
 
+// TODO(Georg): move these test into separate TestSuite for ConstraintFunctions
 TEST_F(ConstraintsTest, BelowFunction)
 {
   Constraint ac;
@@ -363,4 +364,44 @@ TEST_F(ConstraintsTest, PerpendicularFunction)
   ASSERT_TRUE(perpc.isValid());
   perpc.update(T_view_tool, T_view_object);
   EXPECT_DOUBLE_EQ(perpc.outputValue(), -1.0);
+}
+
+TEST_F(ConstraintsTest, PointingFunction)
+{
+  Constraint pointingc;
+  pointingc.semantics().reference().setName(view_frame_name);
+  pointingc.semantics().name().setName(constraint_name);
+  pointingc.semantics().type().setName("pointing");
+  pointingc.toolFeature() = tool_feature;
+  pointingc.objectFeature() = object_feature;
+  pointingc.lowerBoundary() = lower_boundary;
+  pointingc.upperBoundary() = upper_boundary;
+
+  ASSERT_TRUE(pointingc.isValid());
+  T_view_tool.numerics() = 
+      KDL::Frame(KDL::Rotation::Identity(), KDL::Vector(0, 0, 0));
+  T_view_object.numerics() = 
+      KDL::Frame(KDL::Rotation::Identity(), KDL::Vector(1, 0, 0));
+  pointingc.update(T_view_tool, T_view_object);
+  EXPECT_DOUBLE_EQ(pointingc.outputValue(), 1.0);
+
+  T_view_object.numerics() = 
+     KDL::Frame(KDL::Rotation::Identity(), KDL::Vector(-1, 0, 0));
+  pointingc.update(T_view_tool, T_view_object);
+  EXPECT_DOUBLE_EQ(pointingc.outputValue(), -1.0);
+
+  T_view_object.numerics() = 
+     KDL::Frame(KDL::Rotation::Identity(), KDL::Vector(0, 1, 0));
+  pointingc.update(T_view_tool, T_view_object);
+  EXPECT_DOUBLE_EQ(pointingc.outputValue(), 0.0);
+
+  T_view_object.numerics() = 
+     KDL::Frame(KDL::Rotation::Identity(), KDL::Vector(0, 0, 1));
+  pointingc.update(T_view_tool, T_view_object);
+  EXPECT_DOUBLE_EQ(pointingc.outputValue(), 0.0);
+
+  T_view_object.numerics() = 
+     KDL::Frame(KDL::Rotation::Identity(), KDL::Vector(0, 0, 0));
+  pointingc.update(T_view_tool, T_view_object);
+  EXPECT_DOUBLE_EQ(pointingc.outputValue(), 0.0);
 }

@@ -7,18 +7,6 @@ namespace fccl
 {
   namespace base
   {
-
-    Feature transformFeature(const fccl::semantics::SemanticsBase& target_frame,
-         const fccl::kdl::Transform& transform, const Feature& feature)
-    {
-      assert(target_frame.equals(transform.semantics().reference()));
-  
-      Feature result = feature;
-      result.changeReferenceFrame(transform);
-
-      return result;
-    }
-
     double above(const SemanticsBase& view_frame,
         const Feature& tool_feature, const Feature& object_feature,
         const Transform& tool_transform, const Transform& object_transform)
@@ -89,6 +77,43 @@ namespace fccl
 
       return KDL::dot(tool.orientation(), object.orientation()) /
           (tool.orientation().Norm() * object.orientation().Norm());
+    }
+
+    double pointing(const fccl::semantics::SemanticsBase& view_frame,
+        const Feature& tool_feature, const Feature& object_feature,
+        const fccl::kdl::Transform& tool_transform,
+        const fccl::kdl::Transform& object_transform)
+    {
+      assert(tool_feature.isOrientationValid());
+
+      Feature tool = transformFeature(view_frame, tool_transform, tool_feature);
+      Feature object = transformFeature(view_frame, object_transform,
+          object_feature);
+
+      KDL::Vector connector = object.position() - tool.position();
+
+      double denominator = tool.orientation().Norm() * connector.Norm();
+      
+      if(denominator < KDL::epsilon)
+      {
+        // SINGULARITY: THE TWO FEATURES ARE PRACTICALLY ON THE SAME SPOT!!
+        return 0.0;
+      }
+      else
+      {
+        return KDL::dot(tool.orientation(), connector) / denominator;
+      }
+    }
+
+    Feature transformFeature(const fccl::semantics::SemanticsBase& target_frame,
+         const fccl::kdl::Transform& transform, const Feature& feature)
+    {
+      assert(target_frame.equals(transform.semantics().reference()));
+  
+      Feature result = feature;
+      result.changeReferenceFrame(transform);
+
+      return result;
     }
   } // namespace base
 } // namespace fccl

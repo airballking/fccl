@@ -15,9 +15,6 @@ namespace fccl
          const fccl::kdl::Transform& tool_transform,
          const fccl::kdl::Transform& object_transform);
 
-    Feature transformFeature(const fccl::semantics::SemanticsBase& target_frame,
-         const fccl::kdl::Transform& transform, const Feature& feature);
-
     double above(const fccl::semantics::SemanticsBase& view_frame,
         const Feature& tool_feature, const Feature& object_feature,
         const fccl::kdl::Transform& tool_transform,
@@ -52,6 +49,14 @@ namespace fccl
         const Feature& tool_feature, const Feature& object_feature,
         const fccl::kdl::Transform& tool_transform,
         const fccl::kdl::Transform& object_transform);
+
+    double pointing(const fccl::semantics::SemanticsBase& view_frame,
+        const Feature& tool_feature, const Feature& object_feature,
+        const fccl::kdl::Transform& tool_transform,
+        const fccl::kdl::Transform& object_transform);
+
+    Feature transformFeature(const fccl::semantics::SemanticsBase& target_frame,
+         const fccl::kdl::Transform& transform, const Feature& feature);
   } // namespace base
 } // namespace fccl
 #endif // FCCL_BASE_CONSTRAINT_FUNCTIONS_H
