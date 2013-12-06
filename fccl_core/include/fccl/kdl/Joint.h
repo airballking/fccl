@@ -9,7 +9,7 @@ namespace fccl
   namespace kdl
   {
     // TODO(Georg): move this to utils
-    bool areEqual(double a, double b)
+    inline bool areEqual(double a, double b)
     {
       return fabs(a-b) < std::numeric_limits<double>::epsilon();
     }
