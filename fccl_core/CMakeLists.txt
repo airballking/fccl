@@ -112,6 +112,7 @@ set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS
 catkin_add_gtest(${PROJECT_NAME}-test 
                  test/main.cpp 
                  test/base/Features.cpp
+                 test/base/JointConstraint.cpp
                  test/base/Constraints.cpp
                  test/base/ConstraintArray.cpp
                  test/control/ConstraintController.cpp
