@@ -1,7 +1,7 @@
 #ifndef FCCL_KDL_JOINT_H
 #define FCCL_KDL_JOINT_H
 
-#include <fccl/base/Policies.h>
+#include <fccl/utils/StatePolicies.h>
 #include <fccl/semantics/SemanticsBase.h>
 
 using namespace fccl::utils;
