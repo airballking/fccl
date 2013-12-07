@@ -5,35 +5,24 @@
 #include <fccl/semantics/SemanticsBase.h>
 
 using namespace fccl::utils;
+using namespace fccl::semantics;
 
 namespace fccl
 {
   namespace kdl
   {
-    template <class StatePolicy>
-    class Joint : public StatePolicy
+    template <class StatePolicy, class SemanticsPolicy>
+    class Joint : public StatePolicy, public SemanticsPolicy
     {
       public:
-        const fccl::semantics::SemanticsBase& semantics() const
-        {
-          return semantics_;
-        }
-
-        fccl::semantics::SemanticsBase& semantics()
-        {
-          return semantics_;
-        }
-
         virtual bool equals(const Joint& other) const
         {
           return this->semantics().equals(other.semantics()) &&
               this->state().equals(other.state());
         }
-      private:
-        fccl::semantics::SemanticsBase semantics_;
     };
 
-    typedef Joint<DoublePositionState> PositionJoint;
+    typedef Joint<DoublePositionState, SemanticsBase> PositionJoint;
   } // namespace kdl
 } // namespace fccl
 #endif // FCCL_KDL_JOINT_H
