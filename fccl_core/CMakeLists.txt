@@ -128,6 +128,7 @@ catkin_add_gtest(${PROJECT_NAME}-test
                  test/kdl/Jacobian.cpp
                  test/kdl/JntArray.cpp
                  test/kdl/Joint.cpp
+                 test/kdl/JointArray.cpp
                  test/kdl/KinematicChain.cpp
                  test/kdl/JointMappingMatrix.cpp
                  test/semantics/TransformSemantics.cpp
