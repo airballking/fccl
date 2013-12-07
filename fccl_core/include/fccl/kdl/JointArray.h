@@ -67,7 +67,7 @@ namespace fccl
       private:
         Eigen::Matrix<T, Eigen::Dynamic, 1> data_;
     };
-/*
+
     template<class T>
     inline ostream& operator<<(ostream& os, const Array<T>& obj)
     {
@@ -76,7 +76,7 @@ namespace fccl
 
       return os;
     }
-*/
+
 /*
     template<class T>
     inline Array<T>& substract(const Array<T>& lhs, const Array<T>& rhs, 
