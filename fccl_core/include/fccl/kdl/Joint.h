@@ -11,8 +11,8 @@ namespace fccl
 {
   namespace kdl
   {
-    template <class StatePolicy, class SemanticsPolicy>
-    class Joint : public StatePolicy, public SemanticsPolicy
+    template <class T, template <class> class StatePolicy, class SemanticsPolicy>
+    class Joint : public StatePolicy<T>, public SemanticsPolicy
     {
       public:
         virtual bool equals(const Joint& other) const
@@ -22,7 +22,9 @@ namespace fccl
         }
     };
 
-    typedef Joint<DoublePositionState, SemanticsBase> PositionJoint;
+    typedef Joint<double, PositionState, SemanticsBase> PositionJoint;
+    typedef Joint<double, VelocityState, SemanticsBase> VelocityJoint;
+    typedef Joint<double, AccelerationState, SemanticsBase> AccelerationJoint;
   } // namespace kdl
 } // namespace fccl
 #endif // FCCL_KDL_JOINT_H
