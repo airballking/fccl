@@ -3,6 +3,9 @@
 
 #include <limits>
 #include <math.h>
+#include <iostream>
+
+using namespace std;
 
 namespace fccl
 {
@@ -93,7 +96,30 @@ namespace fccl
           return *this;
         }
     };
- 
+
+    template<class T>
+    inline ostream& operator<<(ostream& os, const PositionState<T>& state)
+    {
+      os << "position: " << state.position();
+      return os;
+    }
+
+    template<class T>
+    inline ostream& operator<<(ostream& os, const VelocityState<T>& state)
+    {
+      os << static_cast< const PositionState<T>& >(state) << "\n";
+      os << "velocity: " << state.velocity();
+      return os;
+    }
+
+    template<class T>
+    inline ostream& operator<<(ostream& os, const AccelerationState<T>& state)
+    {
+      os << static_cast< const VelocityState<T>& >(state) << "\n";
+      os << "acceleration: " << state.acceleration();
+      return os;
+    }
+
     typedef PositionState<double> DoublePositionState;
     typedef VelocityState<double> DoubleVelocityState;
     typedef AccelerationState<double> DoubleAccelerationState;
