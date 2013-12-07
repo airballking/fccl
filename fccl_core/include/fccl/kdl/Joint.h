@@ -6,6 +6,7 @@
 
 using namespace fccl::utils;
 using namespace fccl::semantics;
+using namespace std;
 
 namespace fccl
 {
@@ -21,6 +22,15 @@ namespace fccl
               this->state().equals(other.state());
         }
     };
+
+    template <class T, template <class> class StatePolicy, class SemanticsPolicy>
+    inline ostream& operator<<(ostream& os, 
+        const Joint<T, StatePolicy, SemanticsPolicy>& joint)
+    {
+      os << static_cast< const StatePolicy<T>& >(joint) << "\n";
+      os << static_cast< const SemanticsPolicy& >(joint);
+      return os;
+    }
 
     typedef Joint<double, PositionState, SemanticsBase> PositionJoint;
     typedef Joint<double, VelocityState, SemanticsBase> VelocityJoint;
