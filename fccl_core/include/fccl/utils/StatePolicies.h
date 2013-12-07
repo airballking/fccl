@@ -73,7 +73,7 @@ namespace fccl
     };
  
     template <class T>
-    class AccelerationState : public AccelerationState<T>
+    class AccelerationState : public VelocityState<T>
     {
       public:
         const T& acceleration() const
