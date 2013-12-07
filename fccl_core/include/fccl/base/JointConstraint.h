@@ -3,22 +3,26 @@
 
 #include <fccl/kdl/Joint.h>
 
+using namespace fccl::kdl;
+
 namespace fccl
 {
   namespace base
   {
-    // TODO(Georg): think about templating Constraint
-    class JointConstraint
+    // TODO(Georg): connect constraint-values with traits of template T
+    // TODO(Georg): extract calculation of weight and desired value in policy
+    template<class T>
+    class Constraint
     {
       public:
-        const fccl::kdl::Joint& joint() const
+        const T& output() const
         {
-          return joint_;
+          return output_;
         }
 
-        fccl::kdl::Joint& joint()
+        T& output()
         {
-          return joint_;
+          return output_;
         }
 
         double lowerBoundary() const
@@ -41,26 +45,26 @@ namespace fccl
           return upper_boundary_;
         }
 
-        bool equals(const JointConstraint& other) const
+        bool equals(const Constraint& other) const
         {
-          using fccl::kdl::areEqual;
+          using fccl::utils::areEqual;
 
-          return joint().equals(other.joint()) && 
+          return output().equals(other.output()) && 
               areEqual(lowerBoundary(), other.lowerBoundary()) &&
               areEqual(upperBoundary(), other.upperBoundary());
         }
 
         double calculateWeight() const
         {
-          if(joint().position() > upperBoundary() || 
-              joint().position() < lowerBoundary())
+          if(output().position() > upperBoundary() || 
+              output().position() < lowerBoundary())
           {
             return 1.0;
           }
           else
           {
-            double w_lo = (1/margin())*(-upperBoundary() + joint().position())+1;
-            double w_hi = (1/margin())*( lowerBoundary() - joint().position())+1;
+            double w_lo = (1/margin())*(-upperBoundary() + output().position())+1;
+            double w_hi = (1/margin())*( lowerBoundary() - output().position())+1;
         
             w_lo = (w_lo > 0.0) ? w_lo : 0.0;
             w_hi = (w_hi > 0.0) ? w_hi : 0.0;
@@ -71,23 +75,23 @@ namespace fccl
 
         double calculateDesiredOutput() const
         {
-          if(joint().position() > adjustedUpperBoundary())
+          if(output().position() > adjustedUpperBoundary())
           {
             return adjustedUpperBoundary();
           }
-          else if(joint().position() < adjustedLowerBoundary())
+          else if(output().position() < adjustedLowerBoundary())
           {
             return adjustedLowerBoundary();
           }
-          else
+          else // constraint is fulfilled
           {
-            return joint().position();
+            return output().position();
           }
         }
 
       private:
-        // internal state of the joint-constraint
-        fccl::kdl::Joint joint_;
+        // internal state of the output-constraint
+        T output_;
         double lower_boundary_;
         double upper_boundary_;
 
@@ -118,6 +122,8 @@ namespace fccl
           return upperBoundary() - lowerBoundary();
         }
     };
+
+    typedef Constraint<PositionJoint> JointConstraint;
   } // namespace base
 } // namespace fccl
 #endif // FCCL_BASE_JOINT_CONSTRAINT_H
