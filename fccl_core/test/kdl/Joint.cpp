@@ -55,3 +55,5 @@ TEST_F(JointTest, Basics)
   jnt5.semantics().setName("");
   EXPECT_FALSE(jnt.equals(jnt5));
 }
+// TODO(Georg): test velocity joint
+// TODO(Georg): test acceleration joint
