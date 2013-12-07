@@ -33,9 +33,19 @@ namespace fccl
           setID(fccl::utils::Hasher::hash(name));
         }
 
-        bool equals(const SemanticsBase& other) const
+        virtual bool equals(const SemanticsBase& other) const
         {
           return getID() == other.getID();
+        }
+
+        const SemanticsBase& semantics() const
+        {
+          return *this;
+        }
+
+        SemanticsBase& semantics()
+        {
+          return *this;
         }
 
       private:
