@@ -26,28 +26,28 @@ class JointTest : public ::testing::Test
 
 TEST_F(JointTest, Basics)
 {
-  Joint jnt;
+  PositionJoint jnt;
   jnt.semantics() = semantics;
   jnt.position() = joint_position;
 
   ASSERT_STREQ(jnt.semantics().getName().c_str(), joint_name.c_str());
   ASSERT_DOUBLE_EQ(jnt.position(), joint_position);
 
-  Joint jnt2(jnt);
+  PositionJoint jnt2(jnt);
   EXPECT_TRUE(jnt.equals(jnt2));
   EXPECT_STREQ(jnt2.semantics().getName().c_str(), joint_name.c_str());
   EXPECT_DOUBLE_EQ(jnt2.position(), joint_position);
 
-  Joint jnt3;
+  PositionJoint jnt3;
   jnt3 = jnt;
   EXPECT_TRUE(jnt.equals(jnt3));
 
-  Joint jnt4;
+  PositionJoint jnt4;
   jnt4.semantics() = jnt.semantics();
   jnt4.position() = jnt.position();
   EXPECT_TRUE(jnt.equals(jnt4));
 
-  Joint jnt5;
+  PositionJoint jnt5;
   EXPECT_FALSE(jnt.equals(jnt5));
   jnt5.semantics() = semantics;
   EXPECT_FALSE(jnt.equals(jnt5));

@@ -1,32 +1,19 @@
 #ifndef FCCL_KDL_JOINT_H
 #define FCCL_KDL_JOINT_H
 
+#include <fccl/base/Policies.h>
 #include <fccl/semantics/SemanticsBase.h>
-#include <limits>
+
+using namespace fccl::utils;
 
 namespace fccl
 {
   namespace kdl
   {
-    // TODO(Georg): move this to utils
-    inline bool areEqual(double a, double b)
-    {
-      return fabs(a-b) < std::numeric_limits<double>::epsilon();
-    }
-
-    class Joint
+    template <class StatePolicy>
+    class Joint : public StatePolicy
     {
       public:
-        double position() const
-        {
-          return position_;
-        }
-
-        double& position()
-        {
-          return position_;
-        }
-
         const fccl::semantics::SemanticsBase& semantics() const
         {
           return semantics_;
@@ -37,15 +24,16 @@ namespace fccl
           return semantics_;
         }
 
-        bool equals(const Joint& other) const
+        virtual bool equals(const Joint& other) const
         {
-          return semantics().equals(other.semantics()) &&
-              areEqual(position(), other.position());
+          return this->semantics().equals(other.semantics()) &&
+              this->state().equals(other.state());
         }
       private:
-        double position_;
         fccl::semantics::SemanticsBase semantics_;
     };
+
+    typedef Joint<DoublePositionState> PositionJoint;
   } // namespace kdl
 } // namespace fccl
 #endif // FCCL_KDL_JOINT_H
