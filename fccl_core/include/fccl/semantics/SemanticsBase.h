@@ -56,6 +56,11 @@ namespace fccl
           return *this;
         }
 
+        SemanticsBase& operator-=(const SemanticsBase& rhs)
+        {
+          return this->operator+=(rhs);
+        }
+
       private:
         std::size_t id_;
     };
@@ -98,6 +103,12 @@ namespace fccl
     }
 
     inline SemanticsBase operator+(SemanticsBase lhs, const SemanticsBase& rhs)
+    {
+      lhs+=rhs;
+      return lhs;
+    }
+
+    inline SemanticsBase operator-(SemanticsBase lhs, const SemanticsBase& rhs)
     {
       lhs+=rhs;
       return lhs;
