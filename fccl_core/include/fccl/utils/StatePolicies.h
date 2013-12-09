@@ -42,12 +42,19 @@ namespace fccl
           return *this;
         }
 
+        PositionState& operator-=(const PositionState& rhs)
+        {
+          this->position() -= rhs.position();
+          return *this;
+        }
+
       protected:
         T position_;
 
         ~PositionState() {}
     };
 
+    // TODO(Georg): think about solving this through composition
     template <class T>
     class VelocityState : public PositionState<T>
     {
@@ -69,6 +76,14 @@ namespace fccl
           static_cast< PositionState<T>& >(*this) +=
               static_cast< const PositionState<T>& >(rhs);
           this->velocity() += rhs.velocity();
+          return *this;
+        }
+
+        VelocityState& operator-=(const VelocityState& rhs)
+        {
+          static_cast< PositionState<T>& >(*this) -=
+              static_cast< const PositionState<T>& >(rhs);
+          this->velocity() -= rhs.velocity();
           return *this;
         }
      
@@ -99,6 +114,14 @@ namespace fccl
           static_cast< VelocityState<T>& >(*this) +=
               static_cast< const VelocityState<T>& >(rhs);
           this->acceleration() += rhs.acceleration();
+          return *this;
+        }
+
+        AccelerationState& operator-=(const AccelerationState& rhs)
+        {
+          static_cast< VelocityState<T>& >(*this) -=
+              static_cast< const VelocityState<T>& >(rhs);
+          this->acceleration() -= rhs.acceleration();
           return *this;
         }
       
@@ -154,6 +177,31 @@ namespace fccl
       lhs += rhs;
       return lhs;
     }
+
+    template<class T>
+    inline PositionState<T> operator-(PositionState<T> lhs, 
+        const PositionState<T>& rhs)
+    {
+      lhs -= rhs;
+      return lhs;
+    }
+
+    template<class T>
+    inline VelocityState<T> operator-(VelocityState<T> lhs, 
+        const VelocityState<T>& rhs)
+    {
+      lhs -= rhs;
+      return lhs;
+    }
+
+    template<class T>
+    inline AccelerationState<T> operator-(AccelerationState<T> lhs, 
+        const AccelerationState<T>& rhs)
+    {
+      lhs -= rhs;
+      return lhs;
+    }
+
 
     typedef PositionState<double> DoublePositionState;
     typedef VelocityState<double> DoubleVelocityState;
