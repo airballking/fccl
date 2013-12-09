@@ -62,7 +62,12 @@ namespace fccl
           return this->velocity_;
         }
 
-        // TODO(Georg): add equals()
+        virtual bool equals(const VelocityState& other) const
+        {
+          return static_cast< const PositionState<T>& >(*this).equals(
+              static_cast< const PositionState<T>& >(other)) &&
+              areEqual(this->velocity(), other.velocity());
+        }
 
         VelocityState& operator+=(const VelocityState& rhs)
         {
@@ -100,7 +105,12 @@ namespace fccl
           return this->acceleration_;
         }
 
-        // TODO(Georg): add equals()
+        virtual bool equals(const AccelerationState& other) const
+        {
+          return static_cast< const VelocityState<T>& >(*this).equals(
+              static_cast< const VelocityState<T>& >(other)) &&
+              areEqual(this->acceleration(), other.acceleration());
+        }
 
         AccelerationState& operator+=(const AccelerationState& rhs)
         {
