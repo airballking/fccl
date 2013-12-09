@@ -30,6 +30,14 @@ namespace fccl
           return *this;
         }
 
+        Joint& operator-=(const Joint& rhs)
+        {
+          this->as<SemanticsPolicy>() -= rhs.as<const SemanticsPolicy>();
+          this->as< StatePolicy<T> >() -= rhs.as< const StatePolicy<T> >();
+
+          return *this;
+        }
+
         template<class U>
         U& as()
         {
@@ -58,6 +66,15 @@ namespace fccl
         const Joint<T, StatePolicy, SemanticsPolicy>& rhs)
     {
       lhs += rhs;
+      return lhs;
+    }
+
+    template <class T, template <class> class StatePolicy, class SemanticsPolicy>
+    inline Joint<T, StatePolicy, SemanticsPolicy> operator-(
+        Joint<T, StatePolicy, SemanticsPolicy> lhs,
+        const Joint<T, StatePolicy, SemanticsPolicy>& rhs)
+    {
+      lhs -= rhs;
       return lhs;
     }
 
