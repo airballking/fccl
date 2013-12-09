@@ -46,11 +46,6 @@ namespace fccl
         T position_;
 
         ~PositionState() {}
-
-        const PositionState& state() const 
-        {
-          return *this;
-        }
     };
 
     template <class T>
@@ -81,11 +76,6 @@ namespace fccl
         T velocity_;
         
         ~VelocityState() {}
-        
-        const VelocityState& state() const
-        {
-          return *this;
-        }
     };
  
     template <class T>
@@ -116,11 +106,6 @@ namespace fccl
         T acceleration_;
         
         ~AccelerationState() {}
-        
-        const AccelerationState& state() const
-        {
-          return *this;
-        }
     };
 
     template<class T>

@@ -18,30 +18,37 @@ namespace fccl
       public:
         virtual bool equals(const Joint& other) const
         {
-          return this->semantics().equals(other.semantics()) &&
-              this->state().equals(other.state());
+          return this->as<const SemanticsPolicy>().equals(other.as<const SemanticsPolicy>()) &&
+              this->as< const StatePolicy<T> >().equals(other.as< const StatePolicy<T> >());
         }
 
         Joint& operator+=(const Joint& rhs)
         {
-          static_cast< SemanticsPolicy& >(*this) += 
-              static_cast< const SemanticsPolicy& >(rhs);
-          static_cast< StatePolicy<T>& >(*this) += 
-              static_cast< const StatePolicy<T>& >(rhs);
-          std::cout << "result in Joint:\n " << *this << "\n";
+          this->as<SemanticsPolicy>() += rhs.as<const SemanticsPolicy>();
+          this->as< StatePolicy<T> >() += rhs.as< const StatePolicy<T> >();
 
           return *this;
         }
 
-        // TODO(Georg): add operator 'as'
+        template<class U>
+        U& as()
+        {
+          return static_cast< U& >(*this);
+        }
+
+        template<class U>
+        const U& as() const
+        {
+          return static_cast< const U& >(*this);
+        }
     };
 
     template <class T, template <class> class StatePolicy, class SemanticsPolicy>
     inline ostream& operator<<(ostream& os, 
         const Joint<T, StatePolicy, SemanticsPolicy>& joint)
     {
-      os << static_cast< const StatePolicy<T>& >(joint) << "\n";
-      os << static_cast< const SemanticsPolicy& >(joint);
+      os << joint.template as< const StatePolicy<T> >() << "\n";
+      os << joint.template as< const SemanticsPolicy >();
       return os;
     }
 
