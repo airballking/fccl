@@ -21,6 +21,19 @@ namespace fccl
           return this->semantics().equals(other.semantics()) &&
               this->state().equals(other.state());
         }
+
+        Joint& operator+=(const Joint& rhs)
+        {
+          static_cast< SemanticsPolicy& >(*this) += 
+              static_cast< const SemanticsPolicy& >(rhs);
+          static_cast< StatePolicy<T>& >(*this) += 
+              static_cast< const StatePolicy<T>& >(rhs);
+          std::cout << "result in Joint:\n " << *this << "\n";
+
+          return *this;
+        }
+
+        // TODO(Georg): add operator 'as'
     };
 
     template <class T, template <class> class StatePolicy, class SemanticsPolicy>
@@ -30,6 +43,15 @@ namespace fccl
       os << static_cast< const StatePolicy<T>& >(joint) << "\n";
       os << static_cast< const SemanticsPolicy& >(joint);
       return os;
+    }
+
+    template <class T, template <class> class StatePolicy, class SemanticsPolicy>
+    inline Joint<T, StatePolicy, SemanticsPolicy> operator+(
+        Joint<T, StatePolicy, SemanticsPolicy> lhs,
+        const Joint<T, StatePolicy, SemanticsPolicy>& rhs)
+    {
+      lhs += rhs;
+      return lhs;
     }
 
     typedef Joint<double, PositionState, SemanticsBase> PositionJoint;

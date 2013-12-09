@@ -36,6 +36,12 @@ namespace fccl
           return areEqual(this->position(), other.position());
         }
 
+        PositionState& operator+=(const PositionState& rhs)
+        {
+          this->position() += rhs.position();
+          return *this;
+        }
+
       protected:
         T position_;
 
@@ -60,7 +66,17 @@ namespace fccl
         {
           return this->velocity_;
         }
-      
+
+        // TODO(Georg): add equals()
+
+        VelocityState& operator+=(const VelocityState& rhs)
+        {
+          static_cast< PositionState<T>& >(*this) +=
+              static_cast< const PositionState<T>& >(rhs);
+          this->velocity() += rhs.velocity();
+          return *this;
+        }
+     
       protected:
         T velocity_;
         
@@ -84,6 +100,16 @@ namespace fccl
         T& acceleration()
         {
           return this->acceleration_;
+        }
+
+        // TODO(Georg): add equals()
+
+        AccelerationState& operator+=(const AccelerationState& rhs)
+        {
+          static_cast< VelocityState<T>& >(*this) +=
+              static_cast< const VelocityState<T>& >(rhs);
+          this->acceleration() += rhs.acceleration();
+          return *this;
         }
       
       protected:
@@ -118,6 +144,30 @@ namespace fccl
       os << static_cast< const VelocityState<T>& >(state) << "\n";
       os << "acceleration: " << state.acceleration();
       return os;
+    }
+
+    template<class T>
+    inline PositionState<T> operator+(PositionState<T> lhs, 
+        const PositionState<T>& rhs)
+    {
+      lhs += rhs;
+      return lhs;
+    }
+
+    template<class T>
+    inline VelocityState<T> operator+(VelocityState<T> lhs, 
+        const VelocityState<T>& rhs)
+    {
+      lhs += rhs;
+      return lhs;
+    }
+
+    template<class T>
+    inline AccelerationState<T> operator+(AccelerationState<T> lhs, 
+        const AccelerationState<T>& rhs)
+    {
+      lhs += rhs;
+      return lhs;
     }
 
     typedef PositionState<double> DoublePositionState;

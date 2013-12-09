@@ -55,5 +55,18 @@ TEST_F(JointTest, Basics)
   jnt5.semantics().setName("");
   EXPECT_FALSE(jnt.equals(jnt5));
 }
+
+TEST_F(JointTest, Addition)
+{
+  PositionJoint jnt;
+  jnt.semantics().setName("neck");
+  jnt.position() = 1.13;
+  PositionJoint jnt2(jnt);
+
+  PositionJoint jnt3;
+  jnt3 = jnt + jnt2;
+  EXPECT_TRUE(jnt.semantics().equals(jnt3.semantics()));
+  EXPECT_DOUBLE_EQ(jnt3.position(), jnt.position() + jnt2.position());
+}
 // TODO(Georg): test velocity joint
 // TODO(Georg): test acceleration joint

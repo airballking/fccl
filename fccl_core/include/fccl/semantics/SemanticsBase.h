@@ -38,13 +38,21 @@ namespace fccl
           return getID() == other.getID();
         }
 
+        // TODO(Georg): deprecate this
         const SemanticsBase& semantics() const
         {
           return *this;
         }
 
+        // TODO(Georg): deprecate this
         SemanticsBase& semantics()
         {
+          return *this;
+        }
+
+        SemanticsBase& operator+=(const SemanticsBase& rhs)
+        {
+          assert(this->equals(rhs));
           return *this;
         }
 
@@ -87,6 +95,12 @@ namespace fccl
     inline bool operator>=(const SemanticsBase& lhs, const SemanticsBase& rhs)
     {
       return !operator<(lhs,rhs);
+    }
+
+    inline SemanticsBase operator+(SemanticsBase lhs, const SemanticsBase& rhs)
+    {
+      lhs+=rhs;
+      return lhs;
     }
   } // namespace semantics
 } // namespace fccl
