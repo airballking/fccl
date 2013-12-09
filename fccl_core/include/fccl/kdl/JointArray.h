@@ -63,6 +63,18 @@ namespace fccl
         {
           this->data().segment(start, elements) = other.data();
         }
+
+        Array& operator+=(const Array& rhs)
+        {
+          this->data() += rhs.data();
+          return *this;
+        }
+
+        Array& operator-=(const Array& rhs)
+        {
+          this->data() -= rhs.data();
+          return *this;
+        }
  
       private:
         Eigen::Matrix<T, Eigen::Dynamic, 1> data_;
@@ -77,29 +89,21 @@ namespace fccl
       return os;
     }
 
-/*
     template<class T>
-    inline Array<T>& substract(const Array<T>& lhs, const Array<T>& rhs, 
-        Array<T>& result)
+    inline Array<T> operator+(Array<T> lhs, const Array<T>& rhs)
     {
-      assert(lhs.size() == rhs.size());
-      assert(lhs.size() == result());
-
-      for(size_t i=0; i<lhs.size(); i++)
-        result(i) = subtract(lhs(i), rhs(i));
+      lhs += rhs;
+      return lhs;
     }
 
     template<class T>
-    inline Array<T>& add(const Array<T>& lhs, const Array<T>& rhs, 
-        Array<T>& result)
+    inline Array<T> operator-(Array<T> lhs, const Array<T>& rhs)
     {
-      assert(lhs.size() == rhs.size());
-      assert(lhs.size() == result());
-
-      for(size_t i=0; i<lhs.size(); i++)
-        result(i) = add(lhs(i), rhs(i));
+      lhs -= rhs;
+      return lhs;
     }
-*/
+
+
     typedef Array<PositionJoint> PositionJointArray;
     typedef Array<VelocityJoint> VelocityJointArray;
     typedef Array<AccelerationJoint> AccelerationJointArray;
