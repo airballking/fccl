@@ -1,9 +1,8 @@
 #ifndef FCCL_UTILS_STATE_POLICIES_H
 #define FCCL_UTILS_STATE_POLICIES_H
 
-#include <limits>
-#include <math.h>
 #include <iostream>
+#include <fccl/utils/Equalities.h>
 
 using namespace std;
 
@@ -11,12 +10,6 @@ namespace fccl
 {
   namespace utils
   {
-    // TODO(Georg): move this to another file
-    inline bool areEqual(double a, double b)
-    {
-      return fabs(a-b) < std::numeric_limits<double>::epsilon();
-    }
-
     template <class T>
     class PositionState
     {

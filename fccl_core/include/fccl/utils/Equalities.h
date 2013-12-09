@@ -13,6 +13,8 @@ namespace fccl
 
     bool Equal(const std::vector<std::string>& v1, const std::vector<std::string>& v2);
 
+    bool areEqual(double a, double b);
+
     bool isJoint(const KDL::Segment& segment);
   } // namespace utils
 } // namespace fccl

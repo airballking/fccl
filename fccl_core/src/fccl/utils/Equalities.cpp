@@ -1,5 +1,7 @@
 #include <fccl/utils/Equalities.h>
 #include <assert.h>
+#include <limits>
+#include <math.h>
 
 namespace fccl
 {
@@ -29,6 +31,11 @@ namespace fccl
       return true;
     }
 
+    bool areEqual(double a, double b)
+    {
+      return fabs(a-b) < std::numeric_limits<double>::epsilon();
+    }
+ 
     bool isJoint(const KDL::Segment& segment)
     {
       return (segment.getJoint().getType() != KDL::Joint::None);
