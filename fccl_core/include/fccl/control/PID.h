@@ -12,6 +12,89 @@ namespace fccl
 {
   namespace control
   {
+    template <class T, class SemanticsPolicy>
+    class PIDController : public SemanticsPolicy
+    {
+      public:
+        const PIDGains2<T, SemanticsPolicy>& getGains() const
+        {
+          return this->gains_;
+        }
+
+        void setGains(const PIDGains2<T, SemanticsPolicy>& gains)
+        {
+          assert(gains.semantics().equals(this->semantics()));
+
+          this->gains_ = gains;
+        }
+
+        void reset()
+        {
+          p_last_error_ = 0.0;
+          i_error_term_ = 0.0;
+          cmd_ = 0.0;
+        }
+
+        const T& computeCommand(const T& error, const T& dt)
+        {
+          if (!inputValid(error, dt))
+            return 0.0;
+
+          cmd_ = - calcProportionalErrorTerm(error)
+                 - calcIntegralErrorTerm(error, dt)
+                 - calcDerivativeErrorTerm(error, dt);
+
+          return cmd_;
+        }
+      
+      private:
+        PIDGains2<T, SemanticsPolicy> gains_;
+
+        // Save last position error to calculate derivated error
+        T p_last_error_;
+        // Integral error term
+        T i_error_term_;
+
+        // Memory for command output
+        T cmd_;
+
+        bool inputValid(const T& error, const T& dt) const
+        {
+          return dt <= 0.0 || std::isnan(error) || std::isinf(error);
+        }
+
+        T calcProportionalErrorTerm(const T& error) const
+        {
+          return getGains().p() * error;
+        }
+
+        T calcIntegralErrorTerm(const T& error, const T& dt)
+        {
+          i_error_term_ += getGains().i() * dt * error;
+
+          // truncate integral error term
+          i_error_term_ =
+              std::max( getGains().i_min(),
+                        std::min( i_error_term_, getGains().i_max()) );
+
+          return i_error_term_;
+        }
+
+        T calcDerivativeErrorTerm(const T& error, const T& dt)
+        {
+          // calculate derivative error numerically
+          T d_error_term = (error - p_last_error_) / dt;
+          // remember current error for next iteration
+          p_last_error_ = error;
+
+          return getGains().d() * d_error_term;
+        }
+    };
+
+    typedef PIDController<double, fccl::semantics::SemanticsBase> StandardPID;
+    typedef Array<StandardPID, fccl::semantics::SemanticsBase> StandardPIDArray;
+
+    // TODO(Georg): refactor this into Array<template> + single-PID
     class PID
     {
       public:
