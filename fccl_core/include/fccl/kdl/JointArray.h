@@ -8,9 +8,10 @@ namespace fccl
 {
   namespace kdl
   {
-    typedef fccl::base::Array<PositionJoint> PositionJointArray;
-    typedef fccl::base::Array<VelocityJoint> VelocityJointArray;
-    typedef fccl::base::Array<AccelerationJoint> AccelerationJointArray;
+    typedef fccl::base::Array<PositionJoint, SemanticsBase> PositionJointArray;
+    typedef fccl::base::Array<VelocityJoint, SemanticsBase> VelocityJointArray;
+    typedef fccl::base::Array<AccelerationJoint, SemanticsBase> AccelerationJointArray;
+    typedef fccl::base::Array<JerkJoint, SemanticsBase> JerkJointArray;
   } // namespace kdl
 } // namespace fccl
 #endif // FCCL_KDL_JOINT_ARRAY_H

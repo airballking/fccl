@@ -2,6 +2,7 @@
 #define FCCL_BASE_ARRAY_H
 
 #include <Eigen/Core>
+#include <boost/type_traits.hpp>
 
 using namespace std;
 
@@ -11,10 +12,23 @@ namespace fccl
   {
 // TODO(Georg): add policy for validity checking
 // TODO(Georg): add policy for updates
-    template <class T>
+    template <class T, class SemanticsPolicy>
     class Array
     {
       public:
+        template <class U>
+        void init(const Array<U, SemanticsPolicy>& semantics_array)
+        {
+          BOOST_STATIC_ASSERT((boost::is_base_of<SemanticsPolicy, U>::value));
+          BOOST_STATIC_ASSERT((boost::is_base_of<SemanticsPolicy, T>::value));
+
+          this->resize(semantics_array.size());
+
+          for(size_t i=0; i<this->size(); i++)
+            // TODO(Georg): refactor this using as<SemanticsPolicy>()
+            this->operator()(i).semantics() = semantics_array(i).semantics();
+        }
+
         size_t size() const
         {
           this->data().rows();
@@ -78,8 +92,8 @@ namespace fccl
         Eigen::Matrix<T, Eigen::Dynamic, 1> data_;
     };
 
-    template<class T>
-    inline ostream& operator<<(ostream& os, const Array<T>& obj)
+    template<class T, class SemanticsPolicy>
+    inline ostream& operator<<(ostream& os, const Array<T, SemanticsPolicy>& obj)
     {
       for(size_t i=0; i<obj.size(); i++)
         os << obj(i) << "\n";
@@ -87,15 +101,17 @@ namespace fccl
       return os;
     }
 
-    template<class T>
-    inline Array<T> operator+(Array<T> lhs, const Array<T>& rhs)
+    template<class T, class SemanticsPolicy>
+    inline Array<T, SemanticsPolicy> operator+(Array<T, SemanticsPolicy> lhs,
+        const Array<T, SemanticsPolicy>& rhs)
     {
       lhs += rhs;
       return lhs;
     }
 
-    template<class T>
-    inline Array<T> operator-(Array<T> lhs, const Array<T>& rhs)
+    template<class T, class SemanticsPolicy>
+    inline Array<T, SemanticsPolicy> operator-(Array<T, SemanticsPolicy> lhs,
+        const Array<T, SemanticsPolicy>& rhs)
     {
       lhs -= rhs;
       return lhs;
