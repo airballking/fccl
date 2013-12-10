@@ -134,6 +134,50 @@ namespace fccl
         ~AccelerationState() {}
     };
 
+    template <class T>
+    class JerkState : public AccelerationState<T>
+    {
+      public:
+        const T& jerk() const
+        {
+          return this->jerk_;
+        }
+ 
+        T& jerk()
+        {
+          return this->jerk_;
+        }
+
+        virtual bool equals(const JerkState& other) const
+        {
+          return static_cast< const AccelerationState<T>& >(*this).equals(
+              static_cast< const AccelerationState<T>& >(other)) &&
+              areEqual(this->jerk(), other.jerk());
+        }
+
+        JerkState& operator+=(const JerkState& rhs)
+        {
+          static_cast< AccelerationState<T>& >(*this) +=
+              static_cast< const AccelerationState<T>& >(rhs);
+          this->jerk() += rhs.jerk();
+          return *this;
+        }
+
+        JerkState& operator-=(const JerkState& rhs)
+        {
+          static_cast< AccelerationState<T>& >(*this) -=
+              static_cast< const AccelerationState<T>& >(rhs);
+          this->jerk() -= rhs.jerk();
+          return *this;
+        }
+      
+      protected:
+        T jerk_;
+        
+        ~JerkState() {}
+    };
+
+
     template<class T>
     inline ostream& operator<<(ostream& os, const PositionState<T>& state)
     {
@@ -158,6 +202,14 @@ namespace fccl
     }
 
     template<class T>
+    inline ostream& operator<<(ostream& os, const JerkState<T>& state)
+    {
+      os << static_cast< const AccelerationState<T>& >(state) << "\n";
+      os << "jerk: " << state.jerk();
+      return os;
+    }
+
+    template<class T>
     inline PositionState<T> operator+(PositionState<T> lhs, 
         const PositionState<T>& rhs)
     {
@@ -176,6 +228,14 @@ namespace fccl
     template<class T>
     inline AccelerationState<T> operator+(AccelerationState<T> lhs, 
         const AccelerationState<T>& rhs)
+    {
+      lhs += rhs;
+      return lhs;
+    }
+
+    template<class T>
+    inline JerkState<T> operator+(JerkState<T> lhs, 
+        const JerkState<T>& rhs)
     {
       lhs += rhs;
       return lhs;
@@ -205,10 +265,18 @@ namespace fccl
       return lhs;
     }
 
+    template<class T>
+    inline JerkState<T> operator-(JerkState<T> lhs, 
+        const JerkState<T>& rhs)
+    {
+      lhs -= rhs;
+      return lhs;
+    }
 
     typedef PositionState<double> DoublePositionState;
     typedef VelocityState<double> DoubleVelocityState;
     typedef AccelerationState<double> DoubleAccelerationState;
+    typedef JerkState<double> DoubleJerkState;
   } // namespace utils
 } // namespace fccl
 #endif // FCCL_UTILS_STATE_POLICIES_H

@@ -81,6 +81,7 @@ namespace fccl
     typedef Joint<double, PositionState, SemanticsBase> PositionJoint;
     typedef Joint<double, VelocityState, SemanticsBase> VelocityJoint;
     typedef Joint<double, AccelerationState, SemanticsBase> AccelerationJoint;
+    typedef Joint<double, JerkState, SemanticsBase> JerkJoint;
   } // namespace kdl
 } // namespace fccl
 #endif // FCCL_KDL_JOINT_H
