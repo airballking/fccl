@@ -1,19 +1,58 @@
 #ifndef FCCL_CONTROL_GAINS_H
 #define FCCL_CONTROL_GAINS_H
 
+#include <fccl/base/Array.h>
 #include <fccl/kdl/JntArray.h>
 #include <fccl/semantics/JntArraySemantics.h>
+#include <fccl/utils/Equalities.h>
 #include <vector>
 #include <string>
 
+using namespace fccl::base;
 using namespace fccl::kdl;
 using namespace fccl::semantics;
+using namespace fccl::utils;
 using namespace std;
 
 namespace fccl
 {
   namespace control
   {
+    template <class T, class SemanticsPolicy>
+    class PIDGains2 : public SemanticsPolicy
+    {
+      public:
+        const T& p() const { return p_; }
+        T& p() { return p_; }
+       
+        const T& i() const { return i_; }
+        T& i() { return i_; }
+
+        const T& d() const { return d_; }
+        T& d() { return d_; }
+
+        const T& i_max() const { return i_max_; }
+        T& i_max() { return i_max_; }
+
+        const T& i_min() const { return i_min_; }
+        T& i_min() { return i_min_; }
+
+        virtual bool equals(const PIDGains2& other) const
+        {
+          return this->semantics().equals(other.semantics()) &&
+              areEqual(this->p(), other.p()) && areEqual(this->i(), other.i()) &&
+              areEqual(this->d(), other.d()) && areEqual(this-i_max(), other.i_max()) &&
+              areEqual(this->i_min(), other.i_min());
+        }
+
+      private:
+        T p_, i_, d_, i_max_, i_min_;
+    };
+
+    typedef PIDGains2<double, SemanticsBase> StandardPIDGains;
+    typedef Array<StandardPIDGains, SemanticsBase> StandardPIDGainArray;
+
+    // TODO(Georg): refactor this into Array<template> + single-PIDGains
     class PIDGains
     {
       public:
