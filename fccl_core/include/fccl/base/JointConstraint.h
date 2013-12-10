@@ -1,8 +1,10 @@
 #ifndef FCCL_BASE_JOINT_CONSTRAINT_H
 #define FCCL_BASE_JOINT_CONSTRAINT_H
 
+#include <fccl/base/Array.h>
 #include <fccl/kdl/Joint.h>
 
+using namespace fccl::base;
 using namespace fccl::kdl;
 
 namespace fccl
@@ -124,6 +126,7 @@ namespace fccl
     };
 
     typedef Constraint<PositionJoint> JointConstraint;
+    typedef Array<JointConstraint, SemanticsBase> JointConstraintArray;
   } // namespace base
 } // namespace fccl
 #endif // FCCL_BASE_JOINT_CONSTRAINT_H
