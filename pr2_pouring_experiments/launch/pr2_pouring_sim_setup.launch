@@ -1,0 +1,25 @@
+<launch>
+  <include file="$(find loopback_controller_manager_examples)/launch/pr2_loopback_no_controllers.launch"/>
+
+  <!-- write desired start configuration on parameter server -->
+  <rosparam command="load"
+       file="$(find pr2_pouring_experiments)/config/pr2_pouring_sim_start_config.yaml"
+       ns="loopback_controllers"/> 
+
+  <!-- table visualization -->
+  <node name="pancake_transform" pkg="tf" type="static_transform_publisher"
+      args="0.534 0.0 0.746  0 0 0 /base_link /pancake 20"/>
+  <node name="table_transform" pkg="tf" type="static_transform_publisher"
+      args="0.1 0.0 -0.763  0 0 0 /pancake /table 20"/>
+  <node name="baker_model" pkg="pr2_pouring_experiments" type="baker_model.py"
+      args="/table"/>
+
+  <!-- bottle visualization -->
+  <node name="pancake_bottle_transform" pkg="tf" type="static_transform_publisher"
+      args="0.0 0.0 0.0 0 0 0 /l_gripper_tool_frame /pancake_bottle 20"/>
+  <node name="pancake_bottle_model" pkg="pr2_pouring_experiments"
+      type="pancake_bottle_model.py" args="/pancake_bottle"/>
+
+  <node name="rviz" pkg="rviz" type="rviz"
+       args="-d $(find pr2_pouring_experiments)/config/pr2_pouring_sim.rviz"/>
+</launch>
