@@ -8,9 +8,9 @@
 
   <!-- table visualization -->
   <node name="pancake_transform" pkg="tf" type="static_transform_publisher"
-      args="0.534 0.0 0.746  0 0 0 /base_link /pancake 20"/>
+      args="0.534 0.0 0.746  0 0 0 /base_link /pancake_maker 20"/>
   <node name="table_transform" pkg="tf" type="static_transform_publisher"
-      args="0.1 0.0 -0.763  0 0 0 /pancake /table 20"/>
+      args="0.1 0.0 -0.763  0 0 0 /pancake_maker /table 20"/>
   <node name="baker_model" pkg="pr2_pouring_experiments" type="baker_model.py"
       args="/table"/>
 
