@@ -35,6 +35,7 @@ namespace fccl
           cmd_ = 0.0;
         }
 
+        // error = target - state
         const T& computeCommand(const T& error, const T& dt)
         {
           if (!inputValid(error, dt))
