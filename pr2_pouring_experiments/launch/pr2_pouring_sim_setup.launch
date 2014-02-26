@@ -19,7 +19,4 @@
       args="0.0 0.0 0.0 0 0 0 /l_gripper_tool_frame /pancake_bottle 20"/>
   <node name="pancake_bottle_model" pkg="pr2_pouring_experiments"
       type="pancake_bottle_model.py" args="/pancake_bottle"/>
-
-  <node name="rviz" pkg="rviz" type="rviz"
-       args="-d $(find pr2_pouring_experiments)/config/pr2_pouring_sim.rviz"/>
 </launch>
