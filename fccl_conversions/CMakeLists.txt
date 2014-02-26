@@ -53,8 +53,6 @@ target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
   ${orocos_kdl_LIBRARIES}
 )
-set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS
-  -L${orocos_kdl_LIBRARY_DIRS})
 
 #############
 ## Install ##
@@ -88,6 +86,6 @@ if(TARGET ${PROJECT_NAME}-test)
                         ${PROJECT_NAME} 
                         ${catkin_LIBRARIES}
                         ${orocos_kdl_LIBRARIES})
-  set_target_properties(${PROJECT_NAME}-test PROPERTIES LINK_FLAGS
-    -L${orocos_kdl_LIBRARY_DIRS})
+#  set_target_properties(${PROJECT_NAME}-test PROPERTIES LINK_FLAGS
+#    -L${orocos_kdl_LIBRARY_DIRS})
 endif()

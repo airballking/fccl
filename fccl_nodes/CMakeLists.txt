@@ -68,8 +68,6 @@ target_link_libraries(single_arm_controller
   ${catkin_LIBRARIES}
   ${orocos_kdl_LIBRARIES}
 )
-set_target_properties(single_arm_controller PROPERTIES LINK_FLAGS
-  -L${orocos_kdl_LIBRARY_DIRS})
 
 #############
 ## Install ##
