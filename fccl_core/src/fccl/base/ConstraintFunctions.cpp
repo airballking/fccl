@@ -105,6 +105,21 @@ namespace fccl
       }
     }
 
+    double distance(const fccl::semantics::SemanticsBase& view_frame,
+        const Feature& tool_feature, const Feature& object_feature,
+        const fccl::kdl::Transform& tool_transform,
+        const fccl::kdl::Transform& object_transform)
+    {
+      Feature tool = transformFeature(view_frame, tool_transform, tool_feature);
+      Feature object = transformFeature(view_frame, object_transform,
+            object_feature);
+
+      KDL::Vector connector = object.position() - tool.position();
+      
+      return connector.Norm();
+    }
+
+
     Feature transformFeature(const fccl::semantics::SemanticsBase& target_frame,
          const fccl::kdl::Transform& transform, const Feature& feature)
     {

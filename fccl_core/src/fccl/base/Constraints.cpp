@@ -24,6 +24,7 @@ namespace fccl
       registerConstraintFunction("infront", infront, result);
       registerConstraintFunction("perpendicular", perpendicular, result);
       registerConstraintFunction("pointing", pointing, result);
+      registerConstraintFunction("distance", distance, result);
 
       return result;
     }

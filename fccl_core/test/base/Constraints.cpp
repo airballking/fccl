@@ -405,3 +405,37 @@ TEST_F(ConstraintsTest, PointingFunction)
   pointingc.update(T_view_tool, T_view_object);
   EXPECT_DOUBLE_EQ(pointingc.outputValue(), 0.0);
 }
+
+TEST_F(ConstraintsTest, DistanceFunction)
+{
+  Constraint distc;
+  distc.semantics().reference().setName(view_frame_name);
+  distc.semantics().name().setName(constraint_name);
+  distc.semantics().type().setName("distance");
+  distc.toolFeature() = tool_feature;
+  distc.objectFeature() = object_feature;
+  distc.lowerBoundary() = lower_boundary;
+  distc.upperBoundary() = upper_boundary;
+
+  ASSERT_TRUE(distc.isValid());
+  distc.update(T_view_tool, T_view_object);
+  EXPECT_DOUBLE_EQ(distc.outputValue(), std::sqrt(0.19));
+
+  T_view_tool.numerics() = KDL::Frame::Identity();
+  T_view_object.numerics() = KDL::Frame::Identity();
+  distc.update(T_view_tool, T_view_object);
+  EXPECT_DOUBLE_EQ(distc.outputValue(), 0.0);
+
+  T_view_tool.numerics() = 
+      KDL::Frame(KDL::Rotation::Identity(), KDL::Vector(3.0, 4.0, 0.0));
+  T_view_object.numerics() = KDL::Frame::Identity();
+  distc.update(T_view_tool, T_view_object);
+  EXPECT_DOUBLE_EQ(distc.outputValue(), 5.0);
+
+  T_view_tool.numerics() = 
+      KDL::Frame(KDL::Rotation::Identity(), KDL::Vector(3.0, 4.0, 0.0));
+  T_view_object.numerics() = 
+      KDL::Frame(KDL::Rotation::RotZ(M_PI/2.0), KDL::Vector(0.0, 0.0, 0.0));
+  distc.update(T_view_tool, T_view_object);
+  EXPECT_DOUBLE_EQ(distc.outputValue(), 5.0);
+}
