@@ -2,10 +2,12 @@
 #define FCCL_CONTROL_INTERPOLATOR_H
 
 #include <ReflexxesAPI.h>
+#include <fccl/base/Array.h>
 #include <fccl/kdl/JntArray.h>
 #include <fccl/kdl/JointArray.h>
 #include <fccl/semantics/SemanticsBase.h>
 
+using namespace fccl::base;
 using namespace fccl::semantics;
 using namespace fccl::kdl;
 
@@ -58,7 +60,8 @@ namespace fccl
             next_state_(i).semantics() = semantics(i);
         }
 
-        void init(const AccelerationJointArray& state, double delta_t)
+        // TODO(Georg): make this a template of the class
+        void init(const Array<SemanticsBase, SemanticsBase>& state, double delta_t)
         {
           deletePointers();
 
@@ -67,7 +70,7 @@ namespace fccl
           output_ = new RMLPositionOutputParameters(state.size());
           result_value_ = 0;
 
-          next_state_ = state;
+          next_state_.init(state);
         }
 
         bool inputValid() const
