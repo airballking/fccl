@@ -5,7 +5,6 @@
    <remap from="~qdot" to="/l_arm_vel/command"/>
    <remap from="joint_state" to="/joint_states"/>
    <remap from="~joint_state" to="/joint_states"/>
-
  </node>
 
 </launch>
