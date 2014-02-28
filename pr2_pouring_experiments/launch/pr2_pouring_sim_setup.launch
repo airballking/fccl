@@ -20,9 +20,10 @@
   <node name="pancake_bottle_model" pkg="pr2_pouring_experiments"
       type="pancake_bottle_model.py" args="/pancake_bottle"/>
 
+  <!-- feature visualization -->
+  <node name="feature_visualization" pkg="fccl_visualization" type="feature_visualization.py"/>
+
   <!-- fake localization -->
   <node name="map_transform" pkg="tf" type="static_transform_publisher"
       args="0.0 0.0 0.0 0 0 0 /base_link /map 20"/>
- 
-
 </launch>
