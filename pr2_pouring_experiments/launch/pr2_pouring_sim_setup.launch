@@ -19,4 +19,10 @@
       args="0.0 0.0 0.0 0 0 0 /l_gripper_tool_frame /pancake_bottle 20"/>
   <node name="pancake_bottle_model" pkg="pr2_pouring_experiments"
       type="pancake_bottle_model.py" args="/pancake_bottle"/>
+
+  <!-- fake localization -->
+  <node name="map_transform" pkg="tf" type="static_transform_publisher"
+      args="0.0 0.0 0.0 0 0 0 /base_link /map 20"/>
+ 
+
 </launch>
