@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<package>
+  <name>fccl_visualization</name>
+  <version>0.0.0</version>
+  <description>
+    Ensemble of scripts to visualize fccl-controlled motions in RVIZ.
+  </description>
+
+  <author email="kresse@in.tum.de">Ingo Kresse</author>
+  <author email="georg.bartels@cs.uni-bremen.de">Georg Bartels</author>
+  <maintainer email="georg.bartels@cs.uni-bremen.de">Georg Bartels</maintainer>
+
+  <license>BSD</license>
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>rospy</build_depend>
+  <build_depend>orocos_kdl</build_depend>
+  <build_depend>fccl_msgs</build_depend>
+  <build_depend>geometry_msgs</build_depend>
+  <build_depend>sensor_msgs</build_depend>
+  <build_depend>std_msgs</build_depend>
+  <build_depend>visualization_msgs</build_depend>
+
+  <run_depend>rospy</run_depend>
+  <run_depend>orocos_kdl</run_depend>
+  <run_depend>fccl_msgs</run_depend>
+  <run_depend>geometry_msgs</run_depend>
+  <run_depend>sensor_msgs</run_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>visualization_msgs</run_depend>
+  <run_depend>message_runtime</run_depend>
+</package>
