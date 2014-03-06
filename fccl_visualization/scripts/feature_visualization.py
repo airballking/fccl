@@ -7,6 +7,8 @@ import rospy
 import PyKDL as kdl
 import threading
 
+from math import *
+
 from fccl_msgs.msg import SingleArmMotionActionGoal,SingleArmMotionGoal,Constraint,Feature
 from visualization_msgs.msg import Marker
 from geometry_msgs.msg import Vector3,Quaternion
@@ -73,6 +75,7 @@ def orientation_feature(feature):
 
   direction = msg2vec(feature.direction)
 
+  scale = direction.Norm()
   axis = kdl.Vector(0,0,1) * direction
   angle = direction.z()
 
