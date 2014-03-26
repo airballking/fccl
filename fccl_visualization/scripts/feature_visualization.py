@@ -14,6 +14,9 @@ from visualization_msgs.msg import Marker
 from geometry_msgs.msg import Vector3,Quaternion
 from std_msgs.msg import ColorRGBA
 
+import sys
+namespace = sys.argv[1]
+
 # some color definitions
 grey = ColorRGBA(0.7, 0.7, 0.7, 0.5)
 red = ColorRGBA(0.7, 0.1, 0.1, 1.0)
@@ -139,11 +142,11 @@ def callback(msg):
 
 if __name__ == "__main__":
   
-  rospy.init_node('feature_visualization')
+  rospy.init_node('feature_visualization', anonymous=True)
 
   rate = rospy.Rate(20)
 
-  config = {'ns': 'features',
+  config = {'ns': namespace,
             'lifetime': rospy.Duration(0.5),
             'color': yellow,
             'point_width': 0.02,
@@ -154,8 +157,7 @@ if __name__ == "__main__":
  
   feature_visualization = FeatureVisualization(config)
 
-#  subscriber = rospy.Subscriber('~constraint_goal', SingleArmMotionGoal, callback)
-  subscriber = rospy.Subscriber('/l_arm_fccl_controller/command/goal', SingleArmMotionActionGoal, callback)
+  subscriber = rospy.Subscriber("~fccl_goal", SingleArmMotionActionGoal, callback)
 
   while not rospy.is_shutdown():
     feature_visualization.publish_markers()
