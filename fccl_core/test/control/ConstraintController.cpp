@@ -134,7 +134,7 @@ TEST_F(ConstraintControllerTest, Basics)
   ASSERT_FALSE(controller.constraints().areFulfilled());
   
   unsigned int counter = 0;
-  while((!controller.constraints().areFulfilled()) && (counter < 100))
+  while((!controller.constraints().areFulfilled()) && (counter < 1000))
   {
     counter++;
     controller.update(joint_state, transform_map, delta_deriv, cycle_time);

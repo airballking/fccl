@@ -17,9 +17,9 @@ namespace fccl
           max_jerk_.init(semantics);
 
           // TODO(Georg): implement sth more useful in the future
-          max_velocity_.numerics().data.setConstant(2.0);
-          max_acceleration_.numerics().data.setConstant(1.0); 
-          max_jerk_.numerics().data.setConstant(1.0);
+          max_velocity_.numerics().data.setConstant(0.1);
+          max_acceleration_.numerics().data.setConstant(0.4);
+          max_jerk_.numerics().data.setConstant(0.4);
         }
 
         const fccl::kdl::JntArray& maximumVelocity() const

@@ -19,9 +19,9 @@ class LimitEstimatorTest : public ::testing::Test
 
       for(std::size_t i=0; i< joint_names.size(); i++)
       {
-        max_vel.numerics()(i) = 2.0;
-        max_acc.numerics()(i) = 1.0;
-        max_jerk.numerics()(i) = 1.0;
+        max_vel.numerics()(i) = 1.0;
+        max_acc.numerics()(i) = 0.5;
+        max_jerk.numerics()(i) = 0.5;
       }
     }
 
