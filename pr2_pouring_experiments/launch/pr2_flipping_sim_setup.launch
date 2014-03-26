@@ -46,8 +46,14 @@
       type="spatula_model_bremen_1.py" args="/r_spatula_blade"/>
 
   <!-- feature visualization -->
-  <node name="feature_visualization" pkg="fccl_visualization"
-       type="feature_visualization.py"/>
+  <node name="left_feature_visualization" pkg="fccl_visualization"
+      type="feature_visualization.py" args="l_arm_fccl" output="screen">
+    <remap from="~fccl_goal" to="/l_arm_fccl_controller/command/goal"/>
+  </node>
+  <node name="right_feature_visualization" pkg="fccl_visualization"
+      type="feature_visualization.py" args="r_arm_fccl" output="screen">
+    <remap from="~fccl_goal" to="/r_arm_fccl_controller/command/goal"/>
+  </node>
 
   <!-- fake localization -->
   <node name="map_transform" pkg="tf" type="static_transform_publisher"
