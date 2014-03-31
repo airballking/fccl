@@ -1,0 +1,9 @@
+<launch>
+  
+  <include file="$(find pr2_pouring_experiments)/launch/pr2_fccl_controllers.launch"/>
+
+  <include file="$(find pr2_pouring_experiments)/launch/pancake_scenario_visualization.launch"/>
+
+  <include file="$(find knowrob_motion_constraints)/launch/knowrob_motion_constraints.launch"/>
+
+</launch>

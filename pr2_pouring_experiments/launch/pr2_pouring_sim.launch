@@ -3,5 +3,5 @@
   <include file="$(find pr2_pouring_experiments)/launch/pr2_pouring_sim_setup.launch"/>
 
   <!-- pos-resolved/vel-resolved joint controllers, constraint arm controllers -->
-  <include file="$(find pr2_pouring_experiments)/launch/pr2_fccl_sim_controllers.launch"/>
+  <include file="$(find pr2_pouring_experiments)/launch/pr2_fccl_real_controllers.launch"/>
 </launch>

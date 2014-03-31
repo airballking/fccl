@@ -1,0 +1,16 @@
+<launch>
+  <!-- write desired start configuration on parameter server -->
+  <rosparam command="load"
+       file="$(find pr2_pouring_experiments)/config/pr2_flipping_sim_start_config.yaml"
+       ns="loopback_controllers"/> 
+
+  <!-- starting up simulated pr2 in stopped state -->
+  <include file="$(find loopback_controller_manager_examples)/launch/pr2_loopback_no_controllers.launch"/>
+
+  <!-- load pr2 standard controllers in stopped state -->
+  <include file="$(find pr2_pouring_experiments)/launch/pr2_standard_arm_controllers.launch"/>
+
+  <!-- fake localization -->
+  <node name="map_transform" pkg="tf" type="static_transform_publisher"
+      args="0.0 0.0 0.0 0 0 0 /base_link /map 20"/>
+</launch>

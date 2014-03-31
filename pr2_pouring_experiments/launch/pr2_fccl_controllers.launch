@@ -1,0 +1,14 @@
+<launch>
+  <!-- load params of the joint velocity controllers -->
+  <rosparam command="load" file="$(find pr2_controller_configuration)/pr2_joint_velocity_controllers.yaml" />
+
+  <!-- load the velocity-resolved controllers in stopped state -->
+  <node name="spawner_vel_controllers" pkg="pr2_controller_manager" type="spawner" 
+    args="--stopped r_shoulder_pan_velocity_controller r_shoulder_lift_velocity_controller r_upper_arm_roll_velocity_controller r_elbow_flex_velocity_controller r_forearm_roll_velocity_controller r_wrist_flex_velocity_controller r_wrist_roll_velocity_controller l_shoulder_pan_velocity_controller l_shoulder_lift_velocity_controller l_upper_arm_roll_velocity_controller l_elbow_flex_velocity_controller l_forearm_roll_velocity_controller l_wrist_flex_velocity_controller l_wrist_roll_velocity_controller"/>
+
+  <!-- start demuxing of velocity commands -->
+  <include file="$(find iai_velocity_controller_demux)/launch/pr2_arm_velocity_controller_demux.launch"/>
+
+  <!-- constraint arm controllers -->
+  <include file="$(find fccl_nodes)/launch/pr2_fccl_arm_controllers.launch"/>
+</launch>

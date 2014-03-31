@@ -1,0 +1,5 @@
+<launch>
+  <include file="$(find pr2_pouring_experiments)/launch/pr2_simulation.launch"/>
+ 
+  <include file="$(find pr2_pouring_experiments)/launch/pr2_pancake.launch"/>
+</launch>
