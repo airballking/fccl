@@ -1,7 +1,0 @@
-<launch>
-  <!-- visualizations, tf frames -->
-  <include file="$(find pr2_pouring_experiments)/launch/pr2_flipping_real_setup.launch"/>
-
-  <!-- vel-resolved joint controllers, constraint arm controllers -->
-  <include file="$(find pr2_pouring_experiments)/launch/pr2_fccl_real_controllers.launch"/>
-</launch>
