@@ -1,0 +1,44 @@
+<launch>
+  <!-- PR2 -->
+  <include file="$(find pr2_pouring_experiments)/launch/pr2_simulation.launch"/>
+
+  <!-- table visualization -->
+  <node name="table_transform" pkg="tf" type="static_transform_publisher"
+      args="0.6 0.0 0.0  0 0 0 /map /table 20"/>
+  <node name="table_model" pkg="pr2_pouring_experiments" type="table_model.py"
+      args="/table"/>
+
+  <!-- oven visualization -->
+  <node name="pancake_maker_transform" pkg="tf" type="static_transform_publisher"
+      args="-0.1 0.0 0.703  0 0 0 /table /pancake_maker 20"/>
+  <node name="pancake_maker_model" pkg="pr2_pouring_experiments"
+      type="oven_model.py" args="/pancake_maker"/>
+
+  <!-- pancake visualization -->
+  <node name="pancake_transform" pkg="tf" type="static_transform_publisher"
+      args="-0.02 0.03 0.05  0 0 0 /pancake_maker /pancake 20"/>
+  <node name="pancake_model" pkg="pr2_pouring_experiments"
+      type="pancake_model.py" args="/pancake"/>
+
+  <!-- plate visualization -->
+  <node name="plate_transform" pkg="tf" type="static_transform_publisher"
+      args="0.05 0.35 0.653  0 0 0 /table /plate 20"/>
+  <node name="plate_model" pkg="pr2_pouring_experiments"
+      type="dinner_plate_model.py" args="/plate"/>
+
+  <!-- spatula visualization -->
+  <node name="spatula_handle_transform" pkg="tf"
+      type="static_transform_publisher"
+      args="-0.2 -0.45 0.653 0 0 3.14 /table /spatula_handle 100"/>
+  <node name="spatula_blade_transform" pkg="tf"
+      type="static_transform_publisher"
+      args="0.245 0.0 -0.015 0 2.1 0 /spatula_handle /spatula_blade 100"/>
+  <node name="spatula_model" pkg="pr2_pouring_experiments"
+      type="spatula_model_bremen_1.py" args="/spatula_blade"/>
+
+  <!-- bottle visualization -->
+  <node name="pancake_bottle_transform" pkg="tf" type="static_transform_publisher"
+      args="0.0 -0.25 0.76 2.0 0 0 /table /pancake_bottle 20"/>
+  <node name="pancake_bottle_model" pkg="pr2_pouring_experiments"
+	      type="pancake_bottle_model.py" args="/pancake_bottle"/>
+</launch>
