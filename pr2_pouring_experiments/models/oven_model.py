@@ -60,5 +60,5 @@ def publishCube(pos, ori, scale, id):
 
 rate = rospy.Rate(0.5)
 while not rospy.is_shutdown():
-  publishCylinder([0, 0, 0], [0,0,0,1], [0.3, 0.3, 0.1], [0.15, 0.05, 0.05, 1], 1)
+  publishCylinder([0, 0, -0.05], [0,0,0,1], [0.3, 0.3, 0.1], [0.15, 0.05, 0.05, 1], 1)
   rate.sleep()
