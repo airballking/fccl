@@ -9,19 +9,27 @@
   <!--node name="oven_transform" pkg="tf" type="static_transform_publisher"
       args="-0.1 0.0 0.703  0 0 0 /table /oven 20"/-->
   <node name="pancake_maker_model" pkg="pr2_pouring_experiments"
-      type="oven_model.py" args="/pancake_maker"/>
+      type="oven_model.py" args="/pancake_maker">
+    <remap from="visualization_marker" to="fccl_viz/visualization_marker"/>
+  </node>
 
   <!-- pancake visualization -->
   <!--node name="pancake_transform" pkg="tf" type="static_transform_publisher"
       args="0.0 0.0 0.05  0 0 0 /oven /pancake 20"/-->
   <node name="pancake_model" pkg="pr2_pouring_experiments"
-      type="pancake_model.py" args="/pancake"/>
+      type="pancake_model.py" args="/pancake">
+    <remap from="visualization_marker" to="fccl_viz/visualization_marker"/>
+  </node>
+
 
   <!-- bottle visualization -->
   <!--node name="pancake_bottle_transform" pkg="tf" type="static_transform_publisher"
       args="0.0 0.0 0.0 0 0 0 /l_gripper_tool_frame /pancake_bottle 20"/-->
   <node name="pancake_bottle_model" pkg="pr2_pouring_experiments"
-      type="pancake_bottle_model.py" args="/pancake_bottle"/>
+      type="pancake_bottle_model.py" args="/pancake_bottle">
+    <remap from="visualization_marker" to="fccl_viz/visualization_marker"/>
+  </node>
+
 
   <!-- left spatula visualization -->
   <!--node name="l_spatula_handle_transform" pkg="tf"
@@ -31,7 +39,10 @@
       type="static_transform_publisher"
       args="0.245 0.0 -0.015 0 2.1 0 /l_spatula_handle /l_spatula_blade 100"/>
   <node name="l_spatula_model" pkg="pr2_pouring_experiments"
-      type="spatula_model_bremen_1.py" args="/l_spatula_blade"/>
+      type="spatula_model_bremen_1.py" args="/l_spatula_blade">
+    <remap from="visualization_marker" to="fccl_viz/visualization_marker"/>
+  </node>
+
 
   <!-- right spatula visualization -->
   <!--node name="r_spatula_handle_transform" pkg="tf"
@@ -41,16 +52,21 @@
       type="static_transform_publisher"
       args="0.245 0.0 -0.015 0 2.1 0 /r_spatula_handle /r_spatula_blade 100"/>
   <node name="r_spatula_model" pkg="pr2_pouring_experiments"
-      type="spatula_model_bremen_1.py" args="/r_spatula_blade"/>
+      type="spatula_model_bremen_1.py" args="/r_spatula_blade">
+    <remap from="visualization_marker" to="fccl_viz/visualization_marker"/>
+  </node>
+
 
   <!-- feature visualization -->
   <node name="left_feature_visualization" pkg="fccl_visualization"
       type="feature_visualization.py" args="l_arm_fccl" output="screen">
     <remap from="~fccl_goal" to="/l_arm_fccl_controller/command/goal"/>
+    <remap from="visualization_marker" to="fccl_viz/visualization_marker"/>
   </node>
   <node name="right_feature_visualization" pkg="fccl_visualization"
       type="feature_visualization.py" args="r_arm_fccl" output="screen">
     <remap from="~fccl_goal" to="/r_arm_fccl_controller/command/goal"/>
+    <remap from="visualization_marker" to="fccl_viz/visualization_marker"/>
   </node>
 
   <!-- tf relay -->
