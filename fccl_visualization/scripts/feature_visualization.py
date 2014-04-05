@@ -151,8 +151,8 @@ if __name__ == "__main__":
             'color': yellow,
             'point_width': 0.02,
             'line_width': 0.02,
-            'line_length': 0.05,
-            'plane_width': 0.05,
+            'line_length': 0.08,
+            'plane_width': 0.2,
             'plane_length': 0.02}
  
   feature_visualization = FeatureVisualization(config)
