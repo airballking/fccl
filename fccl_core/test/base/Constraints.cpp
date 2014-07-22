@@ -383,22 +383,22 @@ TEST_F(ConstraintsTest, PointingFunction)
   T_view_object.numerics() = 
       KDL::Frame(KDL::Rotation::Identity(), KDL::Vector(1, 0, 0));
   pointingc.update(T_view_tool, T_view_object);
-  EXPECT_DOUBLE_EQ(pointingc.outputValue(), 1.0);
+  EXPECT_DOUBLE_EQ(pointingc.outputValue(), 0.0);
 
   T_view_object.numerics() = 
      KDL::Frame(KDL::Rotation::Identity(), KDL::Vector(-1, 0, 0));
   pointingc.update(T_view_tool, T_view_object);
-  EXPECT_DOUBLE_EQ(pointingc.outputValue(), -1.0);
+  EXPECT_DOUBLE_EQ(pointingc.outputValue(), -2.0);
 
   T_view_object.numerics() = 
      KDL::Frame(KDL::Rotation::Identity(), KDL::Vector(0, 1, 0));
   pointingc.update(T_view_tool, T_view_object);
-  EXPECT_DOUBLE_EQ(pointingc.outputValue(), 0.0);
+  EXPECT_DOUBLE_EQ(pointingc.outputValue(), -1.0);
 
   T_view_object.numerics() = 
      KDL::Frame(KDL::Rotation::Identity(), KDL::Vector(0, 0, 1));
   pointingc.update(T_view_tool, T_view_object);
-  EXPECT_DOUBLE_EQ(pointingc.outputValue(), 0.0);
+  EXPECT_DOUBLE_EQ(pointingc.outputValue(), -1.0);
 
   T_view_object.numerics() = 
      KDL::Frame(KDL::Rotation::Identity(), KDL::Vector(0, 0, 0));

@@ -7,6 +7,8 @@ namespace fccl
 {
   namespace base
   {
+    const double infinity = 100;
+
     double above(const SemanticsBase& view_frame,
         const Feature& tool_feature, const Feature& object_feature,
         const Transform& tool_transform, const Transform& object_transform)
@@ -75,6 +77,7 @@ namespace fccl
       Feature object = transformFeature(view_frame, object_transform,
           object_feature);
 
+      // returning the cos() of the angle between the two vectors
       return KDL::dot(tool.orientation(), object.orientation()) /
           (tool.orientation().Norm() * object.orientation().Norm());
     }
@@ -92,16 +95,29 @@ namespace fccl
 
       KDL::Vector connector = object.position() - tool.position();
 
+//      double len = tool.orientation().Norm() * connector.Norm();
+//
+//      if(len < KDL::epsilon)
+//      {
+//        return 0.0;
+//      }
+//      else
+//      {
+//        // returning the sin() of the angle between the two vectors
+//        return (tool.orientation() * connector).Norm() / len;
+//      }
+
       double denominator = tool.orientation().Norm() * connector.Norm();
       
       if(denominator < KDL::epsilon)
       {
-        // SINGULARITY: THE TWO FEATURES ARE PRACTICALLY ON THE SAME SPOT!!
+        // SINGULARITY: (a) THE TWO FEATURES ARE PRACTICALLY ON THE SAME SPOT!!
+        //              OR (b) AT LEAST ONE OF THE VECTORS HASE LENGTH 0 
         return 0.0;
       }
       else
       {
-        return KDL::dot(tool.orientation(), connector) / denominator;
+        return KDL::dot(tool.orientation(), connector) - denominator;
       }
     }
 
