@@ -60,6 +60,11 @@ class ConstraintsTest : public ::testing::Test
       //actual constraint values
       lower_boundary = 0.1; 
       upper_boundary = 0.2;
+
+      //actual limits
+      max_vel = 0.5;
+      max_acc = 0.6;
+      max_jerk = 0.7;
    }
 
     virtual void TearDown()
@@ -77,6 +82,7 @@ class ConstraintsTest : public ::testing::Test
     TransformMap transform_map;
     Feature object_feature, tool_feature;
     double lower_boundary, upper_boundary;
+    double max_vel, max_acc, max_jerk;
 };
 
 TEST_F(ConstraintsTest, Basics)
@@ -89,6 +95,9 @@ TEST_F(ConstraintsTest, Basics)
   ac.objectFeature() = object_feature;
   ac.lowerBoundary() = lower_boundary;
   ac.upperBoundary() = upper_boundary;
+  ac.maxVelocity() = max_vel;
+  ac.maxAcceleration() = max_acc;
+  ac.maxJerk() = max_jerk;
  
   Constraint ac2(ac);
 
@@ -103,6 +112,9 @@ TEST_F(ConstraintsTest, Basics)
   ac5.objectFeature() = ac.objectFeature();
   ac5.lowerBoundary() = ac.lowerBoundary();
   ac5.upperBoundary() = ac.upperBoundary();
+  ac5.maxVelocity() = ac.maxVelocity();
+  ac5.maxAcceleration() = ac.maxAcceleration();
+  ac5.maxJerk() = ac.maxJerk();
 
   EXPECT_TRUE(ac.equals(ac2));
   EXPECT_TRUE(ac.equals(ac3));
@@ -118,6 +130,9 @@ TEST_F(ConstraintsTest, Basics)
   EXPECT_TRUE(ac.objectFeature().equals(object_feature));
   EXPECT_EQ(ac.lowerBoundary(), lower_boundary);
   EXPECT_EQ(ac.upperBoundary(), upper_boundary);
+  EXPECT_EQ(ac.maxVelocity(), max_vel);
+  EXPECT_EQ(ac.maxAcceleration(), max_acc);
+  EXPECT_EQ(ac.maxJerk(), max_jerk);
 
   EXPECT_STREQ(ac2.semantics().reference().getName().c_str(), view_frame_name.c_str());
   EXPECT_STREQ(ac2.semantics().name().getName().c_str(), constraint_name.c_str());
@@ -125,6 +140,9 @@ TEST_F(ConstraintsTest, Basics)
   EXPECT_TRUE(ac2.objectFeature().equals(object_feature));
   EXPECT_EQ(ac2.lowerBoundary(), lower_boundary);
   EXPECT_EQ(ac2.upperBoundary(), upper_boundary);
+  EXPECT_EQ(ac2.maxVelocity(), max_vel);
+  EXPECT_EQ(ac2.maxAcceleration(), max_acc);
+  EXPECT_EQ(ac2.maxJerk(), max_jerk);
 }
 
 TEST_F(ConstraintsTest, Evaluation)

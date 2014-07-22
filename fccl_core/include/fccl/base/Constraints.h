@@ -23,6 +23,7 @@ namespace fccl
             semantics_( fccl::semantics::ConstraintSemantics() ),
             tool_feature_( Feature() ), object_feature_( Feature() ),
             lower_boundary_( 0.0 ), upper_boundary_( 0.0 ),
+            max_velocity_( 0.0 ), max_acceleration_( 0.0 ), max_jerk_( 0.0 ),
             output_value_( 0.0 ), desired_output_value_( 0.0 ), task_weight_( 0.0 )
         {
           first_derivative_.resize(1);
@@ -33,7 +34,10 @@ namespace fccl
             tool_feature_( other.toolFeature() ),
             object_feature_( other.objectFeature() ),
             lower_boundary_( other.lowerBoundary() ),
-            upper_boundary_( other.upperBoundary() )
+            upper_boundary_( other.upperBoundary() ),
+            max_velocity_( other.maxVelocity() ),
+            max_acceleration_( other.maxAcceleration() ),
+            max_jerk_( other.maxJerk() )
         {
           first_derivative_.resize(1);
         }
@@ -48,6 +52,9 @@ namespace fccl
             objectFeature() = rhs.objectFeature();
             lowerBoundary() = rhs.lowerBoundary();
             upperBoundary() = rhs.upperBoundary();
+            maxVelocity() = rhs.maxVelocity();
+            maxAcceleration() = rhs.maxAcceleration();
+            maxJerk() = rhs.maxJerk();
           }
 
           return *this;
@@ -93,6 +100,36 @@ namespace fccl
           return upper_boundary_;
         }
 
+        double maxVelocity() const
+        {
+          return max_velocity_;
+        }
+
+        double& maxVelocity()
+        {
+          return max_velocity_;
+        }
+
+        double maxAcceleration() const
+        {
+          return max_acceleration_;
+        }
+
+        double& maxAcceleration()
+        {
+          return max_acceleration_;
+        }
+
+        double maxJerk() const
+        {
+          return max_jerk_;
+        }
+
+        double& maxJerk()
+        {
+          return max_jerk_;
+        }
+
         const fccl::semantics::ConstraintSemantics& semantics() const
         {
           return semantics_;
@@ -128,6 +165,9 @@ namespace fccl
           return semantics().equals(other.semantics()) &&
             (lowerBoundary() == other.lowerBoundary()) &&
             (upperBoundary() == other.upperBoundary()) &&
+            (maxVelocity() == other.maxVelocity()) &&
+            (maxAcceleration() == other.maxAcceleration()) &&
+            (maxJerk() == other.maxJerk()) &&
             toolFeature().equals(other.toolFeature()) &&
             objectFeature().equals(other.objectFeature());
         }
@@ -191,6 +231,9 @@ namespace fccl
         // upper boundary for output of feature function
         double upper_boundary_;
   
+        // velocity, acceleration, and jerk limits
+        double max_velocity_, max_acceleration_, max_jerk_;
+
         // memory to store first derivative of constraint
         fccl::kdl::InteractionMatrix first_derivative_;
 
@@ -302,6 +345,10 @@ namespace fccl
       os << "object feature: " << constraint.objectFeature() << "\n";
       os << "lower boundary: " << constraint.lowerBoundary() << "\n";
       os << "upper boundary: " << constraint.upperBoundary() << "\n";
+
+      os << "max velocity: " << constraint.maxVelocity() << "\n";
+      os << "max acceleration: " << constraint.maxAcceleration() << "\n";
+      os << "max jerk: " << constraint.maxJerk() << "\n";
 
       os << "output value: " << constraint.outputValue() << "\n";
       os << "desired output value: " << constraint.desiredOutputValue() << "\n",
