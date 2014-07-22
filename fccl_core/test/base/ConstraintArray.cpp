@@ -43,6 +43,9 @@ class ConstraintArrayTest : public ::testing::Test
       ac1.objectFeature() = object_feature;
       ac1.lowerBoundary() = 0.1;
       ac1.upperBoundary() = 0.2;
+      ac1.maxVelocity() = 0.3;
+      ac1.maxAcceleration() = 0.4;
+      ac1.maxJerk() = 0.5;
 
       ac2.semantics().reference().setName(view);
       ac2.semantics().name().setName("height of tool over object edge");
@@ -51,6 +54,9 @@ class ConstraintArrayTest : public ::testing::Test
       ac2.objectFeature() = object_feature2;
       ac2.lowerBoundary() = 0.1;
       ac2.upperBoundary() = 0.2;
+      ac2.maxVelocity() = 1.3;
+      ac2.maxAcceleration() = 1.4;
+      ac2.maxJerk() = 1.5;
 
       constraints.push_back(ac1);
       constraints.push_back(ac2);
@@ -216,4 +222,41 @@ TEST_F(ConstraintArrayTest, NecessaryTransforms)
   container.target().setName(object);
   it = transforms.find(container);
   EXPECT_NE(it, transforms.end());
+}
+
+TEST_F(ConstraintArrayTest, Limits)
+{
+  ConstraintArray cs;
+  cs.init(constraints);
+
+  ASSERT_EQ(cs.maxVelocities().size(), constraints.size());
+  ASSERT_EQ(cs.maxAccelerations().size(), constraints.size());
+  ASSERT_EQ(cs.maxJerks().size(), constraints.size());
+
+  EXPECT_TRUE(cs.maxVelocities().semantics().equals(cs.maxAccelerations().semantics()));
+  EXPECT_TRUE(cs.maxVelocities().semantics().equals(cs.maxJerks().semantics()));
+
+  for(std::size_t i=0; i<constraints.size(); i++)
+  {
+    EXPECT_TRUE(cs.maxVelocities().semantics()(i).equals(cs(i).semantics().name()));
+    EXPECT_TRUE(cs.maxAccelerations().semantics()(i).equals(cs(i).semantics().name()));
+    EXPECT_TRUE(cs.maxJerks().semantics()(i).equals(cs(i).semantics().name()));
+  }
+
+  EXPECT_DOUBLE_EQ(cs.maxVelocities().numerics()(0), constraints[0].maxVelocity());
+  EXPECT_DOUBLE_EQ(cs.maxAccelerations().numerics()(0), constraints[0].maxAcceleration());
+  EXPECT_DOUBLE_EQ(cs.maxJerks().numerics()(0), constraints[0].maxJerk());
+
+  EXPECT_DOUBLE_EQ(cs.maxVelocities().numerics()(1), constraints[1].maxVelocity());
+  EXPECT_DOUBLE_EQ(cs.maxAccelerations().numerics()(1), constraints[1].maxAcceleration());
+  EXPECT_DOUBLE_EQ(cs.maxJerks().numerics()(1), constraints[1].maxJerk());
+
+
+  EXPECT_DOUBLE_EQ(cs.maxVelocities().numerics()(0), 0.3);
+  EXPECT_DOUBLE_EQ(cs.maxAccelerations().numerics()(0), 0.4);
+  EXPECT_DOUBLE_EQ(cs.maxJerks().numerics()(0), 0.5);
+
+  EXPECT_DOUBLE_EQ(cs.maxVelocities().numerics()(1), 1.3);
+  EXPECT_DOUBLE_EQ(cs.maxAccelerations().numerics()(1), 1.4);
+  EXPECT_DOUBLE_EQ(cs.maxJerks().numerics()(1), 1.5);
 }

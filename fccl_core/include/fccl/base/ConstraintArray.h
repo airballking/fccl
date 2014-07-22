@@ -55,6 +55,36 @@ namespace fccl
           return task_weights_;
         }
 
+        const fccl::kdl::JntArray& maxVelocities() const
+        {
+          return max_velocities_;
+        }
+
+        const fccl::kdl::JntArray maxVelocities()
+        {
+          return max_velocities_;
+        }
+
+        const fccl::kdl::JntArray& maxAccelerations() const
+        {
+          return max_accelerations_;
+        }
+
+        const fccl::kdl::JntArray maxAccelerations()
+        {
+          return max_accelerations_;
+        }
+
+        const fccl::kdl::JntArray& maxJerks() const
+        {
+          return max_jerks_;
+        }
+
+        const fccl::kdl::JntArray maxJerks()
+        {
+          return max_jerks_;
+        }
+
         bool equals(const ConstraintArray& other) const
         {
           assert(isValid());
@@ -130,6 +160,8 @@ namespace fccl
           initFirstDerivative();
 
           initOutputValuesAndWeights();
+
+          copyLimits();
         }
 
         std::size_t size() const
@@ -144,6 +176,9 @@ namespace fccl
           output_values_.resize(new_size);
           desired_output_values_.resize(new_size);
           task_weights_.resize(new_size);
+          max_velocities_.resize(new_size);
+          max_accelerations_.resize(new_size);
+          max_jerks_.resize(new_size);
         }
 
         void update(const fccl::utils::TransformMap& transform_map, double delta=0.001)
@@ -192,6 +227,9 @@ namespace fccl
         fccl::kdl::JntArray output_values_;
         fccl::kdl::JntArray desired_output_values_;
         fccl::kdl::JntArray task_weights_;
+        fccl::kdl::JntArray max_velocities_;
+        fccl::kdl::JntArray max_accelerations_;
+        fccl::kdl::JntArray max_jerks_;
 
         void copyConstraints(const std::vector<fccl::base::Constraint>& constraints)
         {
@@ -257,6 +295,24 @@ namespace fccl
             output_values_.semantics()(i) = operator()(i).semantics().name();
             desired_output_values_.semantics()(i) = operator()(i).semantics().name();
             task_weights_.semantics()(i) = operator()(i).semantics().name();
+          }
+        }
+
+        void copyLimits()
+        {
+          assert(size() == max_velocities_.size());
+          assert(size() == max_accelerations_.size());
+          assert(size() == max_jerks_.size());
+
+          for(std::size_t i=0; i<size(); i++)
+          {
+            max_velocities_.semantics()(i) = operator()(i).semantics().name();
+            max_accelerations_.semantics()(i) = operator()(i).semantics().name();
+            max_jerks_.semantics()(i) = operator()(i).semantics().name();
+
+            max_velocities_.numerics()(i) = operator()(i).maxVelocity();
+            max_accelerations_.numerics()(i) = operator()(i).maxAcceleration();
+            max_jerks_.numerics()(i) = operator()(i).maxJerk();
           }
         }
     }; 
