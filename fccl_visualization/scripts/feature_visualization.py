@@ -152,7 +152,7 @@ if __name__ == "__main__":
             'point_width': 0.02,
             'line_width': 0.02,
             'line_length': 0.08,
-            'plane_width': 0.2,
+            'plane_width': 0.1,
             'plane_length': 0.02}
  
   feature_visualization = FeatureVisualization(config)
