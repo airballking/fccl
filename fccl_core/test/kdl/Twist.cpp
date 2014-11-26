@@ -73,3 +73,26 @@ TEST_F(TwistTest, ChangeReferenceFrame)
   EXPECT_FALSE(t.equals(t2));
   EXPECT_TRUE(t3.equals(t4));
 }
+
+TEST_F(TwistTest, TwistConversions)
+{
+  KDL::Twist twist, twist2;
+  KDL::JntArray joints = KDL::JntArray(6);
+
+  for(unsigned i=0; i<joints.rows(); i++)
+  {
+    twist(i) = i;
+    twist2(i) = 0;
+    joints(i) = 0;
+  }
+
+  TwistToJntArray(twist, joints);
+  JntArrayToTwist(joints, twist2);
+
+  ASSERT_EQ(joints.rows(), 6);
+  for(unsigned i=0; i< joints.rows(); i++)
+  {
+    EXPECT_EQ(twist(i), twist2(i));
+    EXPECT_EQ(twist(i), joints(i));
+  }
+}

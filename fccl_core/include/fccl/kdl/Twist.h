@@ -6,7 +6,7 @@
 #include <iostream>
 #include <fccl/kdl/Transform.h>
 #include <fccl/semantics/TwistSemantics.h>
-#include <fccl/utils/Printing.h>
+#include <fccl/utils/Printing.h> 
 
 namespace fccl
 {
@@ -59,6 +59,26 @@ namespace fccl
         // numerics
         KDL::Twist twist_;
     };
+
+    inline KDL::JntArray& TwistToJntArray(const KDL::Twist& twist, KDL::JntArray& joints)
+    {
+      assert(joints.rows() == 6);
+
+      for(unsigned int i=0; i<6; i++)
+        joints(i) = twist(i);
+      
+      return joints;
+    }
+
+    inline KDL::Twist JntArrayToTwist(const KDL::JntArray& joints, KDL::Twist& twist)
+    {
+      assert(joints.rows() == 6);
+
+      for(unsigned int i=0; i<6; i++)
+        twist(i) = joints(i);
+   
+      return twist;
+    }
 
     inline std::ostream& operator<<(std::ostream& os, const Twist& twist)
     {
