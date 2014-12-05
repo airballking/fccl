@@ -106,7 +106,7 @@ namespace fccl
 
       interpolator_.setCurrentPosition(constraints_.outputValues());
       // Hack: this is assuming the last commanded values got really applied
-      interpolator_.setCurrentVelocity(interpolator_.nextPosition());
+      interpolator_.setCurrentVelocity(interpolator_.nextVelocity());
       interpolator_.setCurrentAcceleration(interpolator_.nextAcceleration());
  
       interpolator_.setTargetPosition(constraints_.desiredOutputValues());
