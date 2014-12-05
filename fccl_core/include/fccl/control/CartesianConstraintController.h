@@ -60,7 +60,6 @@ namespace fccl
         fccl::kdl::JntArray output_error_;
         fccl::kdl::JntArray desired_output_velocities_;
         fccl::kdl::JntArray desired_target_velocities_;
-        fccl::kdl::Twist desired_twist;
         fccl::kdl::JointMappingMatrix twist_weights_;
         fccl::kdl::JointMappingMatrix task_weights_;
         std::set<fccl::semantics::TransformSemantics> necessary_transforms_;

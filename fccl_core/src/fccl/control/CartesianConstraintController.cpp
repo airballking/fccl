@@ -30,7 +30,7 @@ namespace fccl
 
       desired_output_velocities_.init(constraints_.outputValues().semantics());
 
-      desired_twist.semantics() = constraints_.firstDerivative().semantics().twist();
+      desired_twist_.semantics() = constraints_.firstDerivative().semantics().twist();
 
       twist_weights_.resize(6, 6);
       twist_weights_.numerics().setIdentity();
