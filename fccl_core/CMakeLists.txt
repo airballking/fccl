@@ -36,6 +36,7 @@ add_library(${PROJECT_NAME}
   src/fccl/base/Constraints.cpp
   src/fccl/base/ConstraintFunctions.cpp
   src/fccl/control/ConstraintController.cpp
+  src/fccl/control/CartesianConstraintController.cpp
   src/fccl/kdl/InteractionMatrix.cpp
   src/fccl/kdl/KinematicChain.cpp
   src/fccl/solvers/WDLSSolver.cpp
@@ -91,6 +92,7 @@ catkin_add_gtest(${PROJECT_NAME}-test
                  test/base/JointConstraint.cpp
                  test/base/Constraints.cpp
                  test/base/ConstraintArray.cpp
+                 test/control/CartesianConstraintController.cpp
                  test/control/ConstraintController.cpp
                  test/control/FSM.cpp
                  test/control/Gains.cpp
