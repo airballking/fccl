@@ -18,7 +18,7 @@ class YamlParserTest : public ::testing::Test
 
 };
 
-TEST_F(YamlParserTest, Features)
+TEST_F(YamlParserTest, FeaturesParsingBasics)
 {
   std::ifstream file_in("features.yaml");
   ASSERT_TRUE(file_in.good());
@@ -29,6 +29,6 @@ TEST_F(YamlParserTest, Features)
   for(unsigned int i=0; i<doc.size(); ++i)
   {
     doc[i] >> feature;
-    std::cout << feature << "\n";
+    EXPECT_TRUE(feature.isValid());
   }
 }

@@ -5,11 +5,11 @@
   orientation: [4.4, 5.5, 6.6]
 - name: StoveCenterPoint
   reference: Stove
-  type: Point
+  type: POINT
   position: [1.01, 2.02, 3.03]
   orientation: [4.04, 5.05, 6.06]
 - name: StovePlane
   reference: Stove
-  type: Plane
+  type: PLANE
   position: [1.001, 2.002, 3.003]
   orientation: [4.004, 5.005, 6.006]
