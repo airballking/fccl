@@ -123,3 +123,21 @@ TEST_F(FeatureSemanticsTest, ChangeReferenceFrame)
   EXPECT_STREQ(fs.name().getName().c_str(), name.c_str());
   EXPECT_EQ(fs.type(), POINT_FEATURE);
 } 
+
+TEST_F(FeatureSemanticsTest, Conversions)
+{
+  EXPECT_EQ(0, featureTypeFromString("lala"));
+  EXPECT_EQ(0, featureTypeFromString("Point"));
+  EXPECT_EQ(0, featureTypeFromString("Line"));
+  EXPECT_EQ(0, featureTypeFromString("Plane"));
+  EXPECT_EQ(1, featureTypeFromString("POINT"));
+  EXPECT_EQ(2, featureTypeFromString("LINE"));
+  EXPECT_EQ(3, featureTypeFromString("PLANE"));
+
+  EXPECT_STREQ("POINT", featureTypeToString(1).c_str());
+  EXPECT_STREQ("LINE", featureTypeToString(2).c_str());
+  EXPECT_STREQ("PLANE", featureTypeToString(3).c_str());
+
+  EXPECT_STREQ("UNKNOWN_FEATURE_TYPE", featureTypeToString(0).c_str());
+  EXPECT_STREQ("UNKNOWN_FEATURE_TYPE", featureTypeToString(4).c_str());
+}

@@ -26,7 +26,32 @@ namespace fccl
     {
       return (UNKNOWN_FEATURE < feature_type) && (feature_type < FEATURE_COUNT);
     }
- 
+
+    inline FeatureTypes featureTypeFromString(const std::string& type_string)
+    {
+      if (type_string.compare("POINT") == 0)
+        return POINT_FEATURE;
+      else if (type_string.compare("LINE") == 0)
+        return LINE_FEATURE;
+      else if (type_string.compare("PLANE") == 0)
+        return PLANE_FEATURE;
+      else
+        return UNKNOWN_FEATURE;
+    }
+
+    // NOTE: Not realtime safe!
+    inline std::string featureTypeToString(int feature_type)
+    {
+      if (feature_type == POINT_FEATURE)
+        return "POINT";
+      else if (feature_type == LINE_FEATURE)
+        return "LINE";
+      else if (feature_type == PLANE_FEATURE)
+        return "PLANE";
+      else
+        return "UNKNOWN_FEATURE_TYPE";
+    }
+
     class FeatureSemantics
     {
       public:
@@ -101,7 +126,7 @@ namespace fccl
     {
       os << "reference: " << obj.reference() << "\n";
       os << "name: " << obj.name() << "\n";
-      os << "type: " << obj.type();
+      os << "type: " << featureTypeToString(obj.type());
       return os;
     }
   } // namespace semantics
