@@ -14,6 +14,12 @@ find_package(catkin REQUIRED COMPONENTS
 find_package(Eigen REQUIRED)
 find_package(orocos_kdl REQUIRED)
 
+## Finding system dependencies which come without cmake
+find_package(PkgConfig)
+pkg_check_modules(PC_YAMLCPP yaml-cpp)
+find_path(YAML_CPP_INCLUDE_DIRS yaml-cpp/node.h PATH_SUFFIXES yaml-cpp )
+find_library(YAML_CPP_LIBRARIES NAMES yaml-cpp )
+
 ###################################
 ## catkin specific configuration ##
 ###################################
@@ -27,7 +33,7 @@ catkin_package(
   INCLUDE_DIRS include
   LIBRARIES ${PROJECT_NAME}
   CATKIN_DEPENDS roscpp eigen fccl_core fccl_msgs 
-  DEPENDS Eigen orocos_kdl)
+  DEPENDS Eigen orocos_kdl yaml-cpp)
 
 ###########
 ## Build ##
@@ -37,7 +43,8 @@ catkin_package(
 include_directories(
   include
   ${catkin_INCLUDE_DIRS}
-  ${orocos_kdl_INCLUDE_DIRS})
+  ${orocos_kdl_INCLUDE_DIRS}
+  ${YAML_CPP_INCLUDE_DIRS})
 include_directories(
   SYSTEM
   ${EIGEN_INCLUDE_DIRS})
@@ -52,6 +59,7 @@ add_library(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
   ${orocos_kdl_LIBRARIES}
+  ${YAML_CPP_LIBRARIES}
 )
 
 #############
@@ -85,7 +93,8 @@ if(TARGET ${PROJECT_NAME}-test)
   target_link_libraries(${PROJECT_NAME}-test 
                         ${PROJECT_NAME} 
                         ${catkin_LIBRARIES}
-                        ${orocos_kdl_LIBRARIES})
+                        ${orocos_kdl_LIBRARIES}
+                        ${YAML_CPP_LIBRARIES})
 #  set_target_properties(${PROJECT_NAME}-test PROPERTIES LINK_FLAGS
 #    -L${orocos_kdl_LIBRARY_DIRS})
 endif()
