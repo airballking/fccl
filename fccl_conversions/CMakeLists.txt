@@ -53,6 +53,8 @@ include_directories(
 add_library(${PROJECT_NAME}
   src/${PROJECT_NAME}/Conversions.cpp
   src/${PROJECT_NAME}/JointStateInterpreter.cpp
+  src/${PROJECT_NAME}/YamlParser.cpp
+
 )
 
 # Specify libraries to link a library or executable target against
@@ -87,7 +89,9 @@ target_link_libraries(${PROJECT_NAME}
 catkin_add_gtest(${PROJECT_NAME}-test 
                  test/fccl_conversions/Conversions.cpp
                  test/fccl_conversions/JointStateInterpreter.cpp
-                 test/main.cpp)
+                 test/fccl_conversions/YamlParser.cpp
+                 test/main.cpp
+                 WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/test_data)
 
 if(TARGET ${PROJECT_NAME}-test)
   target_link_libraries(${PROJECT_NAME}-test 

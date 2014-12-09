@@ -1,0 +1,15 @@
+- name: CupMainAxis
+  reference: Cup
+  type: LINE
+  position: [1.1, 2.2, 3.3]
+  orientation: [4.4, 5.5, 6.6]
+- name: StoveCenterPoint
+  reference: Stove
+  type: Point
+  position: [1.01, 2.02, 3.03]
+  orientation: [4.04, 5.05, 6.06]
+- name: StovePlane
+  reference: Stove
+  type: Plane
+  position: [1.001, 2.002, 3.003]
+  orientation: [4.004, 5.005, 6.006]
