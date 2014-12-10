@@ -32,3 +32,18 @@ TEST_F(YamlParserTest, FeaturesParsingBasics)
     EXPECT_TRUE(feature.isValid());
   }
 }
+
+TEST_F(YamlParserTest, ConstraintsParsingBasics)
+{
+  std::ifstream file_in("constraints.yaml");
+  ASSERT_TRUE(file_in.good());
+  YAML::Parser parser(file_in);
+  YAML::Node doc;
+  parser.GetNextDocument(doc);
+  fccl::base::Constraint constraint;
+  for(unsigned int i=0; i<doc.size(); ++i)
+  {
+    doc[i] >> constraint;
+    EXPECT_TRUE(constraint.isValid());
+  }
+}
