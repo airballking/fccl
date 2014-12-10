@@ -53,16 +53,13 @@ include_directories(
 add_library(${PROJECT_NAME}
   src/${PROJECT_NAME}/Conversions.cpp
   src/${PROJECT_NAME}/JointStateInterpreter.cpp
-  src/${PROJECT_NAME}/YamlParser.cpp
-
-)
+  src/${PROJECT_NAME}/YamlParser.cpp)
 
 # Specify libraries to link a library or executable target against
 target_link_libraries(${PROJECT_NAME}
   ${catkin_LIBRARIES}
   ${orocos_kdl_LIBRARIES}
-  ${YAML_CPP_LIBRARIES}
-)
+  ${YAML_CPP_LIBRARIES})
 
 #############
 ## Install ##
