@@ -42,5 +42,17 @@ namespace fccl
       node["max-acceleration"] >> c.maxAcceleration();
       node["max-jerk"] >> c.maxJerk();
     }
+
+    void operator>> (const YAML::Node& node, fccl::base::ConstraintArray& cs)
+    {
+      std::vector<fccl::base::Constraint> constraint_vector;
+      for(unsigned int i=0; i<node.size(); i++)
+      {
+        fccl::base::Constraint c;
+        node[i] >> c;
+        constraint_vector.push_back(c);
+      }
+      cs.init(constraint_vector);
+    }
   } // namespace conversions
 } // namespace fccl

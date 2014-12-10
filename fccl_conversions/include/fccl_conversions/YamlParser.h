@@ -5,6 +5,7 @@
 #include <iostream>
 #include <fccl/base/Features.h>
 #include <fccl/base/Constraints.h>
+#include <fccl/base/ConstraintArray.h>
 
 namespace fccl
 {
@@ -15,6 +16,8 @@ namespace fccl
     void operator>> (const YAML::Node& node, fccl::base::Feature& f);
 
     void operator>> (const YAML::Node& node, fccl::base::Constraint& c);
+
+    void operator>> (const YAML::Node& node, fccl::base::ConstraintArray& cs);
 
   } // namespace conversions
 } // namespace fccl

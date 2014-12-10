@@ -47,3 +47,15 @@ TEST_F(YamlParserTest, ConstraintsParsingBasics)
     EXPECT_TRUE(constraint.isValid());
   }
 }
+
+TEST_F(YamlParserTest, ConstraintArrayParsingBasics)
+{
+  std::ifstream file_in("constraints.yaml");
+  ASSERT_TRUE(file_in.good());
+  YAML::Parser parser(file_in);
+  YAML::Node doc;
+  parser.GetNextDocument(doc);
+  fccl::base::ConstraintArray constraints;
+  doc >> constraints;
+  EXPECT_TRUE(constraints.isValid());
+}

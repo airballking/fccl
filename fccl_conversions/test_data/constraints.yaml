@@ -1,0 +1,20 @@
+- name: Cup center above Stove center
+  reference: World
+  type: ABOVE
+  tool-feature:
+    name: CupMainAxis
+    reference: Cup
+    type: LINE
+    position: [1.1, 2.2, 3.3]
+    orientation: [4.4, 5.5, 6.6]
+  object-feature: 
+    name: StoveCenterPoint
+    reference: Stove
+    type: POINT
+    position: [1.01, 2.02, 3.03]
+    orientation: [4.04, 5.05, 6.06]
+  lower-boundary: 0.2
+  upper-boundary: 0.33
+  max-velocity: 0.1
+  max-acceleration: 1.0
+  max-jerk: 1.0
