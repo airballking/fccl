@@ -68,6 +68,18 @@ namespace fccl
         void interpolate();
         void assembleNecessaryTransforms();
     }; 
+
+    inline std::ostream& operator<<(std::ostream& os, const CartesianConstraintController& controller)
+    {
+      os << "cartesian constraint controller:\n";
+      os << "*******************************:\n";
+
+      os << controller.constraints() << "\n";
+      os << "desired twist:\n";
+      os << controller.desiredTwist() << "\n";
+
+      return os;
+    }
   } // namespace control
 } // namespace fccl
 #endif // FCCL_CONTROL_CARTESIAN_CONSTRAINT_CONTROLLER_H
