@@ -382,6 +382,54 @@ TEST_F(ConstraintsTest, PerpendicularFunction)
   ASSERT_TRUE(perpc.isValid());
   perpc.update(T_view_tool, T_view_object);
   EXPECT_DOUBLE_EQ(perpc.outputValue(), -1.0);
+
+  // sanity tests added because Yuen asked for them
+  T_view_tool.numerics() = KDL::Frame::Identity();
+  T_view_object.numerics() = KDL::Frame::Identity();
+
+  perpc.toolFeature().orientation() = KDL::Vector(0, 0, 1);
+  perpc.objectFeature().orientation() = KDL::Vector(-1, 0, 0);
+  ASSERT_TRUE(perpc.isValid());
+  perpc.update(T_view_tool, T_view_object);
+  EXPECT_DOUBLE_EQ(perpc.outputValue(), 0.0);
+
+  perpc.toolFeature().orientation() = KDL::Vector(0, 1, 0);
+  perpc.objectFeature().orientation() = KDL::Vector(0, 1, 0);
+  ASSERT_TRUE(perpc.isValid());
+  perpc.update(T_view_tool, T_view_object);
+  EXPECT_DOUBLE_EQ(perpc.outputValue(), 1.0);
+
+  perpc.toolFeature().orientation() = KDL::Vector(1, 0, 0);
+  perpc.objectFeature().orientation() = KDL::Vector(-1, 0, 0);
+  ASSERT_TRUE(perpc.isValid());
+  perpc.update(T_view_tool, T_view_object);
+  EXPECT_DOUBLE_EQ(perpc.outputValue(), -1.0);
+
+  perpc.toolFeature().orientation() = KDL::Vector(0, 0, 1);
+  perpc.objectFeature().orientation() = KDL::Vector(0, 0.5, 0.5);
+  ASSERT_TRUE(perpc.isValid());
+  perpc.update(T_view_tool, T_view_object);
+  EXPECT_DOUBLE_EQ(perpc.outputValue(), 0.7071067811865475);
+
+  perpc.toolFeature().orientation() = KDL::Vector(0, 0, 1);
+  perpc.objectFeature().orientation() = KDL::Vector(0.5, 0.5, 0.5);
+  ASSERT_TRUE(perpc.isValid());
+  perpc.update(T_view_tool, T_view_object);
+  EXPECT_DOUBLE_EQ(perpc.outputValue(), 0.5773502691896258);
+
+  perpc.toolFeature().orientation() = KDL::Vector(-0.4620588374492333, 0.8675023433618231, 0.18423168836225917);
+  perpc.objectFeature().orientation() = KDL::Vector(-1.4999310963025327E-5, 1.4377279851653142E-7, 0.9999999998875);
+  ASSERT_TRUE(perpc.isValid());
+  perpc.update(T_view_tool, T_view_object);
+  EXPECT_DOUBLE_EQ(perpc.outputValue(), 0.18423874362895884);
+
+  perpc.toolFeature().orientation() = KDL::Vector(-0.787534302288049, 0.6148545577321307, 0.0417563834126201);
+  perpc.objectFeature().orientation() = KDL::Vector(-3.777464064713236E-8, -4.999857305595393E-6, 0.9999999999875);
+  ASSERT_TRUE(perpc.isValid());
+  perpc.update(T_view_tool, T_view_object);
+  EXPECT_DOUBLE_EQ(perpc.outputValue(), 0.04175333897587106);
+
+
 }
 
 TEST_F(ConstraintsTest, PointingFunction)
